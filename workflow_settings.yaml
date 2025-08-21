@@ -1,0 +1,5 @@
+defaultProject: rc-datamart-adminreport
+defaultLocation: US
+defaultDataset: dataform
+defaultAssertionDataset: dataform_assertions
+dataformCoreVersion: 3.0.0
