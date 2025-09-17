@@ -1,0 +1,68 @@
+config {
+  type: "table",
+  database: "rc-datamart-adminreport",
+  schema: "datamart_clickup", 
+  name: "fct_clickup_tasks_tasks", 
+  tags: ["clickup", "tasks", "tasks"]
+}
+
+/*
+    Changelog: 2025-09-15 jbatoy: Transfer the code into the Dataform
+*/
+
+SELECT
+  t.task_id
+  , t.task_name
+  , t.task_description
+  , t.task_description_markdown
+  , t.task_text_content
+  , t.task_url
+  , t.task_status
+  , t.task_status_type
+  , t.task_priority
+  , t.task_priority_color
+  , t.task_orderindex
+  , t.task_date_created
+  , t.task_date_updated
+  , t.task_date_done
+  , t.task_date_closed
+  , t.task_due_date
+  , t.task_start_date
+  , t.creator_id
+  , t.creator_username
+  , t.creator_email
+  , t.list_id
+  , t.list_name
+  , t.folder_id
+  , t.folder_name
+  , t.project_id
+  , t.project_name
+  , t.space_id
+  , s.name
+  , t.team_id
+  , t.archived
+  , t.permission_level
+  , t.time_spent_minutes
+  , t.time_spent_hours
+  , t.time_estimate_minutes
+  , t.time_estimate_hours
+  , ta.assignee_id
+  , ta.assignee_username
+  , ta.assignee_email
+  , cf.field_id AS custom_field_id
+  , cf.field_name AS custom_field_name
+  , cf.field_type AS custom_field_type
+  , cf.raw_value AS custom_field_value
+  , cf.dropdown_value AS custom_field_dropdown_value
+  , CAST(
+      CASE
+        WHEN cf.field_name = 'Prod. Hours' THEN cf.raw_value
+        ELSE NULL
+      END
+    AS FLOAT64) AS production_hours
+FROM ${ref("rc-datamart-adminreport","staging_clickup_data","stg_clickup_tasks_tasks")} t
+LEFT JOIN ${ref("rc-datamart-adminreport","staging_clickup_data","stg_clickup_tasks_assignees")} ta USING (task_id)
+LEFT JOIN ${ref("rc-datamart-adminreport","staging_clickup_data","stg_clickup_tasks_custom_fields")}  cf USING (task_id)
+LEFT JOIN `rc-datamart-adminreport.staging_clickup_data.clickup_spaces` s
+  ON t.space_id = s.id
+ORDER BY t.task_date_created

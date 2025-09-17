@@ -1,0 +1,20 @@
+config {
+  type: "table",
+  database: "rc-datamart-adminreport",
+  schema: "staging_clickup_data", 
+  name: "stg_clickup_tasks_assignees", 
+  tags: ["clickup", "tasks", "assignees"]
+}
+
+/*
+    Changelog: 2025-09-15 jbatoy: Transfer the code into the Dataform
+*/
+
+SELECT
+  JSON_VALUE(raw, '$.id') AS task_id
+  , JSON_VALUE(a, '$.id') AS assignee_id
+  , JSON_VALUE(a, '$.username') AS assignee_username
+  , JSON_VALUE(a, '$.email') AS assignee_email
+FROM ${ref("clickup_tasks_main")} 
+, UNNEST(JSON_QUERY_ARRAY(raw, '$.assignees')) AS a
+

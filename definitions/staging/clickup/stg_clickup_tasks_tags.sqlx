@@ -1,0 +1,18 @@
+config {
+  type: "table",
+  database: "rc-datamart-adminreport",
+  schema: "staging_clickup_data", 
+  name: "stg_clickup_tasks_tags", 
+  tags: ["clickup", "tasks", "tags"]
+}
+
+/*
+    Changelog: 2025-09-15 jbatoy: Transfer the code into the Dataform
+*/
+
+SELECT
+  JSON_VALUE(raw, '$.id') AS task_id
+  , JSON_VALUE(raw, '$.tags[0].name') AS tag_name
+  , JSON_VALUE(raw, '$.tags[0].tag_bg') AS tag_color
+FROM ${ref("clickup_tasks_main")} 
+, UNNEST(JSON_QUERY_ARRAY(raw, '$.tags')) AS t

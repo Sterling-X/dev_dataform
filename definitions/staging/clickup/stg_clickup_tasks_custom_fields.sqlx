@@ -1,0 +1,25 @@
+config {
+  type: "table",
+  database: "rc-datamart-adminreport",
+  schema: "staging_clickup_data", 
+  name: "stg_clickup_tasks_custom_fields", 
+  tags: ["clickup", "tasks", "custom_fields"]
+}
+
+/*
+    Changelog: 2025-09-15 jbatoy: Transfer the code into the Dataform
+*/
+
+SELECT
+  JSON_VALUE(raw, '$.id') AS task_id
+  , JSON_VALUE(cf, '$.id') AS field_id
+  , JSON_VALUE(cf, '$.name') AS field_name
+  , JSON_VALUE(cf, '$.type') AS field_type
+  , JSON_VALUE(cf, '$.value') AS raw_value
+  , (
+      SELECT JSON_VALUE(opt, '$.name')
+      FROM UNNEST(JSON_QUERY_ARRAY(cf, '$.type_config.options')) opt
+      WHERE JSON_VALUE(opt, '$.orderindex') = JSON_VALUE(cf, '$.value')
+    ) AS dropdown_value
+FROM ${ref("clickup_tasks_main")} 
+, UNNEST(JSON_QUERY_ARRAY(raw, '$.custom_fields')) AS cf

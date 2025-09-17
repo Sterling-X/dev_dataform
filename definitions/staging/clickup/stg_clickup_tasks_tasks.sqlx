@@ -1,0 +1,48 @@
+config {
+  type: "table",
+  database: "rc-datamart-adminreport",
+  schema: "staging_clickup_data", 
+  name: "stg_clickup_tasks_tasks", 
+  tags: ["clickup", "tasks", "tasks"]
+}
+
+/*
+    Changelog: 2025-09-15 jbatoy: Transfer the code into the Dataform
+*/
+
+SELECT
+  JSON_VALUE(raw, '$.id') AS task_id
+  , JSON_VALUE(raw, '$.name') AS task_name
+  , JSON_VALUE(raw, '$.description') AS task_description
+  , JSON_VALUE(raw, '$.markdown_description') AS task_description_markdown
+  , JSON_VALUE(raw, '$.text_content') AS task_text_content
+  , JSON_VALUE(raw, '$.url') AS task_url
+  , JSON_VALUE(raw, '$.status.status') AS task_status
+  , JSON_VALUE(raw, '$.status.type') AS task_status_type
+  , JSON_VALUE(raw, '$.priority.priority') AS task_priority
+  , JSON_VALUE(raw, '$.priority.color') AS task_priority_color
+  , JSON_VALUE(raw, '$.orderindex') AS task_orderindex
+  , TIMESTAMP_MILLIS(CAST(JSON_VALUE(raw, '$.date_created') AS INT64)) AS task_date_created
+  , TIMESTAMP_MILLIS(CAST(JSON_VALUE(raw, '$.date_updated') AS INT64)) AS task_date_updated
+  , TIMESTAMP_MILLIS(CAST(JSON_VALUE(raw, '$.date_done') AS INT64)) AS task_date_done
+  , TIMESTAMP_MILLIS(CAST(JSON_VALUE(raw, '$.date_closed') AS INT64)) AS task_date_closed
+  , TIMESTAMP_MILLIS(CAST(JSON_VALUE(raw, '$.due_date') AS INT64)) AS task_due_date
+  , TIMESTAMP_MILLIS(CAST(JSON_VALUE(raw, '$.start_date') AS INT64)) AS task_start_date
+  , JSON_VALUE(raw, '$.creator.id') AS creator_id
+  , JSON_VALUE(raw, '$.creator.username') AS creator_username
+  , JSON_VALUE(raw, '$.creator.email') AS creator_email
+  , JSON_VALUE(raw, '$.list.id') AS list_id
+  , JSON_VALUE(raw, '$.list.name') AS list_name
+  , JSON_VALUE(raw, '$.folder.id') AS folder_id
+  , JSON_VALUE(raw, '$.folder.name') AS folder_name
+  , JSON_VALUE(raw, '$.project.id') AS project_id
+  , JSON_VALUE(raw, '$.project.name') AS project_name
+  , JSON_VALUE(raw, '$.space.id') AS space_id
+  , JSON_VALUE(raw, '$.team_id') AS team_id
+  , JSON_VALUE(raw, '$.archived') AS archived
+  , JSON_VALUE(raw, '$.permission_level') AS permission_level
+  , SAFE_DIVIDE(CAST(JSON_VALUE(raw, '$.time_spent') AS INT64), 1000 * 60) AS time_spent_minutes
+  , SAFE_DIVIDE(CAST(JSON_VALUE(raw, '$.time_spent') AS INT64), 1000 * 60 * 60) AS time_spent_hours
+  , SAFE_DIVIDE(CAST(JSON_VALUE(raw, '$.time_estimate') AS INT64), 1000 * 60) AS time_estimate_minutes
+  , SAFE_DIVIDE(CAST(JSON_VALUE(raw, '$.time_estimate') AS INT64), 1000 * 60 * 60) AS time_estimate_hours
+FROM ${ref("clickup_tasks_main")} task
