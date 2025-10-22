@@ -1,0 +1,15 @@
+config {
+  type: "table",
+  database: "rc-datamart-adminreport",
+  schema: "datamart", 
+  name: "fct_local_brand_manager_geo_grid", 
+  tags: ["local_brand_manager", "geo_grid"]
+}
+
+/*
+    Changelog: [date]2025-09-15 jbatoy: [description]
+*/
+
+SELECT *
+FROM ${ref("rc-datamart-adminreport","staging","stg_local_brand_manager_geo_grid")}
+ORDER BY created_at DESC

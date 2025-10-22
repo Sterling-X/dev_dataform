@@ -1,0 +1,23 @@
+config {
+  type: "table",
+  database: "rc-datamart-adminreport",
+  schema: "staging", 
+  name: "stg_local_brand_manager_geo_grid", 
+  tags: ["local_brand_manager", "geo_grid"]
+}
+
+/*
+
+*/
+
+SELECT created_at
+  , business_name
+  , business_address
+  , search_term
+  , atgr
+  , solv
+  , agr
+  , grid_size
+  , state
+FROM ${ref("local_brand_manager_geogrids")} 
+WHERE business_name = 'Vasquez de Lara Law Group'
