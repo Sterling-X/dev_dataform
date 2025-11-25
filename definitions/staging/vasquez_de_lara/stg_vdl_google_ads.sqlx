@@ -1,0 +1,24 @@
+config {
+  type: "view",
+  database: "rc-datamart-adminreport",
+  schema: "vasquez_de_lara", 
+  name: "stg_vdl_google_ads", 
+  tags: ["google_ads", "vdl", "vasquez de lara"]
+}
+
+/*
+  Changelog: 2025-11-21 jbatoy: include only specific fields
+*/
+
+SELECT
+  date
+  , campaign
+  , clicks
+  , spend
+  , conversions
+FROM ${ref("google_ads_data")}
+WHERE customer_id IN (
+    '7054623682'
+    , '9922040145'
+    , '9919088782'
+  )

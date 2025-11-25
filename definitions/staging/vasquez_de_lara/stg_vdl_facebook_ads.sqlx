@@ -1,0 +1,33 @@
+config {
+  type: "view",
+  database: "rc-datamart-adminreport",
+  schema: "vasquez_de_lara", 
+  name: "stg_vdl_facebook_ads", 
+  tags: ["facebook_ads", "vdl", "vasquez de lara"]
+}
+
+/*
+  Changelog: 2025-11-21 jbatoy: added aggregation
+*/
+
+WITH cte_facebook_ads AS
+(
+  SELECT
+    date_start AS date
+    , campaign_name AS campaign
+    , clicks
+    , spend
+    , offsite_conversion_fb_pixel_custom
+    , impressions
+  FROM `rc-datamart-adminreport.vasquez_de_lara.facebook_ads_insights`
+)
+
+SELECT
+  date
+  , campaign
+  , SUM(clicks) AS clicks
+  , SUM(spend) AS spend
+  , SUM(offsite_conversion_fb_pixel_custom) AS actions_offsite_conversion_fb_pixel_custom
+  , SUM(impressions) AS impressions
+FROM cte_facebook_ads
+GROUP BY ALL

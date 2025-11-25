@@ -1,0 +1,7 @@
+config {
+    type: "declaration",
+    database: "rc-datamart-adminreport",
+    schema: "raw_source", 
+    name: "local_brand_manager_geogrids", 
+    description: "This table is from rc-datamart-adminreport.raw_source.local_brand_manager_geogrids."
+}

@@ -1,0 +1,18 @@
+config {
+  type: "view",
+  database: "rc-datamart-adminreport",
+  schema: "vasquez_de_lara", 
+  name: "stg_vdl_google_search_console", 
+  tags: ["google_search_console", "vdl", "vasquez de lara"]
+}
+
+/*
+  Changelog: 2025-11-21 jbatoy: added aggregation
+*/
+
+SELECT
+  date
+  , SUM(impressions) AS impressions
+  , SUM(clicks) AS clicks
+FROM `rc-datamart-adminreport.vasquez_de_lara.google_search_console_data`
+GROUP BY date

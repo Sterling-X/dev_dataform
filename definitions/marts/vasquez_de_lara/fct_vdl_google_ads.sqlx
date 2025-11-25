@@ -1,0 +1,20 @@
+config {
+  type: "table",
+  database: "rc-datamart-adminreport",
+  schema: "analytics_vasquez_de_lara", 
+  name: "fct_vdl_google_ads", 
+  tags: ["google_ads", "vdl", "vasquez de lara"]
+}
+
+/*
+  Changelog: 2025-11-21 jbatoy: include only specific fields.
+*/
+
+SELECT 
+  date
+  , campaign
+  , clicks
+  , spend
+  , conversions
+FROM ${ref("rc-datamart-adminreport","vasquez_de_lara","stg_vdl_google_ads")}
+ORDER BY date

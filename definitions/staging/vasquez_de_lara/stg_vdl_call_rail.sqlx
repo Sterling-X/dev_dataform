@@ -1,0 +1,35 @@
+config {
+  type: "view",
+  database: "rc-datamart-adminreport",
+  schema: "vasquez_de_lara", 
+  name: "stg_vdl_call_rail", 
+  tags: ["call_rail", "vdl", "vasquez de lara"]
+}
+
+/*
+  Changelog: 2025-11-21 jbatoy: include only specific fields and get only the latest record per day
+*/
+
+SELECT
+  DATE(created_at) AS date
+  , source_name
+  , direction
+  , answered
+  , medium
+FROM (
+  SELECT *
+    , ROW_NUMBER() OVER (
+        PARTITION BY DATE(created_at)
+          , source_name
+          , direction
+          , answered
+          , medium
+        ORDER BY TIMESTAMP(created_at) DESC) AS row_num
+  FROM ${ref("callrail_alldata_delta")} 
+)
+WHERE LOWER(source_name) IN (
+  'gmb - kendall',
+  'gmb - coral gables',
+  'gmb - downtown office',
+  'gmb - supreme scholars foundation'
+) AND row_num = 1

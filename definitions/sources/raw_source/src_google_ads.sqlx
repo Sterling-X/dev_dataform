@@ -1,0 +1,7 @@
+config {
+    type: "declaration",
+    database: "rc-datamart-adminreport",
+    schema: "raw_source", 
+    name: "google_ads_data", 
+    description: "This table is from rc-datamart-adminreport.raw_source.google_ads_data."
+}

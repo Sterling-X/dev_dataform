@@ -1,0 +1,22 @@
+config {
+  type: "table",
+  database: "rc-datamart-adminreport",
+  schema: "analytics_vasquez_de_lara", 
+  name: "fct_vdl_local_brand_manager_geogrids", 
+  tags: ["local_brand_manager", "geogrids", "vdl", "vasquez de lara"]
+}
+
+/*
+  Changelog: 2025-11-21 jbatoy: include only specific fields.
+*/
+
+SELECT
+  date
+  , location
+  , keyword
+  , agr
+  , atgr
+  , solv
+FROM ${ref("rc-datamart-adminreport","vasquez_de_lara","stg_vdl_local_brand_manager_geogrids")}
+WHERE date >= '2025-07-01'
+ORDER BY date
