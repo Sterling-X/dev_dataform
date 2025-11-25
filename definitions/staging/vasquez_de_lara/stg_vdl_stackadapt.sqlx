@@ -1,0 +1,20 @@
+config {
+  type: "view",
+  database: "rc-datamart-adminreport",
+  schema: "vasquez_de_lara", 
+  name: "stg_vdl_stackadapt", 
+  tags: ["stackadapt", "vdl", "vasquez de lara"]
+}
+
+/*
+  Changelog: 2025-11-21 jbatoy: include only specific fields.
+*/
+
+SELECT
+  granularity_date AS date
+  , campaign_name AS campaign
+  , clicks
+  , cost AS spend
+  , conversions
+  , impressions
+FROM `rc-datamart-adminreport.vasquez_de_lara.stackadapt_campaign_delivery`

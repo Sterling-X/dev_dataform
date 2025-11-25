@@ -1,0 +1,17 @@
+config {
+  type: "view",
+  database: "rc-datamart-adminreport",
+  schema: "vasquez_de_lara", 
+  name: "stg_vdl_pagespeed_insights", 
+  tags: ["pagespeed_insights", "vdl", "vasquez de lara"]
+}
+
+/*
+  Changelog: 2025-11-21 jbatoy: include only specific fields.
+*/
+
+SELECT
+  DATE(timestamp) AS date
+  , strategy
+  , performance_score
+FROM `rc-datamart-adminreport.vasquez_de_lara.pagespeed_insights`
