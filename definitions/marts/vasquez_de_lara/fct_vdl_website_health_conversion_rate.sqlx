@@ -1,0 +1,59 @@
+config {
+  type: "table",
+  database: "rc-datamart-adminreport",
+  schema: "analytics_vasquez_de_lara", 
+  name: "fct_vdl_website_health_conversion_rate", 
+  tags: ["website health", "conversion rate", "vdl", "vasquez de lara"]
+}
+
+/*
+  Changelog: yyyy-mm-dd jbatoy: 
+*/
+
+WITH cte_ga4_conversion AS (
+  SELECT
+    date
+    , year_month
+    , SUM(event_count) AS total_event_count
+  FROM ${ref("rc-datamart-adminreport", "vasquez_de_lara", "stg_vdl_google_analytics4_conversion")}
+  GROUP BY ALL
+)
+
+, cte_ga4_user AS (
+  SELECT
+    date
+    , year_month
+    , SUM(total_users) AS total_users
+  FROM ${ref("rc-datamart-adminreport", "vasquez_de_lara", "stg_vdl_google_analytics4_users")}
+  GROUP BY ALL
+)
+
+, cte_conversion AS (
+  SELECT
+    c.date
+    , c.year_month
+    , SAFE_DIVIDE(c.total_event_count, u.total_users) AS conversion_rate
+  FROM cte_ga4_conversion c
+  JOIN cte_ga4_user u ON c.date = u.date
+    AND c.year_month = u.year_month
+)
+
+, cte_ranges AS (
+  SELECT
+    n
+    , DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL n MONTH), MONTH) AS last_12_months
+    , FORMAT_DATE('%Y%m', DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL n MONTH), MONTH)) AS last_12_months_ym
+    , FORMAT_DATE('%Y%m', DATE_TRUNC(DATE_SUB(DATE_SUB(CURRENT_DATE(), INTERVAL n MONTH), INTERVAL 12 MONTH), MONTH)) AS prior_12_months_ym
+  FROM UNNEST(GENERATE_ARRAY(0, 11)) AS n
+)
+
+SELECT
+  r.n
+  , r.last_12_months
+  , r.last_12_months_ym
+  , r.prior_12_months_ym
+  , COALESCE(l.conversion_rate, 0.0) AS last_12_months_conversion_rate
+  , COALESCE(p.conversion_rate, 0.0) AS prior_12_months_conversion_rate
+FROM cte_ranges r
+LEFT JOIN cte_conversion l ON l.year_month = r.last_12_months_ym
+LEFT JOIN cte_conversion p ON p.year_month = r.prior_12_months_ym

@@ -1,0 +1,102 @@
+config {
+  type: "table",
+  database: "rc-datamart-adminreport",
+  schema: "analytics_vasquez_de_lara", 
+  name: "fct_vdl_paid_media_prospecting_ads", 
+  tags: ["paid media", "prospecting ads", "vdl", "vasquez de lara"]
+}
+
+/*
+  Changelog: yyyy-mm-dd jbatoy: 
+*/
+
+WITH cte_ranges AS (
+  SELECT
+    DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) AS prior_year_start
+    , CURRENT_DATE() AS today
+    , DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY) AS last_90_start
+    , DATE_SUB(CURRENT_DATE(), INTERVAL 180 DAY) AS prior_90_start
+)
+
+, cte_prospecting_ads AS (
+  SELECT
+    date
+    , SUM(spend) AS spend
+    , SUM(impressions) AS impressions
+  FROM (
+    -- SELECT
+    --   date
+    --   , spend
+    --   , conversions AS leads
+    -- FROM ${ref("rc-datamart-adminreport", "vasquez_de_lara", "stg_vdl_google_ads")}
+    -- WHERE campaign IN (
+    --   'RC - Retargeting - Leads',
+    --   'RC - UCD - Video Ads',
+    --   'Brand Remarketing (Website Visitors) - Audio'
+    -- )
+
+    -- UNION ALL
+
+    -- SELECT
+    --   date
+    --   , spend
+    --   , actions_offsite_conversion_fb_pixel_custom AS leads
+    -- FROM ${ref("rc-datamart-adminreport", "vasquez_de_lara", "stg_vdl_facebook_ads")}
+    -- WHERE campaign IN (
+    --   'RC - Retargeting - Leads',
+    --   'RC - UCD - Video Ads'
+    -- )
+
+    -- UNION ALL
+
+    SELECT
+      date
+      , spend
+      , impressions
+    FROM ${ref("rc-datamart-adminreport", "vasquez_de_lara", "stg_vdl_stackadapt")}
+    WHERE campaign = 'Brand Prospecting - Audio'
+  )
+  GROUP BY date
+)
+
+, cte_metrics AS (
+  SELECT
+    -- spend
+    SUM(CASE WHEN s.date BETWEEN r.prior_year_start AND r.today THEN s.spend END) AS spend_prior_year
+    , SUM(CASE WHEN s.date BETWEEN r.prior_90_start AND r.last_90_start THEN s.spend END) AS spend_prior_90_days
+    , SUM(CASE WHEN s.date BETWEEN r.last_90_start AND r.today THEN s.spend END) AS spend_last_90_days
+
+    -- impressions
+    , SUM(CASE WHEN s.date BETWEEN r.prior_year_start AND r.today THEN s.impressions END) AS impressions_prior_year
+    , SUM(CASE WHEN s.date BETWEEN r.prior_90_start AND r.last_90_start THEN s.impressions END) AS impressions_prior_90_days
+    , SUM(CASE WHEN s.date BETWEEN r.last_90_start AND r.today THEN s.impressions END) AS impressions_last_90_days
+  FROM cte_prospecting_ads s
+  CROSS JOIN cte_ranges r
+)
+
+SELECT * FROM (
+  SELECT
+    'Spend' AS metric
+    , ROUND(spend_prior_year, 4) AS prior_year
+    , ROUND(spend_prior_90_days, 4) AS prior_90_days
+    , ROUND(spend_last_90_days, 4) AS last_90_days
+  FROM cte_metrics
+
+  UNION ALL
+
+  SELECT
+    'Impressions' AS metric
+    , ROUND(impressions_prior_year, 4) AS prior_year
+    , ROUND(impressions_prior_90_days, 4) AS prior_90_days
+    , ROUND(impressions_last_90_days, 4) AS last_90_days
+  FROM cte_metrics
+
+  UNION ALL
+
+  SELECT
+    'Cost per Lead (CPL)' AS metric
+    , ROUND(SAFE_DIVIDE(spend_prior_year, impressions_prior_year) * 1000, 4) AS prior_year
+    , ROUND(SAFE_DIVIDE(spend_prior_90_days, impressions_prior_90_days) * 1000, 4) AS prior_90_days
+    , ROUND(SAFE_DIVIDE(spend_last_90_days, impressions_last_90_days) * 1000, 4) AS last_90_days
+  FROM cte_metrics
+)

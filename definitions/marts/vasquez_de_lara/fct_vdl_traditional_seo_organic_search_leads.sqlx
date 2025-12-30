@@ -1,0 +1,40 @@
+config {
+  type: "table",
+  database: "rc-datamart-adminreport",
+  schema: "analytics_vasquez_de_lara", 
+  name: "fct_vdl_traditional_seo_organic_search_leads", 
+  tags: ["traditional seo", "organic search", "vdl", "vasquez de lara"]
+}
+
+/*
+  Changelog: yyyy-mm-dd jbatoy: 
+*/
+
+WITH cte_leads AS (
+  SELECT 
+    date
+    , year_month
+    , SUM(event_count) AS total
+  FROM ${ref("rc-datamart-adminreport", "vasquez_de_lara", "stg_vdl_google_analytics4_conversion")}
+  GROUP BY ALL
+)
+
+, cte_ranges AS (
+  SELECT
+    n
+    , DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL n MONTH), MONTH) AS last_12_months
+    , FORMAT_DATE('%Y%m', DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL n MONTH), MONTH)) AS last_12_months_ym
+    , FORMAT_DATE('%Y%m', DATE_TRUNC(DATE_SUB(DATE_SUB(CURRENT_DATE(), INTERVAL n MONTH), INTERVAL 12 MONTH), MONTH)) AS prior_12_months_ym
+  FROM UNNEST(GENERATE_ARRAY(0, 11)) AS n
+)
+
+SELECT
+  r.n
+  , r.last_12_months
+  , r.last_12_months_ym
+  , r.prior_12_months_ym
+  , COALESCE(l.total, 0) AS last_12_months_total
+  , COALESCE(p.total, 0) AS prior_12_months_total
+FROM cte_ranges r
+LEFT JOIN cte_leads l ON l.year_month = r.last_12_months_ym
+LEFT JOIN cte_leads p ON p.year_month = r.prior_12_months_ym

@@ -1,0 +1,38 @@
+config {
+  type: "table",
+  database: "rc-datamart-adminreport",
+  schema: "analytics_vasquez_de_lara", 
+  name: "fct_vdl_website_health_core_web_vitals", 
+  tags: ["website health", "core web vitals", "vdl", "vasquez de lara"]
+}
+
+/*
+  Changelog: yyyy-mm-dd jbatoy: 
+*/
+
+WITH cte_ranges AS (
+  SELECT
+    FORMAT_DATE('%Y-%m', DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)) AS prior_year_start
+    , FORMAT_DATE('%Y-%m', CURRENT_DATE()) AS today
+    , FORMAT_DATE('%Y-%m', DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) AS last_90_start
+    , FORMAT_DATE('%Y-%m', DATE_SUB(CURRENT_DATE(), INTERVAL 180 DAY)) AS prior_90_start
+)
+
+SELECT
+  CASE
+    WHEN LOWER(strategy) = 'mobile' THEN 'Mobile Site Health'
+    WHEN LOWER(strategy) = 'desktop' THEN 'Desktop Site Health'
+  END AS metric
+  , CASE WHEN FORMAT_DATE('%Y-%m', date) = prior_year_start THEN performance_score END AS prior_year
+  , CASE WHEN FORMAT_DATE('%Y-%m', date) = prior_90_start THEN performance_score END AS prior_90_days
+  , CASE WHEN FORMAT_DATE('%Y-%m', date) = today THEN performance_score END AS current_health
+  , CASE
+      WHEN LOWER(strategy) = 'mobile' AND (CASE WHEN FORMAT_DATE('%Y-%m', date) = today THEN performance_score END) IS NOT NULL THEN 0.80
+      WHEN LOWER(strategy) = 'desktop' AND (CASE WHEN FORMAT_DATE('%Y-%m', date) = today THEN performance_score END) IS NOT NULL THEN 0.90
+    END AS target_health  
+FROM ${ref("rc-datamart-adminreport", "vasquez_de_lara", "stg_vdl_pagespeed_insights")}
+CROSS JOIN cte_ranges
+WHERE (CASE
+      WHEN LOWER(strategy) = 'mobile' AND (CASE WHEN FORMAT_DATE('%Y-%m', date) = today THEN performance_score END) IS NOT NULL THEN 0.80
+      WHEN LOWER(strategy) = 'desktop' AND (CASE WHEN FORMAT_DATE('%Y-%m', date) = today THEN performance_score END) IS NOT NULL THEN 0.90
+    END) IS NOT NULL

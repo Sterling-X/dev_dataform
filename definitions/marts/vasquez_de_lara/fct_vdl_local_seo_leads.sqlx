@@ -1,0 +1,37 @@
+config {
+  type: "table",
+  database: "rc-datamart-adminreport",
+  schema: "analytics_vasquez_de_lara", 
+  name: "fct_vdl_local_seo_leads", 
+  tags: ["local seo", "leads", "vdl", "vasquez de lara"]
+}
+
+/*
+  Changelog: yyyy-mm-dd jbatoy: 
+*/
+
+WITH cte_leads AS (
+  SELECT
+    FORMAT_DATE('%Y%m', date) AS year_month
+    , COUNTIF(answered = true) AS cnt_answered
+    FROM ${ref("rc-datamart-adminreport", "vasquez_de_lara", "stg_vdl_call_rail")}
+    GROUP BY year_month
+)
+
+, cte_ranges AS (
+  SELECT
+    n
+    , DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL n MONTH), MONTH) AS last_12_months
+    , FORMAT_DATE('%Y%m', DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL n MONTH), MONTH)) AS last_12_months_ym
+    , FORMAT_DATE('%Y%m', DATE_TRUNC(DATE_SUB(DATE_SUB(CURRENT_DATE(), INTERVAL n MONTH), INTERVAL 12 MONTH), MONTH)) AS prior_12_months_ym
+  FROM UNNEST(GENERATE_ARRAY(0, 11)) AS n
+)
+
+SELECT
+  r.n
+  , r.last_12_months
+  , l.cnt_answered AS last_12_months_total
+  , p.cnt_answered AS prior_12_months_total
+FROM cte_ranges r
+LEFT JOIN cte_leads l ON l.year_month = r.last_12_months_ym
+LEFT JOIN cte_leads p ON p.year_month = r.prior_12_months_ym

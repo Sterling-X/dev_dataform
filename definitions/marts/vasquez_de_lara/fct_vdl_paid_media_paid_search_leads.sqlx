@@ -1,0 +1,72 @@
+config {
+  type: "table",
+  database: "rc-datamart-adminreport",
+  schema: "analytics_vasquez_de_lara", 
+  name: "fct_vdl_paid_media_paid_search_leads", 
+  tags: ["paid media", "paid search", "vdl", "vasquez de lara"]
+}
+
+/*
+  Changelog: yyyy-mm-dd jbatoy: 
+*/
+
+WITH cte_leads AS (
+  SELECT
+    FORMAT_DATE('%Y%m', date) AS year_month
+    , SUM(leads) AS leads
+  FROM (
+    SELECT
+      date
+      , conversions AS leads
+    FROM ${ref("rc-datamart-adminreport", "vasquez_de_lara", "stg_vdl_google_ads")}
+    WHERE campaign IN (
+      'RC - Divorce  - BUY CORE / CORE GEO',
+      'RC - Brand Family - VDL',
+      'LocalServicesCampaign:SystemGenerated:0006190f28171517',
+      'LocalServicesCampaign:SystemGenerated:0005f9dd3720d4e4',
+      'LocalServicesCampaign:SystemGenerated:0005d4f685ac0cbc'
+    )
+
+    UNION ALL
+
+    -- retargeting ads
+    SELECT
+      date
+      , actions_offsite_conversion_fb_pixel_custom AS leads
+    FROM ${ref("rc-datamart-adminreport", "vasquez_de_lara", "stg_vdl_facebook_ads")}
+    WHERE campaign IN (
+      'RC - Retargeting - Leads',
+      'RC - UCD - Video Ads'
+    )
+
+    UNION ALL
+
+    SELECT
+      date
+      , conversions AS leads
+    FROM ${ref("rc-datamart-adminreport", "vasquez_de_lara", "stg_vdl_stackadapt")}
+    WHERE campaign IN (
+      'Brand Remarketing (Website Visitors) - Audio',
+      'Brand Prospecting - Audio'
+    )
+  )
+  GROUP BY year_month
+)
+
+, cte_ranges AS (
+  SELECT
+    n
+    , DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL n MONTH), MONTH) AS last_12_months
+    , FORMAT_DATE('%Y%m', DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL n MONTH), MONTH)) AS last_12_months_ym
+    , FORMAT_DATE('%Y%m', DATE_TRUNC(DATE_SUB(DATE_SUB(CURRENT_DATE(), INTERVAL n MONTH), INTERVAL 12 MONTH), MONTH)) AS prior_12_months_ym
+  FROM UNNEST(GENERATE_ARRAY(0, 11)) AS n
+)
+
+SELECT
+  r.n
+  , r.last_12_months
+  , ROUND(l.leads, 1) AS last_12_months_total
+  , ROUND(p.leads, 1) AS prior_12_months_total
+FROM cte_ranges r
+LEFT JOIN cte_leads l ON l.year_month = r.last_12_months_ym
+LEFT JOIN cte_leads p ON p.year_month = r.prior_12_months_ym
