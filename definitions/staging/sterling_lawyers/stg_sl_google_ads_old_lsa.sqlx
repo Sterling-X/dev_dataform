@@ -1,9 +1,9 @@
 config {
   type: "view",
   database: "rc-datamart-adminreport",
-  schema: "vasquez_de_lara", 
-  name: "stg_vdl_google_ads", 
-  tags: ["google_ads", "vdl", "vasquez de lara"]
+  schema: "sterling_lawyers", 
+  name: "stg_sl_google_ads_old_lsa", 
+  tags: ["google_ads", "sterling lawyers"]
 }
 
 /*
@@ -18,8 +18,9 @@ SELECT
   , conversions
 FROM ${ref("google_ads_data")}
 WHERE customer_id IN (
-    '7054623682'
-    , '9922040145'
-    , '9919088782'
+    '5788001493'
+    , '4848705759'
+    , '5543903899'
+    , '2530434917'
+    , '5137010586'
   )
-  

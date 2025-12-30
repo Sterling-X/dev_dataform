@@ -1,0 +1,20 @@
+config {
+  type: "view",
+  database: "rc-datamart-adminreport",
+  schema: "vasquez_de_lara", 
+  name: "stg_vdl_google_analytics4_conversion", 
+  tags: ["google analytics", "conversion", "vdl", "vasquez de lara"]
+}
+
+/*
+  Changelog: yyyy-mm-dd jbatoy: 
+*/
+
+SELECT
+  yearMonth AS year_month
+  , yearMonthDate AS date
+  , firstUserPrimaryChannelGroup AS first_user_primary_channel_group
+  , eventName AS event_name
+  , eventCount AS event_count
+FROM `rc-datamart-adminreport.vasquez_de_lara.google_analytics4_conversion`
+WHERE LOWER(eventName) IN ('phone_call', 'lawmatics form submission')

@@ -7,11 +7,10 @@ config {
 }
 
 /*
-  Changelog: 2025-11-21 jbatoy: include only specific fields. Added CASE WHEN location ID to pull the specific Location
+  Changelog: yyyy-mm-dd jbatoy: 
 */
 
-WITH cte_geogrids AS
-(
+WITH cte_geogrids AS (
   SELECT *
     , CASE
         WHEN location_id = 'nl12x425' THEN 'Kendall'
@@ -31,4 +30,3 @@ SELECT
   , solv
 FROM cte_geogrids
 WHERE location IS NOT NULL
-  AND DATE(created_at) >= '2025-07-01'

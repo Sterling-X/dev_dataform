@@ -1,0 +1,28 @@
+config {
+  type: "view",
+  database: "rc-datamart-adminreport",
+  schema: "sterling_lawyers", 
+  name: "stg_sl_google_ads", 
+  tags: ["google_ads", "sterling lawyers"]
+}
+
+/*
+  Changelog: yyyy-mm-dd jbatoy: Google Ada: Rocket Clicks Master MCC(accouthn number:700-686-7220 )
+  min date - 2022-12-23
+  max date - 2025-12-20
+*/
+
+SELECT
+  date
+  , campaign
+  , clicks
+  , spend
+  , conversions
+FROM `rc-datamart-adminreport.google_ads.google_ads_data`
+WHERE customer_id IN (
+    '5788001493'
+    , '4848705759'
+    , '5543903899'
+    , '2530434917'
+    , '5137010586'
+  )

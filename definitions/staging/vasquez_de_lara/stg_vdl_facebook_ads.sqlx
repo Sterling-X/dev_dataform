@@ -7,27 +7,36 @@ config {
 }
 
 /*
-  Changelog: 2025-11-21 jbatoy: added aggregation
+  Changelog: yyyy-mm-dd jbatoy: 
 */
 
-WITH cte_facebook_ads AS
-(
-  SELECT
-    date_start AS date
-    , campaign_name AS campaign
-    , clicks
-    , spend
-    , offsite_conversion_fb_pixel_custom
-    , impressions
-  FROM `rc-datamart-adminreport.vasquez_de_lara.facebook_ads_insights`
-)
-
 SELECT
-  date
-  , campaign
-  , SUM(clicks) AS clicks
-  , SUM(spend) AS spend
-  , SUM(offsite_conversion_fb_pixel_custom) AS actions_offsite_conversion_fb_pixel_custom
-  , SUM(impressions) AS impressions
-FROM cte_facebook_ads
-GROUP BY ALL
+  date_start AS date
+  , campaign_name AS campaign
+  , clicks
+  , spend
+  , offsite_conversion_fb_pixel_custom AS actions_offsite_conversion_fb_pixel_custom
+  , impressions
+FROM `rc-datamart-adminreport.vasquez_de_lara.facebook_ads_insights`
+
+-- WITH cte_facebook_ads AS
+-- (
+--   SELECT
+--     date_start AS date
+--     , campaign_name AS campaign
+--     , clicks
+--     , spend
+--     , offsite_conversion_fb_pixel_custom
+--     , impressions
+--   FROM `rc-datamart-adminreport.vasquez_de_lara.facebook_ads_insights`
+-- )
+
+-- SELECT
+--   date
+--   , campaign
+--   , SUM(clicks) AS clicks
+--   , SUM(spend) AS spend
+--   , SUM(offsite_conversion_fb_pixel_custom) AS actions_offsite_conversion_fb_pixel_custom
+--   , SUM(impressions) AS impressions
+-- FROM cte_facebook_ads
+-- GROUP BY ALL

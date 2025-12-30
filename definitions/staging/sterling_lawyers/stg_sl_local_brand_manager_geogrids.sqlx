@@ -1,0 +1,33 @@
+config {
+  type: "view",
+  database: "rc-datamart-adminreport",
+  schema: "sterling_lawyers", 
+  name: "stg_sl_local_brand_manager_geogrids", 
+  tags: ["local_brand_manager", "geogrids", "sterling lawyers"]
+}
+
+/*
+  Changelog: yyyy-mm-dd jbatoy: 
+*/
+
+WITH cte_geogrids AS (
+  SELECT *
+    , CASE
+        WHEN location_id = '4z7jp7oz' THEN 'Arlington Heights'
+        WHEN location_id = 'olvgd39l' THEN 'Evanston'
+        WHEN location_id = 'v537pryz' THEN 'Hoffman Estates'
+        WHEN location_id = '95p4dy95' THEN 'Naperville'
+        ELSE NULL
+      END AS location
+  FROM ${ref("local_brand_manager_geogrids")}
+)
+
+SELECT
+  DATE(created_at) AS date
+  , location
+  , search_term AS keyword
+  , agr
+  , atgr
+  , solv
+FROM cte_geogrids
+WHERE location IS NOT NULL

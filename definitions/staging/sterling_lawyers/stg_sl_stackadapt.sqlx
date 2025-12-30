@@ -1,9 +1,9 @@
 config {
   type: "view",
   database: "rc-datamart-adminreport",
-  schema: "vasquez_de_lara", 
-  name: "stg_vdl_stackadapt", 
-  tags: ["stackadapt", "vdl", "vasquez de lara"]
+  schema: "sterling_lawyers", 
+  name: "stg_sl_stackadapt", 
+  tags: ["stackadapt", "sterling lawyers"]
 }
 
 /*
@@ -17,4 +17,4 @@ SELECT
   , cost AS spend
   , conversions
   , impressions
-FROM `rc-datamart-adminreport.vasquez_de_lara.stackadapt_campaign_delivery`
+FROM `rc-datamart-adminreport.sterling_lawyers.stackadapt_campaign_delivery`

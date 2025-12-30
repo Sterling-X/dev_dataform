@@ -7,12 +7,11 @@ config {
 }
 
 /*
-  Changelog: 2025-11-21 jbatoy: added aggregation
+  Changelog: yyyy-mm-dd jbatoy: 
 */
 
 SELECT
   date
-  , SUM(impressions) AS impressions
-  , SUM(clicks) AS clicks
+  , impressions
+  , clicks
 FROM `rc-datamart-adminreport.vasquez_de_lara.google_search_console_data`
-GROUP BY date

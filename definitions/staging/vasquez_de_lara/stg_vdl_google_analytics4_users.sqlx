@@ -1,0 +1,17 @@
+config {
+  type: "view",
+  database: "rc-datamart-adminreport",
+  schema: "vasquez_de_lara", 
+  name: "stg_vdl_google_analytics4_users", 
+  tags: ["google analytics", "users", "vdl", "vasquez de lara"]
+}
+
+/*
+  Changelog: yyyy-mm-dd jbatoy: 
+*/
+
+SELECT
+  yearMonth AS year_month
+  , yearMonthDate AS date
+  , totalUsers AS total_users
+FROM `rc-datamart-adminreport.vasquez_de_lara.google_analytics4_users`

@@ -1,0 +1,7 @@
+config {
+    type: "declaration",
+    database: "focused-sentry-464713-u0",
+    schema: "callrail_vdl", 
+    name: "callrail_alldata_delta", 
+    description: "This table is from focused-sentry-464713-u0.callrail_vdl.callrail_alldata_delta."
+}

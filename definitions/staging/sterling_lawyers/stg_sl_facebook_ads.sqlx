@@ -1,0 +1,20 @@
+config {
+  type: "view",
+  database: "rc-datamart-adminreport",
+  schema: "sterling_lawyers", 
+  name: "stg_sl_facebook_ads", 
+  tags: ["facebook_ads", "sterling lawyers"]
+}
+
+/*
+  Changelog: yyyy-mm-dd jbatoy:
+*/
+
+SELECT
+  date_start AS date
+  , campaign_name AS campaign
+  , clicks
+  , spend
+  , offsite_conversion_fb_pixel_custom AS actions_offsite_conversion_fb_pixel_custom
+  , impressions
+FROM `rc-datamart-adminreport.sterling_lawyers.facebook_ads_insights`

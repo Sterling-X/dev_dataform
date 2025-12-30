@@ -1,9 +1,9 @@
 config {
   type: "view",
   database: "rc-datamart-adminreport",
-  schema: "vasquez_de_lara", 
-  name: "stg_vdl_pagespeed_insights", 
-  tags: ["pagespeed_insights", "vdl", "vasquez de lara"]
+  schema: "sterling_lawyers", 
+  name: "stg_sl_pagespeed_insights", 
+  tags: ["pagespeed_insights", "sterling lawyers"]
 }
 
 /*
@@ -17,6 +17,6 @@ SELECT
 FROM (
   SELECT *
     , ROW_NUMBER() OVER (PARTITION BY FORMAT_DATE('%Y-%m', DATE(timestamp)), strategy ORDER BY timestamp DESC) row_num
-  FROM `rc-datamart-adminreport.vasquez_de_lara.pagespeed_insights`
+  FROM `rc-datamart-adminreport.sterling_lawyers.pagespeed_insights`
 )
 WHERE row_num = 1

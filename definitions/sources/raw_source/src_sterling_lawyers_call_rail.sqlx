@@ -1,0 +1,7 @@
+config {
+    type: "declaration",
+    database: "focused-sentry-464713-u0",
+    schema: "calltracking_slo", 
+    name: "ctp_initialdata_delta", 
+    description: "This table is from focused-sentry-464713-u0.calltracking_slo.ctp_initialdata_delta."
+}
