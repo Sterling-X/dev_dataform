@@ -36,3 +36,4 @@ WHERE (CASE
       WHEN LOWER(strategy) = 'mobile' AND (CASE WHEN FORMAT_DATE('%Y-%m', date) = today THEN performance_score END) IS NOT NULL THEN 0.80
       WHEN LOWER(strategy) = 'desktop' AND (CASE WHEN FORMAT_DATE('%Y-%m', date) = today THEN performance_score END) IS NOT NULL THEN 0.90
     END) IS NOT NULL
+--test
