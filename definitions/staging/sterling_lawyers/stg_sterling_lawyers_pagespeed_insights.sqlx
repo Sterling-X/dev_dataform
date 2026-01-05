@@ -2,7 +2,7 @@ config {
   type: "view",
   database: "rc-datamart-adminreport",
   schema: "sterling_lawyers", 
-  name: "stg_sl_pagespeed_insights", 
+  name: "stg_sterling_lawyers_pagespeed_insights", 
   tags: ["pagespeed_insights", "sterling lawyers"]
 }
 

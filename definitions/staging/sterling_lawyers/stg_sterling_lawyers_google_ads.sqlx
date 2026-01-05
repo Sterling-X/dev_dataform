@@ -2,14 +2,12 @@ config {
   type: "view",
   database: "rc-datamart-adminreport",
   schema: "sterling_lawyers", 
-  name: "stg_sl_google_ads", 
+  name: "stg_sterling_lawyers_google_ads", 
   tags: ["google_ads", "sterling lawyers"]
 }
 
 /*
   Changelog: yyyy-mm-dd jbatoy: Google Ada: Rocket Clicks Master MCC(accouthn number:700-686-7220 )
-  min date - 2022-12-23
-  max date - 2025-12-20
 */
 
 SELECT

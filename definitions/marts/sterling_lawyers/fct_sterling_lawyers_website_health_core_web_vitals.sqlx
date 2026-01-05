@@ -1,9 +1,9 @@
 config {
   type: "table",
   database: "rc-datamart-adminreport",
-  schema: "analytics_vasquez_de_lara", 
-  name: "fct_vdl_website_health_core_web_vitals", 
-  tags: ["website health", "core web vitals", "vdl", "vasquez de lara"]
+  schema: "analytics_sterling_lawyers", 
+  name: "fct_sterling_lawyers_website_health_core_web_vitals", 
+  tags: ["website health", "core web vitals", "sterling lawyers"]
 }
 
 /*
@@ -30,7 +30,7 @@ SELECT
       WHEN LOWER(strategy) = 'mobile' AND (CASE WHEN FORMAT_DATE('%Y-%m', date) = today THEN performance_score END) IS NOT NULL THEN 0.80
       WHEN LOWER(strategy) = 'desktop' AND (CASE WHEN FORMAT_DATE('%Y-%m', date) = today THEN performance_score END) IS NOT NULL THEN 0.90
     END AS target_health  
-FROM ${ref("rc-datamart-adminreport", "vasquez_de_lara", "stg_vdl_pagespeed_insights")}
+FROM ${ref("rc-datamart-adminreport", "sterling_lawyers", "stg_sterling_lawyers_pagespeed_insights")}
 CROSS JOIN cte_ranges
 WHERE (CASE
       WHEN LOWER(strategy) = 'mobile' AND (CASE WHEN FORMAT_DATE('%Y-%m', date) = today THEN performance_score END) IS NOT NULL THEN 0.80
