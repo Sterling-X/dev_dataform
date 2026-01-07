@@ -1,9 +1,9 @@
 config {
   type: "table",
   database: "rc-datamart-adminreport",
-  schema: "analytics_vasquez_de_lara", 
-  name: "fct_vdl_paid_media_prospecting_ads", 
-  tags: ["paid media", "prospecting ads", "vdl", "vasquez de lara"]
+  schema: "analytics_sterling_lawyers", 
+  name: "fct_sterling_lawyers_paid_media_prospecting_ads", 
+  tags: ["paid media", "prospecting ads", "sterling lawyers"]
 }
 
 /*
@@ -24,37 +24,12 @@ WITH cte_ranges AS (
     , SUM(spend) AS spend
     , SUM(impressions) AS impressions
   FROM (
-    -- SELECT
-    --   date
-    --   , spend
-    --   , conversions AS leads
-    -- FROM ${ref("rc-datamart-adminreport", "vasquez_de_lara", "stg_vdl_google_ads")}
-    -- WHERE campaign IN (
-    --   'RC - Retargeting - Leads',
-    --   'RC - UCD - Video Ads',
-    --   'Brand Remarketing (Website Visitors) - Audio'
-    -- )
-
-    -- UNION ALL
-
-    -- SELECT
-    --   date
-    --   , spend
-    --   , actions_offsite_conversion_fb_pixel_custom AS leads
-    -- FROM ${ref("rc-datamart-adminreport", "vasquez_de_lara", "stg_vdl_facebook_ads")}
-    -- WHERE campaign IN (
-    --   'RC - Retargeting - Leads',
-    --   'RC - UCD - Video Ads'
-    -- )
-
-    -- UNION ALL
-
     SELECT
       date
       , spend
       , impressions
-    FROM ${ref("rc-datamart-adminreport", "vasquez_de_lara", "stg_vdl_stackadapt")}
-    WHERE campaign = 'Brand Prospecting - Audio'
+    FROM ${ref("rc-datamart-adminreport", "sterling_lawyers", "stg_sterling_lawyers_stackadapt")}
+    -- WHERE campaign = 'Brand Prospecting - Audio'
   )
   GROUP BY date
 )

@@ -16,10 +16,33 @@ WITH cte_geogrids AS (
         WHEN location_id = '4z7jp7oz' THEN 'Arlington Heights'
         WHEN location_id = 'olvgd39l' THEN 'Evanston'
         WHEN location_id = 'v537pryz' THEN 'Hoffman Estates'
+        WHEN location_id = '4z22p1mz' THEN 'Schaumburg'
         WHEN location_id = '95p4dy95' THEN 'Naperville'
+        WHEN location_id = 'g59rokm5' THEN 'Brookfield'
+        WHEN location_id = '45o7krkz' THEN 'Kenosha'
+        WHEN location_id = 'wl63p22l' THEN 'Menomonee Falls'
+        WHEN location_id = '3zy8ny1l' THEN 'Mequon'
+        WHEN location_id = 'v5q9megz' THEN 'Milwaukee'
+        WHEN location_id = 'o5e1499l' THEN 'Oconomowoc'
+        WHEN location_id = 'xln2v1el' THEN 'Racine'
+        WHEN location_id = 'o5em6oxl' THEN 'Waukesha'
+        WHEN location_id = 'el4mp8kl' THEN 'West Bend'
+        WHEN location_id = 'elmj7pml' THEN 'Madison'
+        WHEN location_id = 'xl0np07z' THEN 'Baraboo'
+        WHEN location_id = '8lgdxg1l' THEN 'Beaver Dam'
+        WHEN location_id = '7l81pvmz' THEN 'Beloit'
+        WHEN location_id = '4z22pgmz' THEN 'Janesville'
+        WHEN location_id = 'v5jj8x95' THEN 'Jefferson'
+        WHEN location_id = '95p038dl' THEN 'Middleton'
+        WHEN location_id = 'nl1wpy65' THEN 'Appleton'
+        WHEN location_id = 'vzdgqx4z' THEN 'Fond du Lac'
+        WHEN location_id = '3zxr6oyz' THEN 'Green Bay' --
+        WHEN location_id = 'xlr902ml' THEN 'Oshkosh'
+        WHEN location_id = 'vzw1qmo5' THEN 'Sheboygan'
         ELSE NULL
       END AS location
   FROM ${ref("local_brand_manager_geogrids")}
+  WHERE LOWER(business_name) = 'sterling lawyers, llc'
 )
 
 SELECT
@@ -29,5 +52,6 @@ SELECT
   , agr
   , atgr
   , solv
+  , business_name
 FROM cte_geogrids
 WHERE location IS NOT NULL

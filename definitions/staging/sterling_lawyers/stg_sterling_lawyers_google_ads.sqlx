@@ -17,10 +17,11 @@ SELECT
   , spend
   , conversions
 FROM `rc-datamart-adminreport.google_ads.google_ads_data`
-WHERE customer_id IN (
-    '5788001493'
-    , '4848705759'
-    , '5543903899'
-    , '2530434917'
-    , '5137010586'
-  )
+WHERE customer_id = '4848705759'
+-- WHERE customer_id IN ( -- 40445
+--     '5788001493'
+--     , '4848705759'
+--     , '5543903899'
+--     , '2530434917'
+--     , '5137010586'
+--   )

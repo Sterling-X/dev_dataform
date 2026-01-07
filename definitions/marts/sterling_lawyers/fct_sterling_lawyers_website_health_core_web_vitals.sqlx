@@ -27,12 +27,12 @@ SELECT
   , CASE WHEN FORMAT_DATE('%Y-%m', date) = prior_90_start THEN performance_score END AS prior_90_days
   , CASE WHEN FORMAT_DATE('%Y-%m', date) = today THEN performance_score END AS current_health
   , CASE
-      WHEN LOWER(strategy) = 'mobile' AND (CASE WHEN FORMAT_DATE('%Y-%m', date) = today THEN performance_score END) IS NOT NULL THEN 0.80
-      WHEN LOWER(strategy) = 'desktop' AND (CASE WHEN FORMAT_DATE('%Y-%m', date) = today THEN performance_score END) IS NOT NULL THEN 0.90
+      WHEN LOWER(strategy) = 'mobile' AND (CASE WHEN FORMAT_DATE('%Y-%m', date) = today THEN performance_score END) IS NOT NULL THEN 0.55
+      WHEN LOWER(strategy) = 'desktop' AND (CASE WHEN FORMAT_DATE('%Y-%m', date) = today THEN performance_score END) IS NOT NULL THEN 0.85
     END AS target_health  
 FROM ${ref("rc-datamart-adminreport", "sterling_lawyers", "stg_sterling_lawyers_pagespeed_insights")}
 CROSS JOIN cte_ranges
 WHERE (CASE
-      WHEN LOWER(strategy) = 'mobile' AND (CASE WHEN FORMAT_DATE('%Y-%m', date) = today THEN performance_score END) IS NOT NULL THEN 0.80
-      WHEN LOWER(strategy) = 'desktop' AND (CASE WHEN FORMAT_DATE('%Y-%m', date) = today THEN performance_score END) IS NOT NULL THEN 0.90
+      WHEN LOWER(strategy) = 'mobile' AND (CASE WHEN FORMAT_DATE('%Y-%m', date) = today THEN performance_score END) IS NOT NULL THEN 0.55
+      WHEN LOWER(strategy) = 'desktop' AND (CASE WHEN FORMAT_DATE('%Y-%m', date) = today THEN performance_score END) IS NOT NULL THEN 0.85
     END) IS NOT NULL

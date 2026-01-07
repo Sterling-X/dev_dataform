@@ -2,12 +2,12 @@ config {
   type: "table",
   database: "rc-datamart-adminreport",
   schema: "analytics_sterling_lawyers", 
-  name: "fct_sterling_lawyers_paid_media_local_service_ads", 
-  tags: ["paid media", "local service ads", "sterling lawyers"]
+  name: "fct_sterling_lawyers_paid_media_search_ads", 
+  tags: ["paid media", "search ads", "sterling lawyers"]
 }
 
 /*
-  Changelog: yyyy-mm-dd jbatoy: 
+  Changelog: 2025-11-21 jbatoy: initial
 */
 
 WITH cte_ranges AS (
@@ -18,7 +18,7 @@ WITH cte_ranges AS (
     , DATE_SUB(CURRENT_DATE(), INTERVAL 180 DAY) AS prior_90_start
 )
 
-, cte_local_service_ads AS (
+, cte_search_ads AS (
   SELECT
     date
     , SUM(spend) AS spend
@@ -30,13 +30,19 @@ WITH cte_ranges AS (
       , conversions AS leads
     FROM ${ref("rc-datamart-adminreport", "sterling_lawyers", "stg_sterling_lawyers_google_ads")}
     WHERE campaign IN (
-      'LocalServicesCampaign:SystemGenerated:0005d4ebe979551e',
-      'LocalServicesCampaign:SystemGenerated:0005d4f3bdae4c3b',
-      'LocalServicesCampaign:SystemGenerated:0005d4f79291b97e',
-      'LocalServicesCampaign:SystemGenerated:0005d4f82160741c',
-      'LocalServicesCampaign:SystemGenerated:0005d4fd4c8064ca'
+      'IL - 312 - T1 - CORE - CHI',
+      'IL - 312 - T2 - CORE - CHI',
+      'IL - 312 - T3 - CORE - CHI',
+      'IL - 312 - T4 - CORE - CHI',
+      'IL - 847 - T1 - CORE - CHI',
+      'IL - 847 - T2 - CORE - CHI',
+      'IL - 847 - T3 - CORE - CHI',
+      'IL - 847 - T4 - CORE - CHI',
+      'IL - Brand',
+      'IL - Geo - T1',
+      'IL - Geo - T2',
+      'IL - Geo - T3'      
     )
-    
   )
   GROUP BY date
 )
@@ -52,7 +58,7 @@ WITH cte_ranges AS (
     , SUM(CASE WHEN s.date BETWEEN r.prior_year_start AND r.today THEN s.leads END) AS leads_prior_year
     , SUM(CASE WHEN s.date BETWEEN r.prior_90_start AND r.last_90_start THEN s.leads END) AS leads_prior_90_days
     , SUM(CASE WHEN s.date BETWEEN r.last_90_start AND r.today THEN s.leads END) AS leads_last_90_days
-  FROM cte_local_service_ads s
+  FROM cte_search_ads s
   CROSS JOIN cte_ranges r
 )
 

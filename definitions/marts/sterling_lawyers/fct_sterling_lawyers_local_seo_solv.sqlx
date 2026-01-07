@@ -1,0 +1,87 @@
+config {
+  type: "table",
+  database: "rc-datamart-adminreport",
+  schema: "analytics_sterling_lawyers", 
+  name: "fct_sterling_lawyers_local_seo_solv", 
+  tags: ["local seo", "solv", "sterling lawyers"]
+}
+
+/*
+  Changelog: yyyy-mm-dd jbatoy: 
+*/
+
+WITH cte_current AS (
+  SELECT
+    location
+    , ROUND(AVG(solv), 4) AS avg_current_solv
+  FROM ${ref("rc-datamart-adminreport", "sterling_lawyers", "stg_sterling_lawyers_local_brand_manager_geogrids")}
+  WHERE date = DATE_ADD(
+    DATE_TRUNC(CURRENT_DATE(), MONTH),
+    INTERVAL MOD(9 - EXTRACT(DAYOFWEEK FROM DATE_TRUNC(CURRENT_DATE(), MONTH)), 7) DAY
+  )
+  GROUP BY location
+)
+
+, cte_prior_90_days AS (
+  SELECT
+    location
+    , ROUND(AVG(solv), 4) AS avg_prior_90_days_solv
+  FROM ${ref("rc-datamart-adminreport", "sterling_lawyers", "stg_sterling_lawyers_local_brand_manager_geogrids")}
+  WHERE date = DATE_ADD(
+    DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY), MONTH),
+    INTERVAL MOD(9 - EXTRACT(DAYOFWEEK FROM DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY), MONTH)), 7) DAY
+  )
+  GROUP BY location
+)
+
+, cte_prior_year AS (
+  SELECT
+    location
+    , ROUND(AVG(solv), 4) AS avg_prior_year_solv
+  FROM ${ref("rc-datamart-adminreport", "sterling_lawyers", "stg_sterling_lawyers_local_brand_manager_geogrids")}
+  WHERE date = DATE_ADD(
+    DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR), MONTH),
+    INTERVAL MOD(
+      9 - EXTRACT(DAYOFWEEK FROM DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR), MONTH)),
+      7
+    ) DAY
+  )
+  GROUP BY location
+)
+
+SELECT
+  c.location
+  , y.avg_prior_year_solv
+  , d.avg_prior_90_days_solv
+  , c.avg_current_solv
+  , CASE
+      WHEN LOWER(c.location) = 'arlington heights' THEN 0.75
+      WHEN LOWER(c.location) = 'evanston' THEN 0.75
+      WHEN LOWER(c.location) = 'hoffman estates' THEN 0.75
+      WHEN LOWER(c.location) = 'schaumburg' THEN 0.75
+      WHEN LOWER(c.location) = 'naperville' THEN 0.75
+      WHEN LOWER(c.location) = 'brookfield' THEN 0.75
+      WHEN LOWER(c.location) = 'kenosha' THEN 0.75
+      WHEN LOWER(c.location) = 'menomonee falls' THEN 0.75
+      WHEN LOWER(c.location) = 'mequon' THEN 0.75
+      WHEN LOWER(c.location) = 'milwaukee' THEN 0.75
+      WHEN LOWER(c.location) = 'oconomowoc' THEN 0.75
+      WHEN LOWER(c.location) = 'racine' THEN 0.75
+      WHEN LOWER(c.location) = 'waukesha' THEN 0.75
+      WHEN LOWER(c.location) = 'west bend' THEN 0.75
+      WHEN LOWER(c.location) = 'madison' THEN 0.75
+      WHEN LOWER(c.location) = 'baraboo' THEN 0.75
+      WHEN LOWER(c.location) = 'beaver dam' THEN 0.75
+      WHEN LOWER(c.location) = 'beloit' THEN 0.75
+      WHEN LOWER(c.location) = 'janesville' THEN 0.75
+      WHEN LOWER(c.location) = 'jefferson' THEN 0.75
+      WHEN LOWER(c.location) = 'middleton' THEN 0.75
+      WHEN LOWER(c.location) = 'appleton' THEN 0.75
+      WHEN LOWER(c.location) = 'fond du lac' THEN 0.75
+      WHEN LOWER(c.location) = 'green bay' THEN 0.75
+      WHEN LOWER(c.location) = 'oshkosh' THEN 0.75
+      WHEN LOWER(c.location) = 'sheboygan' THEN 0.75
+    END AS target_solv
+FROM cte_current c
+LEFT JOIN cte_prior_90_days d ON c.location = d.location
+LEFT JOIN cte_prior_year y ON c.location = y.location

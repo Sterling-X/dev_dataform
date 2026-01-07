@@ -58,7 +58,8 @@ FROM (
           , direction
           , answered
           , medium
-        ORDER BY TIMESTAMP(created_at) DESC) AS row_num
+        -- ORDER BY TIMESTAMP(created_at) DESC) AS row_num
+        ORDER BY created_at DESC) AS row_num
   FROM ${ref("callrail_alldata_delta")}
 )
 WHERE LOWER(source_name) IN (

@@ -26,6 +26,11 @@ FROM (
           , direction
           , call_status
           , medium
-        ORDER BY TIMESTAMP(called_at) DESC) AS row_num
+        ORDER BY called_at DESC) AS row_num
   FROM ${ref("ctp_initialdata_delta")}
 )
+WHERE LOWER(source) IN (
+  'nap - organic (attorney)',
+  'nap - organic (location)'
+)
+AND row_num = 1
