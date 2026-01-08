@@ -28,8 +28,31 @@ WITH cte_ranges AS (
       date
       , spend
       , impressions
+    FROM ${ref("rc-datamart-adminreport", "sterling_lawyers", "stg_sterling_lawyers_facebook_ads")}
+    WHERE campaign IN (
+      'New Lead Ads - WI'
+      , 'New Lead Ads - IL'
+      , 'RC - Funnel Relaunch -  Phase 1'
+      , 'RC - Funnel Relaunch -  Phase 3'
+      , 'RC - Funnel Relaunch -  Phase 2'
+      , 'RC - Funnel Relaunch -  Phase 5'
+      , 'RC - Funnel Relaunch Winning Ads - WI'
+      , 'RC - Funnel Relaunch Winning Ads - IL'
+    )
+
+    UNION ALL
+
+    SELECT
+      date
+      , spend
+      , impressions
     FROM ${ref("rc-datamart-adminreport", "sterling_lawyers", "stg_sterling_lawyers_stackadapt")}
-    -- WHERE campaign = 'Brand Prospecting - Audio'
+    WHERE campaign IN (
+      'Custody - Digitally Savvy - IL CTV'
+      , 'Divorce - Couples with Clout - IL CTV'
+      , 'Custody - Digitally Savvy - WI CTV'
+      , 'Divorce - Couples with Clout - WI CTV'
+    )
   )
   GROUP BY date
 )
