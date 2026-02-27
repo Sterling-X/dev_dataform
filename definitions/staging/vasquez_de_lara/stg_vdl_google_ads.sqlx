@@ -16,7 +16,8 @@ SELECT
   , clicks
   , spend
   , conversions
-FROM ${ref("google_ads_data")}
+-- FROM ${ref("google_ads_data")}
+FROM `rc-datamart-adminreport.google_ads.google_ads_data`
 WHERE customer_id IN (
     '7054623682'
     , '9922040145'
