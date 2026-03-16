@@ -1,0 +1,55 @@
+config {
+    type: "table",
+    database: "rc-datamart-adminreport",
+    schema: "local_brand_manager",
+    name: "stg_lbm_geogrid_configs",
+    tags: ["local brand manager", "geogrid configs", "marketing data"],
+    bigquery: {
+        partitionBy: "DATE(processed_at)",
+        clusterBy: ["business_place_id", "gbp_id", "location_id"]
+    }
+}
+
+SELECT
+    JSON_VALUE(raw_json, '$.id') AS id,
+    JSON_VALUE(raw_json, '$.business_address') AS business_address,
+    JSON_VALUE(raw_json, '$.business_country') AS business_country,
+    JSON_VALUE(raw_json, '$.business_name') AS business_name,
+    JSON_VALUE(raw_json, '$.business_place_id') AS business_place_id,
+    JSON_VALUE(raw_json, '$.business_store_code') AS business_store_code,
+    SAFE_CAST(JSON_VALUE(raw_json, '$.day_number') AS INT64) AS day_number,
+    JSON_VALUE(raw_json, '$.gbp_id') AS gbp_id,
+    SAFE_CAST(JSON_VALUE(raw_json, '$.grid_center_lat') AS FLOAT64) AS grid_center_lat,
+    SAFE_CAST(JSON_VALUE(raw_json, '$.grid_center_lng') AS FLOAT64) AS grid_center_lng,
+    JSON_VALUE(raw_json, '$.grid_distance_measure') AS grid_distance_measure,
+    SAFE_CAST(JSON_VALUE(raw_json, '$.grid_point_distance') AS FLOAT64) AS grid_point_distance,
+    SAFE_CAST(JSON_VALUE(raw_json, '$.grid_size') AS INT64) AS grid_size,
+    SAFE_CAST(JSON_VALUE(raw_json, '$.last_geogrid_created_at') AS TIMESTAMP) AS last_geogrid_created_at,
+    SAFE_CAST(JSON_VALUE(raw_json, '$.local') AS BOOL) AS local,
+    JSON_VALUE(raw_json, '$.location_id') AS location_id,
+    SAFE_CAST(JSON_VALUE(raw_json, '$.month_day') AS INT64) AS month_day,
+    JSON_VALUE(raw_json, '$.note') AS note,
+    JSON_VALUE(raw_json, '$.period') AS period,
+    JSON_VALUE(raw_json, '$.starting_month') AS starting_month,
+    SAFE_CAST(JSON_VALUE(raw_json, '$.week_number') AS INT64) AS week_number,
+
+    ARRAY(
+        SELECT STRUCT(
+            JSON_VALUE(search_terms, '$.id') AS id,
+            SAFE_CAST(JSON_VALUE(search_terms, '$.active') AS BOOL) AS active,
+            SAFE_CAST(JSON_VALUE(search_terms, '$.geogrids_count') AS INT64) AS geogrids_count,
+            SAFE_CAST(JSON_VALUE(search_terms, '$.gif_generated_at') AS TIMESTAMP) AS gif_generated_at,
+            JSON_VALUE(search_terms, '$.gif_url') AS gif_url,
+            JSON_VALUE(search_terms, '$.text') AS text,
+            SAFE_CAST(JSON_VALUE(search_terms, '$.created_at') AS TIMESTAMP) AS created_at,
+            SAFE_CAST(JSON_VALUE(search_terms, '$.updated_at') AS TIMESTAMP) AS updated_at,
+            SAFE_CAST(JSON_VALUE(search_terms, '$.processed_at') AS TIMESTAMP) AS processed_at
+        )
+        FROM UNNEST(JSON_QUERY_ARRAY(raw_json, '$.search_terms')) search_terms
+    ) AS search_terms,
+    
+    SAFE_CAST(JSON_VALUE(raw_json, '$.created_at') AS TIMESTAMP) AS created_at,
+    SAFE_CAST(JSON_VALUE(raw_json, '$.updated_at') AS TIMESTAMP) AS updated_at,
+    SAFE_CAST(JSON_VALUE(raw_json, '$.processed_at') AS TIMESTAMP) AS processed_at,
+    SAFE_CAST(JSON_VALUE(raw_json, '$.scheduled_at') AS DATE) AS scheduled_at
+FROM `rc-datamart-adminreport.local_brand_manager.raw_lbm_geogrid_configs` 

@@ -1,0 +1,19 @@
+config {
+    type: "table",
+    database: "rc-datamart-adminreport",
+    schema: "marketing_vdl",
+    name: "stackadapt_creative",
+    tags: ["stackadapt", "creative", "marketing data"],
+    bigquery: {
+        partitionBy: "event_date",
+        clusterBy: ["creative_id", "campaign_id", "advertiser_id"]
+    }
+}
+
+SELECT *
+    EXCEPT(
+        fact_key,
+        created_at,
+        updated_at
+    )
+FROM `rc-datamart-adminreport.stackadapt_vdl.fct_sadapt_creative_daily`

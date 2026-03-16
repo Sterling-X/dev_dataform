@@ -1,0 +1,21 @@
+config {
+    type: "table",
+    database: "rc-datamart-adminreport",
+    schema: "marketing_vdl",
+    name: "localbrandmanager_locations",
+    tags: ["local brand manager", "locations", "marketing data"],
+    bigquery: {
+        partitionBy: "created_date",
+        clusterBy: ["gbp_id", "place_id"]
+    }
+}
+
+SELECT
+    CAST(created_at AS DATE) AS created_date,
+    *
+FROM `rc-datamart-adminreport.local_brand_manager.stg_lbm_locations`
+WHERE id IN (
+    'nl12x425',
+    '3zy21y4l',
+    'qzkvwge5'
+)

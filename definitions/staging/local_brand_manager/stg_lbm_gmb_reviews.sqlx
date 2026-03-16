@@ -1,0 +1,29 @@
+config {
+    type: "table",
+    database: "rc-datamart-adminreport",
+    schema: "local_brand_manager",
+    name: "stg_lbm_gmb_reviews",
+    tags: ["local brand manager", "gmb reviews", "marketing data"],
+    bigquery: {
+        partitionBy: "DATE(created_at)",
+        clusterBy: ["location_place_id", "remote_location_id"]
+    }
+}
+
+SELECT
+    JSON_VALUE(raw_json, '$.remote_id') AS remote_id,
+    JSON_VALUE(raw_json, '$.location_name') AS location_name,
+    JSON_VALUE(raw_json, '$.location_place_id') AS location_place_id,
+    SAFE_CAST(JSON_VALUE(raw_json, '$.rating') AS FLOAT64) AS rating,
+    JSON_VALUE(raw_json, '$.remote_location_id') AS remote_location_id,
+    JSON_VALUE(raw_json, '$.reply') AS reply,
+    JSON_VALUE(raw_json, '$.text') AS text,
+
+    STRUCT(
+        JSON_VALUE(raw_json, '$.reviewer.display_name') AS display_name,
+        JSON_VALUE(raw_json, '$.reviewer.profile_photo_url') AS profile_photo_url
+    ) AS reviewer,
+
+    SAFE_CAST(JSON_VALUE(raw_json, '$.created_at') AS TIMESTAMP) AS created_at,
+    SAFE_CAST(JSON_VALUE(raw_json, '$.updated_at') AS TIMESTAMP) AS updated_at
+FROM `rc-datamart-adminreport.local_brand_manager.raw_lbm_gmb_reviews`

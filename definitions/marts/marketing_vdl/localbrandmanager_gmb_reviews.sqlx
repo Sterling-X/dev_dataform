@@ -1,0 +1,21 @@
+config {
+    type: "table",
+    database: "rc-datamart-adminreport",
+    schema: "marketing_vdl",
+    name: "localbrandmanager_gmb_reviews",
+    tags: ["local brand manager", "gmb reviews", "marketing data"],
+    bigquery: {
+        partitionBy: "created_date",
+        clusterBy: ["location_place_id", "remote_location_id"]
+    }
+}
+
+SELECT
+    CAST(created_at AS DATE) AS created_date,
+    *
+FROM `rc-datamart-adminreport.local_brand_manager.stg_lbm_gmb_reviews`
+WHERE location_place_id IN (
+    'ChIJX__M-da32YgReZQ5MMlaO2w',
+    'ChIJzyAclQG32YgRPuHRV92O7bE',
+    'ChIJETMi36jH2YgRwwGSpJOP9AI'
+)

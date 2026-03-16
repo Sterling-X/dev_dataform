@@ -1,0 +1,60 @@
+config {
+    type: "table",
+    database: "rc-datamart-adminreport",
+    schema: "marketing_vdl",
+    name: "googleads_ad",
+    tags: ["google ads", "ad", "marketing data"],
+    bigquery: {
+        partitionBy: "segment_date",
+        clusterBy: ["customer_id", "campaign_id", "ad_group_id", "ad_id"]
+    }
+}
+
+SELECT
+    fa.segment_date,
+    fa.customer_id,
+    dc.customer_name,
+    fa.campaign_id,
+    dp.campaign_name,
+    fa.ad_group_id,
+    dg.ad_group_name,
+    fa.ad_id,
+    da.ad_name,
+    fa.device,
+    fa.ad_network_type,
+    fa.impressions,
+    fa.clicks,
+    (fa.cost_micros / 1000000.0) AS spend_cost,
+    fa.interactions,
+    fa.ctr,
+    (fa.average_cpc / 1000000.0) AS average_cpc,
+    (fa.average_cpm / 1000000.0) AS average_cpm,
+    (fa.average_cost / 1000000.0) AS average_cost,
+    fa.conversions,
+    fa.conversions_value,
+    fa.all_conversions,
+    fa.all_conversions_value,
+    fa.view_through_conversions,
+    (fa.cost_per_conversion / 1000000.0) AS cost_per_conversion,
+    fa.value_per_conversion,
+    fa.search_impression_share,
+    fa.search_budget_lost_impression_share,
+    fa.search_rank_lost_impression_share,
+    fa.absolute_top_impression_percentage,
+    fa.top_impression_percentage,
+    fa.engagements,
+    fa.engagement_rate,
+    fa.video_trueview_views,
+    fa.video_quartile_p25_rate,
+    fa.video_quartile_p50_rate,
+    fa.video_quartile_p75_rate,
+    fa.video_quartile_p100_rate
+FROM `rc-datamart-adminreport.google_ads_vdl.fct_gads_ad_daily` fa
+LEFT JOIN `rc-datamart-adminreport.google_ads_vdl.dim_gads_customer` dc
+    ON fa.customer_id = dc.customer_id
+LEFT JOIN `rc-datamart-adminreport.google_ads_vdl.dim_gads_campaign` dp
+    ON fa.campaign_id = dp.campaign_id
+LEFT JOIN `rc-datamart-adminreport.google_ads_vdl.dim_gads_ad_group` dg
+    ON fa.ad_group_id = dg.ad_group_id
+LEFT JOIN `rc-datamart-adminreport.google_ads_vdl.dim_gads_ad` da
+    ON fa.ad_id = da.ad_id

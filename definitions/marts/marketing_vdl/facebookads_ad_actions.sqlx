@@ -1,0 +1,21 @@
+config {
+    type: "table",
+    database: "rc-datamart-adminreport",
+    schema: "marketing_vdl",
+    name: "facebookads_ad_actions",
+    tags: ["facebook ads", "ad actions", "marketing data"],
+    bigquery: {
+        partitionBy: "date",
+        clusterBy: ["account_id", "campaign_id", "adset_id", "ad_id"]
+    }
+}
+
+SELECT *
+    EXCEPT(
+        action_count,
+        action_value,
+        row_hash,
+        record_updated_at
+    ),
+    action_count AS action_value
+FROM `rc-datamart-adminreport.facebook_ads_vdl.fct_fb_ad_actions_daily`

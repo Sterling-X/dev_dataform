@@ -1,0 +1,37 @@
+config {
+    type: "table",
+    database: "rc-datamart-adminreport",
+    schema: "local_brand_manager",
+    name: "stg_lbm_locations",
+    tags: ["local brand manager", "locations", "marketing data"],
+    bigquery: {
+        partitionBy: "DATE(created_at)",
+        clusterBy: ["gbp_id", "place_id"]
+    }
+}
+
+SELECT
+    JSON_VALUE(raw_json, '$.id') AS id,
+    JSON_VALUE(raw_json, '$.address') AS address,
+    JSON_VALUE(raw_json, '$.administrative_area') AS administrative_area,
+    JSON_VALUE(raw_json, '$.city') AS city,
+    JSON_VALUE(raw_json, '$.country') AS country,
+    JSON_VALUE(raw_json, '$.description') AS description,
+    SAFE_CAST(JSON_VALUE(raw_json, '$.enabled') AS BOOL) AS enabled,
+    SAFE_CAST(JSON_VALUE(raw_json, '$.enabled_at') AS TIMESTAMP) AS enabled_at,
+    JSON_VALUE(raw_json, '$.gbp_id') AS gbp_id,
+    JSON_VALUE(raw_json, '$.gmb_url') AS gmb_url,
+    SAFE_CAST(JSON_VALUE(raw_json, '$.keywords_synced_at') AS TIMESTAMP) AS keywords_synced_at,
+    SAFE_CAST(JSON_VALUE(raw_json, '$.lat') AS FLOAT64) AS lat,
+    SAFE_CAST(JSON_VALUE(raw_json, '$.lng') AS FLOAT64) AS lng,
+    JSON_VALUE(raw_json, '$.name') AS name,
+    JSON_VALUE(raw_json, '$.note') AS note,
+    JSON_VALUE(raw_json, '$.phone_number') AS phone_number,
+    JSON_VALUE(raw_json, '$.place_id') AS place_id,
+    JSON_VALUE(raw_json, '$.postal_code') AS postal_code,
+    JSON_VALUE(raw_json, '$.primary_category') AS primary_category,
+    JSON_VALUE(raw_json, '$.source_type') AS source_type,
+    JSON_VALUE(raw_json, '$.store_code') AS store_code,
+    JSON_VALUE(raw_json, '$.website_url') AS website_url,
+    SAFE_CAST(JSON_VALUE(raw_json, '$.created_at') AS TIMESTAMP) AS created_at
+FROM `rc-datamart-adminreport.local_brand_manager.raw_lbm_locations`

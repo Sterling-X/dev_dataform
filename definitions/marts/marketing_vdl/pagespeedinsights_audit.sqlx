@@ -1,0 +1,34 @@
+config {
+    type: "table",
+    database: "rc-datamart-adminreport",
+    schema: "marketing_vdl",
+    name: "pagespeedinsights_audit",
+    tags: ["pagespeed insights", "audit", "marketing data"],
+    bigquery: {
+        partitionBy: "analysis_date",
+        clusterBy: ["normalized_url", "strategy", "audit_id"]
+    }
+}
+
+SELECT
+    fa.analysis_date,
+    du.normalized_url,
+    ds.strategy,
+    da.audit_id,
+    da.title AS audit_title,
+    da.`description` AS audit_description,
+    fa.score,
+    fa.score_display_mode,
+    fa.numeric_value,
+    fa.numeric_unit,
+    fa.display_value,
+    fa.details_type,
+    fa.details_json,
+    fa.warnings_json
+FROM `rc-datamart-adminreport.pagespeed_insights_vdl.fct_psi_pagespeed_audit` fa
+LEFT JOIN `rc-datamart-adminreport.pagespeed_insights_vdl.dim_psi_url` du
+    ON fa.url_key = du.url_key
+LEFT JOIN `rc-datamart-adminreport.pagespeed_insights_vdl.dim_psi_strategy` ds
+    ON fa.strategy_key = ds.strategy_key
+LEFT JOIN `rc-datamart-adminreport.pagespeed_insights_vdl.dim_psi_audit` da
+    ON fa.audit_key = da.audit_key

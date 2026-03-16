@@ -1,0 +1,21 @@
+config {
+    type: "table",
+    database: "rc-datamart-adminreport",
+    schema: "marketing_vdl",
+    name: "localbrandmanager_geogrid_configs",
+    tags: ["local brand manager", "geogrid configs", "marketing data"],
+    bigquery: {
+        partitionBy: "DATE(processed_at)",
+        clusterBy: ["business_place_id", "gbp_id", "location_id"]
+    }
+}
+
+SELECT
+    CAST(created_at AS DATE) AS created_date,
+    *
+FROM `rc-datamart-adminreport.local_brand_manager.stg_lbm_geogrid_configs`
+WHERE location_id IN (
+    'nl12x425',
+    '3zy21y4l',
+    'qzkvwge5'
+)
