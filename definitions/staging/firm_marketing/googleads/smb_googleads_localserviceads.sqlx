@@ -1,0 +1,33 @@
+config {
+    type: "table",
+    database: "sterlingx-insights",
+    schema: "firm_marketing_googleads",
+    name: "smb_googleads_localserviceads",
+    tags: ["google ads", "campaign", "marketing data", "smb"],
+}
+
+WITH cte_local_service_ads AS
+(
+  SELECT
+    d.customer_id,
+    dc.customer_name,
+    d.segment_date AS date,
+    (d.cost_micros / 1000000.0) AS cost,
+    d.conversions
+  FROM `rc-datamart-adminreport.google_ads_smb.fct_gads_campaign_daily` d
+  JOIN `rc-datamart-adminreport.google_ads_smb.dim_gads_campaign` c
+    ON d.campaign_id = c.campaign_id
+  LEFT JOIN `rc-datamart-adminreport.google_ads_smb.dim_gads_customer` dc
+    ON d.customer_id = dc.customer_id
+  WHERE c.advertising_channel_type = 'LOCAL_SERVICES'
+)
+
+SELECT
+  customer_id,
+  customer_name,
+  date,
+  SUM(cost) AS cost,
+  SUM(conversions) AS conversions,
+  IFNULL(SAFE_DIVIDE(SUM(cost), SUM(conversions)), 0.0) AS cpl
+FROM cte_local_service_ads
+GROUP BY ALL
