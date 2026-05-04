@@ -1,0 +1,147 @@
+config {
+    type: "table",
+    database: "sterlingx-insights",
+    schema: "firm_marketing_googleads",
+    name: "smb_googleads_paid_media",
+    tags: ["google ads", "campaign", "marketing data", "smb"],
+}
+
+WITH search_term_base AS (
+  SELECT
+    f.customer_id,
+    f.campaign_id,
+    f.ad_group_id,
+
+    f.segment_date AS date,
+    f.device,
+    f.ad_network_type,
+
+    c.campaign_name AS campaign,
+    ag.ad_group_name AS ad_group,
+
+    -- searcxh term grain dimensions
+    f.keyword_text AS keyword,
+    f.keyword_match_type AS match_type,
+    f.search_term AS search_terms,
+    CAST(NULL AS STRING) AS landing_page,
+
+    -- Base metrics
+    SUM(f.cost_micros) AS cost_micros,
+    SUM(f.conversions) AS conversions,
+    SUM(f.impressions) AS impressions,
+    SUM(f.clicks) AS clicks,
+
+    'SEARCH_TERM' AS type_grain
+  FROM `rc-datamart-adminreport.google_ads_smb.fct_gads_search_term_daily` f
+  LEFT JOIN `rc-datamart-adminreport.google_ads_smb.dim_gads_campaign` c
+    ON f.customer_id = c.customer_id
+   AND f.campaign_id = c.campaign_id
+  LEFT JOIN `rc-datamart-adminreport.google_ads_smb.dim_gads_ad_group` ag
+    ON f.customer_id = ag.customer_id
+   AND f.campaign_id = ag.campaign_id
+   AND f.ad_group_id = ag.ad_group_id
+
+  GROUP BY
+    type_grain,
+    f.customer_id,
+    f.campaign_id,
+    f.ad_group_id,
+    date,
+    f.device,
+    f.ad_network_type,
+    campaign,
+    ad_group,
+    keyword,
+    match_type,
+    search_terms,
+    landing_page
+),
+
+landing_page_base AS (
+  SELECT
+    f.customer_id,
+    f.campaign_id,
+    f.ad_group_id,
+
+    f.segment_date AS date,
+    f.device,
+    f.ad_network_type,
+
+    c.campaign_name AS campaign,
+    ag.ad_group_name AS ad_group,
+
+    -- Landing-page grain dimensions
+    CAST(NULL AS STRING) AS keyword,
+    CAST(NULL AS STRING) AS match_type,
+    CAST(NULL AS STRING) AS search_terms,
+    f.landing_page AS landing_page,
+
+    -- Base metrics
+    SUM(f.cost_micros) AS cost_micros,
+    SUM(f.conversions) AS conversions,
+    SUM(f.impressions) AS impressions,
+    SUM(f.clicks) AS clicks,
+
+    'LANDING_PAGE' AS type_grain
+  FROM `rc-datamart-adminreport.google_ads_smb.fct_gads_landing_page_daily` f
+  LEFT JOIN `rc-datamart-adminreport.google_ads_smb.dim_gads_campaign` c
+    ON f.customer_id = c.customer_id
+   AND f.campaign_id = c.campaign_id
+  LEFT JOIN `rc-datamart-adminreport.google_ads_smb.dim_gads_ad_group` ag
+    ON f.customer_id = ag.customer_id
+   AND f.campaign_id = ag.campaign_id
+   AND f.ad_group_id = ag.ad_group_id
+
+  GROUP BY
+    type_grain,
+    f.customer_id,
+    f.campaign_id,
+    f.ad_group_id,
+    date,
+    f.device,
+    f.ad_network_type,
+    campaign,
+    ad_group,
+    keyword,
+    match_type,
+    search_terms,
+    landing_page
+),
+
+combined AS (
+  SELECT * FROM search_term_base
+  UNION ALL
+  SELECT * FROM landing_page_base
+)
+
+SELECT
+  customer_id,
+  campaign_id,
+  ad_group_id,
+
+  date,
+  device,
+  ad_network_type,
+
+  campaign,
+  ad_group,
+  keyword,
+  match_type,
+  search_terms,
+  landing_page,
+
+  -- Dashboard metrics
+  SAFE_DIVIDE(cost_micros, 1000000.0) AS cost,
+  conversions,
+  SAFE_DIVIDE(SAFE_DIVIDE(cost_micros, 1000000.0), NULLIF(conversions, 0)) AS cpl,
+  SAFE_DIVIDE(conversions, NULLIF(clicks, 0)) AS conv_rate,
+  impressions,
+  clicks,
+  SAFE_DIVIDE(clicks, NULLIF(impressions, 0)) AS ctr,
+  SAFE_DIVIDE(SAFE_DIVIDE(cost_micros, 1000000.0), NULLIF(clicks, 0)) AS cpc,
+
+  -- Keep raw micros for reconciliation
+  cost_micros,
+
+  type_grain
+FROM combined
