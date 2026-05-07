@@ -2,7 +2,7 @@ config {
     type: "table",
     database: "sterlingx-insights",
     schema: "firm_marketing_googleads",
-    name: "meyerpink_googleads_localserviceads",
+    name: "meyerpinklaw_googleads_localserviceads",
     tags: ["google ads", "campaign", "marketing data", "meyerpink law"],
 }
 

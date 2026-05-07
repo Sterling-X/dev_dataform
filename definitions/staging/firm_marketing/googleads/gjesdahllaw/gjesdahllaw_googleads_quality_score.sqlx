@@ -1,0 +1,26 @@
+config {
+    type: "table",
+    database: "sterlingx-insights",
+    schema: "firm_marketing_googleads",
+    name: "gjesdahllaw_googleads_quality_score",
+    tags: ["google ads", "campaign", "marketing data", "gjesdahl law"],
+}
+
+SELECT
+    qs.customer_id,
+    dc.customer_name,
+    qs.campaign_id,
+    cp.campaign_name,
+    qs.keyword_text,
+    qs.keyword_match_type,
+    qs.segment_date,
+    qs.quality_score,
+    qs.quality_score_landing_page,
+    qs.quality_score_ad_relevance,
+    qs.quality_score_ctr
+FROM `rc-datamart-adminreport.google_ads_gjesdahllaw.fct_gads_keyword_quality_score_daily` qs
+LEFT JOIN `rc-datamart-adminreport.google_ads_gjesdahllaw.dim_gads_customer` dc
+    ON qs.customer_id = dc.customer_id
+LEFT JOIN `rc-datamart-adminreport.google_ads_gjesdahllaw.dim_gads_campaign` cp
+    ON qs.campaign_id = cp.campaign_id
+
