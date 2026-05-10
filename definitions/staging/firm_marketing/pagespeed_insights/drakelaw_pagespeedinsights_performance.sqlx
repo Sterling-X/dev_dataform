@@ -3,36 +3,23 @@ config {
     database: "sterlingx-insights",
     schema: "firm_marketing_pagespeedinsights",
     name: "drakelaw_pagespeedinsights_performance",
-    tags: ["pagespeed insights", "run performance", "marketing data", "drake law"],
-    bigquery: {
-        partitionBy: "analysis_date",
-        clusterBy: ["normalized_url", "strategy"]
-    }
+    tags: ["pagespeed insights", "performance", "marketing data", "drake law"]
 }
 
 SELECT
-    fp.analysis_date,
-    du.normalized_url,
-    ds.strategy,
-    fp.requested_url,
-    fp.final_url,
-    fp.locale,
-    fp.environment_benchmark_index,
-    fp.lighthouse_version,
-    fp.user_agent,
-    fp.analysis_utc_timestamp,
-    fp.fetch_time,
-    fp.performance_score,
-    fp.accessibility_score,
-    fp.best_practices_score,
-    fp.seo_score,
-    fp.network_user_agent,
-    fp.host_user_agent,
-    fp.runtime_error_code,
-    fp.runtime_error_message,
-    fp.run_warnings_json
-FROM `rc-datamart-adminreport.pagespeed_insights_drakelaw.fct_psi_pagespeed_run` fp
-LEFT JOIN `rc-datamart-adminreport.pagespeed_insights_drakelaw.dim_psi_url` du
-    ON fp.url_key = du.url_key
-LEFT JOIN `rc-datamart-adminreport.pagespeed_insights_drakelaw.dim_psi_strategy` ds
-    ON fp.strategy_key = ds.strategy_key
+  DATE(timestamp) AS date
+  , timestamp	
+  , url	
+  , strategy	
+  , ROUND(performance_score * 100, 2) as performance_score	
+  , ROUND(fcp / 1000, 2) as first_contentful_paint_seconds
+  , ROUND(lcp / 1000, 2) as last_contentful_paint_seconds
+  , ROUND(tbt, 0) as total_blocking_display_ms
+  , ROUND(speed_index / 1000, 2) as speed_index_seconds
+  , ROUND(cls, 3) as cumulative_layout_shift_display
+FROM (
+  SELECT *
+    , ROW_NUMBER() OVER (PARTITION BY FORMAT_DATE('%Y-%m', DATE(timestamp)), strategy ORDER BY timestamp DESC) row_num
+  FROM `rc-datamart-adminreport.pagespeed_insights.psi_drakelaw`
+)
+WHERE row_num = 1
