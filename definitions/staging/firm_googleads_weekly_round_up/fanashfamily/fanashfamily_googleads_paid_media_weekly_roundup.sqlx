@@ -31,7 +31,6 @@ WITH base AS (
     SAFE_CAST(impressions AS INT64) AS impressions,
     SAFE_CAST(clicks AS INT64) AS clicks,
     SAFE_CAST(cost_micros AS INT64) AS cost_micros
-
   FROM `sterlingx-insights.firm_marketing_googleads.fanashfamily_googleads_paid_media`
 
 ),
@@ -83,9 +82,7 @@ weekly AS (
     ) AS cpc,
 
     SUM(COALESCE(cost_micros, 0)) AS cost_micros
-
   FROM base
-
   GROUP BY
     week_starting,
     customer_id,
@@ -104,8 +101,9 @@ weekly AS (
 )
 
 SELECT
-  '8a4bb5d3-2988-4b58-901a-d7ebdb015a10' AS client_id,
   week_starting,
+  '8a4bb5d3-2988-4b58-901a-d7ebdb015a10' AS SterlingX_Client_ID,
+  'Fanash Family Law' AS SterlingX_Client_Name,
 
   customer_id,
   campaign_id,
@@ -131,9 +129,7 @@ SELECT
   cpc,
   cost_micros,
   type_grain
-
 FROM weekly
-
 ORDER BY
   week_starting DESC,
   customer_id,

@@ -31,7 +31,6 @@ WITH base AS (
     SAFE_CAST(impressions AS INT64) AS impressions,
     SAFE_CAST(clicks AS INT64) AS clicks,
     SAFE_CAST(cost_micros AS INT64) AS cost_micros
-
   FROM `sterlingx-insights.firm_marketing_googleads.aurit_googleads_paid_media`
 
 ),
@@ -83,9 +82,7 @@ weekly AS (
     ) AS cpc,
 
     SUM(COALESCE(cost_micros, 0)) AS cost_micros
-
   FROM base
-
   GROUP BY
     week_starting,
     customer_id,
@@ -104,8 +101,9 @@ weekly AS (
 )
 
 SELECT
-  '30c5b48b-f392-4ef0-8f79-06c9d7e2ff52' AS client_id,
   week_starting,
+  '916fb7c7-13bc-4725-8bca-e11e0749da31' AS SterlingX_Client_ID,
+  'Aurit mediation' AS SterlingX_Client_Name,
 
   customer_id,
   campaign_id,
@@ -131,9 +129,7 @@ SELECT
   cpc,
   cost_micros,
   type_grain
-
 FROM weekly
-
 ORDER BY
   week_starting DESC,
   customer_id,

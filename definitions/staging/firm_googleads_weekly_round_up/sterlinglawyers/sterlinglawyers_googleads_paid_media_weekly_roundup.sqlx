@@ -31,7 +31,6 @@ WITH base AS (
     SAFE_CAST(impressions AS INT64) AS impressions,
     SAFE_CAST(clicks AS INT64) AS clicks,
     SAFE_CAST(cost_micros AS INT64) AS cost_micros
-
   FROM `sterlingx-insights.firm_marketing_googleads.sterlinglawyers_googleads_paid_media`
 
 ),
@@ -83,9 +82,7 @@ weekly AS (
     ) AS cpc,
 
     SUM(COALESCE(cost_micros, 0)) AS cost_micros
-
   FROM base
-
   GROUP BY
     week_starting,
     customer_id,
@@ -104,8 +101,9 @@ weekly AS (
 )
 
 SELECT
-  '99584197-537f-4cf5-80b4-29c99205f07a' AS client_id,
   week_starting,
+  '99584197-537f-4cf5-80b4-29c99205f07a' AS SterlingX_Client_ID,
+  'Sterling Lawyers' AS SterlingX_Client_Name,
 
   customer_id,
   campaign_id,
@@ -131,9 +129,7 @@ SELECT
   cpc,
   cost_micros,
   type_grain
-
 FROM weekly
-
 ORDER BY
   week_starting DESC,
   customer_id,

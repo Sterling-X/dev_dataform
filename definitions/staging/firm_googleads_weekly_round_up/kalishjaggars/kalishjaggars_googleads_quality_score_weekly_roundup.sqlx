@@ -24,7 +24,6 @@ WITH base AS (
     quality_score_landing_page,
     quality_score_ad_relevance,
     quality_score_ctr
-
   FROM `sterlingx-insights.firm_marketing_googleads.kalishjaggars_googleads_quality_score`
 
 ),
@@ -54,9 +53,7 @@ weekly AS (
       ORDER BY segment_date DESC
       LIMIT 1
     )[OFFSET(0)] AS latest_record
-
   FROM base
-
   GROUP BY
     week_starting,
     customer_id,
@@ -69,9 +66,9 @@ weekly AS (
 )
 
 SELECT
-  '085566ed-07da-44fc-9292-e77dafdf1b68' AS client_id,
   week_starting,
-
+  '085566ed-07da-44fc-9292-e77dafdf1b68' AS SterlingX_Client_ID,
+  'Kalish and Jaggars' AS SterlingX_Client_Name,
   customer_id,
   customer_name,
 
@@ -86,9 +83,7 @@ SELECT
   latest_record.quality_score_landing_page AS quality_score_landing_page,
   latest_record.quality_score_ad_relevance AS quality_score_ad_relevance,
   latest_record.quality_score_ctr AS quality_score_ctr
-
 FROM weekly
-
 ORDER BY
   week_starting DESC,
   customer_name,
