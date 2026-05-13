@@ -28,8 +28,8 @@ SELECT
     SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.purchaseRevenue') AS FLOAT64) AS purchase_revenue,
     SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.userEngagementDuration') AS FLOAT64) AS user_engagement_duration
 FROM `rc-datamart-adminreport.google_analytics4_drakelaw.fact_ga4_daily_analysis` fa
-LEFT JOIN `rc-datamart-adminreport.google_analytics4_drakelaw.dim_ga4_event` de
-    ON fa.event_id = de.event_id
+-- LEFT JOIN `rc-datamart-adminreport.google_analytics4_drakelaw.dim_ga4_event` de
+--     ON fa.event_id = de.event_id
 LEFT JOIN `rc-datamart-adminreport.google_analytics4_drakelaw.dim_ga4_report` dr
     ON fa.report_id = dr.report_id
 WHERE dr.report_category = 'events'

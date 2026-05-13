@@ -1,0 +1,144 @@
+config {
+  type: "table",
+  database: "sterlingx-insights",
+  schema: "firm_marketing_googleads_weekly_roundup",
+  name: "haffnerlaw_googleads_paid_media_weekly_roundup",
+  tags: ["google ads", "campaign", "marketing data", "weekly roundup", "haffner law"],
+}
+
+WITH base AS (
+
+  SELECT
+    DATE(date) AS date,
+
+    CAST(customer_id AS STRING) AS customer_id,
+    CAST(campaign_id AS STRING) AS campaign_id,
+    CAST(ad_group_id AS STRING) AS ad_group_id,
+
+    device,
+    ad_network_type,
+    campaign,
+    ad_group,
+
+    keyword,
+    match_type,
+    search_terms,
+    landing_page,
+    type_grain,
+
+    SAFE_CAST(cost AS NUMERIC) AS cost,
+    SAFE_CAST(conversions AS NUMERIC) AS conversions,
+    SAFE_CAST(impressions AS INT64) AS impressions,
+    SAFE_CAST(clicks AS INT64) AS clicks,
+    SAFE_CAST(cost_micros AS INT64) AS cost_micros
+
+  FROM `sterlingx-insights.firm_marketing_googleads.haffnerlaw_googleads_paid_media`
+
+),
+
+weekly AS (
+
+  SELECT
+    DATE_TRUNC(date, WEEK(SUNDAY)) AS week_starting,
+
+    customer_id,
+    campaign_id,
+    ad_group_id,
+
+    device,
+    ad_network_type,
+    campaign,
+    ad_group,
+
+    keyword,
+    match_type,
+    search_terms,
+    landing_page,
+    type_grain,
+
+    SUM(COALESCE(cost, 0)) AS cost,
+    SUM(COALESCE(conversions, 0)) AS conversions,
+
+    SAFE_DIVIDE(
+      SUM(COALESCE(cost, 0)),
+      SUM(COALESCE(conversions, 0))
+    ) AS cpl,
+
+    SAFE_DIVIDE(
+      SUM(COALESCE(conversions, 0)),
+      SUM(COALESCE(clicks, 0))
+    ) AS conv_rate,
+
+    SUM(COALESCE(impressions, 0)) AS impressions,
+    SUM(COALESCE(clicks, 0)) AS clicks,
+
+    SAFE_DIVIDE(
+      SUM(COALESCE(clicks, 0)),
+      SUM(COALESCE(impressions, 0))
+    ) AS ctr,
+
+    SAFE_DIVIDE(
+      SUM(COALESCE(cost, 0)),
+      SUM(COALESCE(clicks, 0))
+    ) AS cpc,
+
+    SUM(COALESCE(cost_micros, 0)) AS cost_micros
+
+  FROM base
+
+  GROUP BY
+    week_starting,
+    customer_id,
+    campaign_id,
+    ad_group_id,
+    device,
+    ad_network_type,
+    campaign,
+    ad_group,
+    keyword,
+    match_type,
+    search_terms,
+    landing_page,
+    type_grain
+
+)
+
+SELECT
+  'ca859f21-4206-4fda-af68-102f24c0b67e' AS client_id,
+  week_starting,
+
+  customer_id,
+  campaign_id,
+  ad_group_id,
+
+  device,
+  ad_network_type,
+  campaign,
+  ad_group,
+
+  keyword,
+  match_type,
+  search_terms,
+  landing_page,
+
+  cost,
+  conversions,
+  cpl,
+  conv_rate,
+  impressions,
+  clicks,
+  ctr,
+  cpc,
+  cost_micros,
+  type_grain
+
+FROM weekly
+
+ORDER BY
+  week_starting DESC,
+  customer_id,
+  campaign,
+  ad_group,
+  device,
+  ad_network_type,
+  type_grain
