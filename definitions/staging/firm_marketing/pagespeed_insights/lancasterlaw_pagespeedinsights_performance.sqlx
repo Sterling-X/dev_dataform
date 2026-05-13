@@ -17,9 +17,4 @@ SELECT
   , ROUND(tbt, 0) as total_blocking_display_ms
   , ROUND(speed_index / 1000, 2) as speed_index_seconds
   , ROUND(cls, 3) as cumulative_layout_shift_display
-FROM (
-  SELECT *
-    , ROW_NUMBER() OVER (PARTITION BY FORMAT_DATE('%Y-%m', DATE(timestamp)), strategy ORDER BY timestamp DESC) row_num
-  FROM `rc-datamart-adminreport.pagespeed_insights.psi_lancasterlaw`
-)
-WHERE row_num = 1
+FROM `rc-datamart-adminreport.pagespeed_insights.psi_lancasterlaw`
