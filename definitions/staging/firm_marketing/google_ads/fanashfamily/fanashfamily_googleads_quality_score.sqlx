@@ -7,6 +7,8 @@ config {
 }
 
 SELECT
+  '8a4bb5d3-2988-4b58-901a-d7ebdb015a10' AS SterlingX_Client_ID,
+  'Fanash Family Law' AS SterlingX_Client_Name,
     qs.customer_id,
     dc.customer_name,
     qs.campaign_id,

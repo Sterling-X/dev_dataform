@@ -2,8 +2,8 @@ config {
     type: "table",
     database: "sterlingx-insights",
     schema: "firm_marketing_googleanalytics4",
-    name: "drakelaw_googleanalytics4_traffic_acquisition",
-    tags: ["google analytics 4", "ga4", "traffic acquisition", "marketing data", "drakelaw"],
+    name: "drakelaw_googleanalytics4_geo",
+    tags: ["google analytics 4", "ga4", "geo", "marketing data", "drakelaw"],
 }
 
 SELECT
@@ -14,26 +14,26 @@ SELECT
     -- dimensions
     JSON_VALUE(fa.dimension_values_json, '$.date') AS date,
     JSON_VALUE(fa.dimension_values_json, '$.sessionDefaultChannelGroup') AS session_default_channel_group,
-    JSON_VALUE(fa.dimension_values_json, '$.sessionSource') AS session_source,
-    JSON_VALUE(fa.dimension_values_json, '$.sessionMedium') AS session_medium,
-    JSON_VALUE(fa.dimension_values_json, '$.sessionSourceMedium') AS session_source_medium,
-    JSON_VALUE(fa.dimension_values_json, '$.sessionCampaignName') AS session_campaign_name,
-    JSON_VALUE(fa.dimension_values_json, '$.sessionCampaignId') AS session_campaignid,
-    JSON_VALUE(fa.dimension_values_json, '$.landingPagePlusQueryString') AS landing_page_plus_query_string,
+    JSON_VALUE(fa.dimension_values_json, '$.platform') AS platform,
     JSON_VALUE(fa.dimension_values_json, '$.deviceCategory') AS device_category,
+    JSON_VALUE(fa.dimension_values_json, '$.country') AS country,
+    JSON_VALUE(fa.dimension_values_json, '$.countryId') AS countryid,
+    JSON_VALUE(fa.dimension_values_json, '$.region') AS region,
+    JSON_VALUE(fa.dimension_values_json, '$.city') AS city,
+    JSON_VALUE(fa.dimension_values_json, '$.language') AS language,
+
     -- metrics
     SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.sessions') AS INT64) AS sessions,
     SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.engagedSessions') AS INT64) AS engaged_sessions,
     SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.engagementRate') AS FLOAT64) AS engagement_rate,
-    SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.bounceRate') AS FLOAT64) AS bounce_rate,
-    SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.averageSessionDuration') AS FLOAT64) AS average_session_duration,
     SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.activeUsers') AS INT64) AS active_users,
     SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.newUsers') AS INT64) AS new_users,
     SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.totalUsers') AS INT64) AS total_users,
     SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.eventCount') AS INT64) AS event_count,
-    SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.keyEvents') AS FLOAT64) AS key_events
+    SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.keyEvents') AS FLOAT64) AS key_events,
+    SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.totalRevenue') AS FLOAT64) AS total_revenue
 FROM `rc-datamart-adminreport.google_analytics4_drakelaw.fact_ga4_daily_analysis` fa
 LEFT JOIN `rc-datamart-adminreport.google_analytics4_drakelaw.dim_ga4_report` dr
     ON fa.report_id = dr.report_id
-WHERE dr.report_category = 'acquisition'
-    AND dr.report_name = 'traffic_acquisition_daily'
+WHERE dr.report_category = 'geo'
+    AND dr.report_name = 'geo_daily'

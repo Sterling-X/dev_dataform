@@ -23,6 +23,8 @@ WITH cte_local_service_ads AS
 )
 
 SELECT
+  '085566ed-07da-44fc-9292-e77dafdf1b68' AS SterlingX_Client_ID,
+  'Kalish and Jaggars' AS SterlingX_Client_Name,
   customer_id,
   customer_name,
   date,

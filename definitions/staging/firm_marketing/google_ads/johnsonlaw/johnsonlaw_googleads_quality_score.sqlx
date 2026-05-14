@@ -7,6 +7,8 @@ config {
 }
 
 SELECT
+    '0c4e2f26-cf3d-41e3-978f-8cd31726062f' AS SterlingX_Client_ID,
+    'Johnson Law Group' AS SterlingX_Client_Name,
     qs.customer_id,
     dc.customer_name,
     qs.campaign_id,

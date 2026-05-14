@@ -115,6 +115,8 @@ combined AS (
 )
 
 SELECT
+  '5537c7d2-eb93-4748-bc6a-e236641db089' AS SterlingX_Client_ID,
+  'Meyer Pink' AS SterlingX_Client_Name,
   customer_id,
   campaign_id,
   ad_group_id,

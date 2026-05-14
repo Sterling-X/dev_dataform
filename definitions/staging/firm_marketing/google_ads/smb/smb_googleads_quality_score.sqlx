@@ -7,6 +7,8 @@ config {
 }
 
 SELECT
+    '3cf419a4-3d2c-4a8b-8deb-d004496a971d' AS SterlingX_Client_ID,
+    'Scott M Brown' AS SterlingX_Client_Name,
     qs.customer_id,
     dc.customer_name,
     qs.campaign_id,

@@ -7,6 +7,8 @@ config {
 }
 
 SELECT
+    '99584197-537f-4cf5-80b4-29c99205f07a' AS SterlingX_Client_ID,
+    'Sterling Lawyers' AS SterlingX_Client_Name,
     qs.customer_id,
     dc.customer_name,
     qs.campaign_id,

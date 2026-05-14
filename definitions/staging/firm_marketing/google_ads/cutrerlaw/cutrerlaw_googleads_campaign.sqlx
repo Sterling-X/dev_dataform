@@ -11,6 +11,8 @@ config {
 }
 
 SELECT
+    '2e0efe10-f122-4a03-bfa5-7215e2dd7b71' AS SterlingX_Client_ID,
+    'Cutrer' AS SterlingX_Client_Name,
     fc.segment_date,
     fc.customer_id,
     dc.customer_name,

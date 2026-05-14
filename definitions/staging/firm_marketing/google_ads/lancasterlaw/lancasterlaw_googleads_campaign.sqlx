@@ -11,6 +11,8 @@ config {
 }
 
 SELECT
+  '331dae6a-d0e7-48fe-866e-b068ec98059e' AS SterlingX_Client_ID,
+  'Lancaster' AS SterlingX_Client_Name,
     fc.segment_date,
     fc.customer_id,
     dc.customer_name,

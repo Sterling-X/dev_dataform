@@ -11,6 +11,8 @@ config {
 }
 
 SELECT
+    '17c0939a-2e3d-4728-933d-564183626ec3' AS SterlingX_Client_ID,
+    'Gjesdahl Law' AS SterlingX_Client_Name,
     fc.segment_date,
     fc.customer_id,
     dc.customer_name,

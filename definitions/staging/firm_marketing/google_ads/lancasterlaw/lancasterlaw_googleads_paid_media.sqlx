@@ -115,6 +115,8 @@ combined AS (
 )
 
 SELECT
+  '331dae6a-d0e7-48fe-866e-b068ec98059e' AS SterlingX_Client_ID,
+  'Lancaster' AS SterlingX_Client_Name,
   customer_id,
   campaign_id,
   ad_group_id,

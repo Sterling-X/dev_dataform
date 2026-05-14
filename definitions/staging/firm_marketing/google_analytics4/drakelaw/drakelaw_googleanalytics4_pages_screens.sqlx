@@ -1,0 +1,39 @@
+config {
+    type: "table",
+    database: "sterlingx-insights",
+    schema: "firm_marketing_googleanalytics4",
+    name: "drakelaw_googleanalytics4_pages_screens",
+    tags: ["google analytics 4", "ga4", "pages screens", "marketing data", "drakelaw"],
+}
+
+SELECT
+   'a706e4b0-b2e6-4774-b5b7-70700c710417' AS SterlingX_Client_ID,
+   'Drake Law Firm' AS SterlingX_Client_Name,
+    fa.property_id,
+    fa.event_date,
+    -- dimensions
+    JSON_VALUE(fa.dimension_values_json, '$.date') AS date,
+    JSON_VALUE(fa.dimension_values_json, '$.country') AS country,
+    JSON_VALUE(fa.dimension_values_json, '$.deviceCategory') AS device_category,
+    JSON_VALUE(fa.dimension_values_json, '$.hostName') AS host_name,
+    JSON_VALUE(fa.dimension_values_json, '$.landingPagePlusQueryString') AS landing_page_plus_query_string,
+    JSON_VALUE(fa.dimension_values_json, '$.pageLocation') AS page_location,
+    JSON_VALUE(fa.dimension_values_json, '$.pagePathPlusQueryString') AS page_path_plus_query_string,
+    JSON_VALUE(fa.dimension_values_json, '$.pageTitle') AS page_title,
+    JSON_VALUE(fa.dimension_values_json, '$.sessionDefaultChannelGroup') AS session_default_channel_group,
+    -- metrics
+    SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.activeUsers') AS INT64) AS active_users,
+    SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.averageSessionDuration') AS FLOAT64) AS average_session_duration,
+    SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.engagedSessions') AS INT64) AS engaged_sessions,
+    SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.eventCount') AS INT64) AS event_count,
+    SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.keyEvents') AS FLOAT64) AS key_events,
+    SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.screenPageViews') AS INT64) AS screen_page_views,
+    SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.screenPageViewsPerSession') AS FLOAT64) AS screen_page_views_per_session,
+    SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.screenPageViewsPerUser') AS FLOAT64) AS screen_page_views_per_user,
+    SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.sessions') AS INT64) AS sessions,
+    SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.userEngagementDuration') AS FLOAT64) AS user_engagement_duration
+FROM `rc-datamart-adminreport.google_analytics4_drakelaw.fact_ga4_daily_analysis` fa
+LEFT JOIN `rc-datamart-adminreport.google_analytics4_drakelaw.dim_ga4_report` dr
+    ON fa.report_id = dr.report_id
+WHERE dr.report_category = 'content'
+    AND dr.report_name = 'pages_screens_daily'

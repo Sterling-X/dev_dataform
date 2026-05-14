@@ -115,6 +115,8 @@ combined AS (
 )
 
 SELECT
+  '3cf419a4-3d2c-4a8b-8deb-d004496a971d' AS SterlingX_Client_ID,
+  'Scott M Brown' AS SterlingX_Client_Name,
   customer_id,
   campaign_id,
   ad_group_id,

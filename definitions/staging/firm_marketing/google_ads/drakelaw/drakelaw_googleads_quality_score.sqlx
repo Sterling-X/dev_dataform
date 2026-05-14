@@ -7,6 +7,8 @@ config {
 }
 
 SELECT
+   'a706e4b0-b2e6-4774-b5b7-70700c710417' AS SterlingX_Client_ID,
+   'Drake Law Firm' AS SterlingX_Client_Name,
     qs.customer_id,
     dc.customer_name,
     qs.campaign_id,

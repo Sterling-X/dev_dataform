@@ -23,6 +23,8 @@ WITH cte_local_service_ads AS
 )
 
 SELECT
+  '916fb7c7-13bc-4725-8bca-e11e0749da31' AS SterlingX_Client_ID,
+  'Aurit mediation' AS SterlingX_Client_Name,
   customer_id,
   customer_name,
   date,

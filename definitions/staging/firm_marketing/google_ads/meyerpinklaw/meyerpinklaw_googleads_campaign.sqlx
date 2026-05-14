@@ -11,6 +11,8 @@ config {
 }
 
 SELECT
+    '5537c7d2-eb93-4748-bc6a-e236641db089' AS SterlingX_Client_ID,
+    'Meyer Pink' AS SterlingX_Client_Name,
     fc.segment_date,
     fc.customer_id,
     dc.customer_name,

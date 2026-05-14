@@ -23,6 +23,8 @@ WITH cte_local_service_ads AS
 )
 
 SELECT
+  'a706e4b0-b2e6-4774-b5b7-70700c710417' AS SterlingX_Client_ID,
+  'Drake Law Firm' AS SterlingX_Client_Name,
   customer_id,
   customer_name,
   date,
