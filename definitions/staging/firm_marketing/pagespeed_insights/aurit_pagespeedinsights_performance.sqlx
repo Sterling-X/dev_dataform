@@ -7,7 +7,9 @@ config {
 }
 
 SELECT
-  DATE(timestamp) AS date
+  '916fb7c7-13bc-4725-8bca-e11e0749da31' AS SterlingX_Client_ID
+  , 'Aurit mediation' AS SterlingX_Client_Name
+  , DATE(timestamp) AS date
   , timestamp	
   , url	
   , strategy	

@@ -7,7 +7,9 @@ config {
 }
 
 SELECT
-  DATE(timestamp) AS date
+  'f3e5ceb5-3957-4541-a076-f51d3dd4cec5' AS SterlingX_Client_ID
+  , 'The Ramage Law Group' AS SterlingX_Client_Name
+  , DATE(timestamp) AS date
   , timestamp	
   , url	
   , strategy	

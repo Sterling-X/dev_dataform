@@ -7,7 +7,9 @@ config {
 }
 
 SELECT
-  DATE(timestamp) AS date
+  '085566ed-07da-44fc-9292-e77dafdf1b68' AS SterlingX_Client_ID
+  , 'Kalish and Jaggars' AS SterlingX_Client_Name
+  , DATE(timestamp) AS date
   , timestamp	
   , url	
   , strategy	

@@ -2,8 +2,8 @@ config {
   type: "table",
   database: "sterlingx-insights",
   schema: "firm_marketing_googleanalytics4_weekly_roundup",
-  name: "drakelaw_googleanalytics4_custom_users_weekly_roundup",
-  tags: ["google analytics 4", "ga4", "engaged sessions", "marketing data", "drakelaw"],
+  name: "johnsonlaw_googleanalytics4_custom_users_weekly_roundup",
+  tags: ["google analytics 4", "ga4", "engaged sessions", "marketing data", "johnsonlaw"],
 /*
   bigquery: {
     partitionBy: "week_starting",
@@ -32,7 +32,7 @@ WITH source AS (
       SAFE_CAST(event_count AS INT64),
       0
     ) AS event_count
-  FROM `sterlingx-insights.firm_marketing_googleanalytics4.drakelaw_googleanalytics4_custom_users`
+  FROM `sterlingx-insights.firm_marketing_googleanalytics4.johnsonlaw_googleanalytics4_custom_users`
 
 ),
 
