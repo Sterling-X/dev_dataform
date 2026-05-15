@@ -1,0 +1,36 @@
+config {
+    type: "table",
+    database: "sterlingx-insights",
+    schema: "firm_marketing_googleanalytics4",
+    name: "smb_googleanalytics4_ads_campaign",
+    tags: ["google analytics 4", "ga4", "ads campaign", "marketing data", "smb"],
+}
+
+SELECT
+   '3cf419a4-3d2c-4a8b-8deb-d004496a971d' AS SterlingX_Client_ID,
+   'Scott M Brown' AS SterlingX_Client_Name,
+    fa.property_id,
+    fa.event_date,
+    -- dimensions
+    JSON_VALUE(fa.dimension_values_json, '$.date') AS date,
+    JSON_VALUE(fa.dimension_values_json, '$.sessionGoogleAdsCampaignName') AS session_google_ads_campaign_name,
+    JSON_VALUE(fa.dimension_values_json, '$.sessionGoogleAdsCampaignId') AS session_google_ads_campaignid,
+    JSON_VALUE(fa.dimension_values_json, '$.sessionGoogleAdsAdGroupName') AS session_google_ads_ad_group_name,
+    JSON_VALUE(fa.dimension_values_json, '$.sessionGoogleAdsAdGroupId') AS session_google_ads_ad_groupid,
+    JSON_VALUE(fa.dimension_values_json, '$.sessionGoogleAdsKeyword') AS session_google_ads_keyword,
+
+    -- metrics
+    SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.sessions') AS INT64) AS sessions,
+    SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.engagedSessions') AS INT64) AS engaged_sessions,
+    SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.eventCount') AS INT64) AS event_count,
+    SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.keyEvents') AS FLOAT64) AS key_events,
+    SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.advertiserAdClicks') AS INT64) AS advertiser_ad_clicks,
+    SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.advertiserAdImpressions') AS INT64) AS advertiser_ad_impressions,
+    SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.advertiserAdCost') AS FLOAT64) AS advertiser_ad_cost,
+    SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.returnOnAdSpend') AS FLOAT64) AS return_on_ad_spend,
+    SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.totalRevenue') AS FLOAT64) AS total_revenue
+FROM `rc-datamart-adminreport.google_analytics4_smb.fact_ga4_daily_analysis` fa
+LEFT JOIN `rc-datamart-adminreport.google_analytics4_smb.dim_ga4_report` dr
+    ON fa.report_id = dr.report_id
+WHERE dr.report_category = 'advertising'
+    AND dr.report_name = 'ads_campaigns_daily'

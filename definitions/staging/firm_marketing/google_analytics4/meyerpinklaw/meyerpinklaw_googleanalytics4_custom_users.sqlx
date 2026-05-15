@@ -1,0 +1,22 @@
+config {
+    type: "table",
+    database: "sterlingx-insights",
+    schema: "firm_marketing_googleanalytics4",
+    name: "meyerpinklaw_googleanalytics4_custom_users",
+    tags: ["google analytics 4", "ga4", "custom users", "marketing data", "meyerpinklaw"],
+}
+
+SELECT
+   '5537c7d2-eb93-4748-bc6a-e236641db089' AS SterlingX_Client_ID,
+   'Meyer Pink' AS SterlingX_Client_Name,
+    fa.property_id,
+    fa.event_date,
+    -- dimensions
+    JSON_VALUE(fa.dimension_values_json, '$.date') AS date,
+    -- metrics
+    SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.totalUsers') AS INT64) AS event_count
+FROM `rc-datamart-adminreport.google_analytics4_meyerpinklaw.fact_ga4_daily_analysis` fa
+LEFT JOIN `rc-datamart-adminreport.google_analytics4_meyerpinklaw.dim_ga4_report` dr
+    ON fa.report_id = dr.report_id
+WHERE dr.report_category = 'users'
+    AND dr.report_name = 'custom_users_daily'
