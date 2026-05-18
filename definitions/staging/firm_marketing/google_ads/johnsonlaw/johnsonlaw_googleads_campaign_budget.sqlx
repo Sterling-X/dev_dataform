@@ -1,0 +1,72 @@
+config {
+    type: "table",
+    database: "sterlingx-insights",
+    schema: "firm_marketing_googleads",
+    name: "johnsonlaw_googleads_campaign_budget",
+    tags: ["google ads", "campaign budget", "marketing data", "johnsonlaw"],
+}
+
+WITH campaign_dim AS (
+  SELECT
+    c.customer_id,
+    c.campaign_id,
+    c.campaign_name,
+    c.campaign_status,
+    c.advertising_channel_type,
+    c.advertising_channel_sub_type,
+    REGEXP_EXTRACT(c.campaign_budget_resource_name, r'campaignBudgets/([0-9]+)') AS campaign_budget_id,
+    b.amount_micros AS budget_amount_micros,
+    cust.currency_code
+  FROM `rc-datamart-adminreport.google_ads_johnsonlaw.dim_gads_campaign` c 
+  LEFT JOIN `rc-datamart-adminreport.google_ads_johnsonlaw.dim_gads_customer` cust
+    ON cust.customer_id = c.customer_id
+  LEFT JOIN `rc-datamart-adminreport.google_ads_johnsonlaw.dim_gads_campaign_budget` b 
+    ON b.customer_id = c.customer_id
+   AND b.campaign_budget_id = REGEXP_EXTRACT(c.campaign_budget_resource_name, r'campaignBudgets/([0-9]+)')
+)
+
+SELECT
+  '0c4e2f26-cf3d-41e3-978f-8cd31726062f' AS SterlingX_Client_ID,
+  'Johnson Law Group' AS SterlingX_Client_Name,
+  f.segment_date,
+  f.customer_id,
+  f.campaign_id,
+  d.campaign_name,
+  d.campaign_status,
+  d.advertising_channel_type,
+  d.advertising_channel_sub_type,
+  d.campaign_budget_id,
+  d.budget_amount_micros,
+  d.currency_code,
+
+  SUM(f.cost_micros) AS actual_spend_micros,
+  SAFE_DIVIDE(SUM(f.cost_micros), 1000000) AS actual_spend,
+  SUM(f.conversions) AS leads,
+  SAFE_DIVIDE(
+    SAFE_DIVIDE(SUM(f.cost_micros), 1000000),
+    NULLIF(SUM(f.conversions), 0)
+  ) AS cost_per_lead,
+  SUM(f.impressions) AS impressions,
+  SUM(f.clicks) AS clicks,
+  SAFE_DIVIDE(SUM(f.clicks), NULLIF(SUM(f.impressions), 0)) AS ctr,
+  SAFE_DIVIDE(
+    SAFE_DIVIDE(SUM(f.cost_micros), 1000000),
+    NULLIF(SUM(f.clicks), 0)
+  ) AS average_cpc,
+  SUM(f.conversions_value) AS conversions_value
+FROM `rc-datamart-adminreport.google_ads_johnsonlaw.fct_gads_campaign_daily` f
+LEFT JOIN campaign_dim d
+  ON d.customer_id = f.customer_id
+ AND d.campaign_id = f.campaign_id
+GROUP BY
+  f.segment_date,
+  f.customer_id,
+  f.campaign_id,
+  d.campaign_name,
+  d.campaign_status,
+  d.advertising_channel_type,
+  d.advertising_channel_sub_type,
+  d.campaign_budget_id,
+  d.budget_amount_micros,
+  d.currency_code
+ORDER by f.segment_date DESC

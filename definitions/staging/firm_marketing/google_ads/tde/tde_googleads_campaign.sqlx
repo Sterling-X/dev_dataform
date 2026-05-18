@@ -11,6 +11,8 @@ config {
 }
 
 SELECT
+    'c663f0d7-1c98-4139-8669-adcf29d6dca0' AS SterlingX_Client_ID,
+    'TDE Family Law' AS SterlingX_Client_Name,
     fc.segment_date,
     fc.customer_id,
     dc.customer_name,
