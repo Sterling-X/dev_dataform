@@ -1,0 +1,26 @@
+config {
+    type: "table",
+    database: "sterlingx-insights",
+    schema: "firm_marketing_googlesearchconsole",
+    name: "kalishjaggars_googlesearchconsole_search_performance",
+    tags: ["google search console", "search performance", "kalishjaggars"],
+}
+
+SELECT
+  data_date,
+  '085566ed-07da-44fc-9292-e77dafdf1b68' AS SterlingX_Client_ID,
+  'Kalish and Jaggars' AS SterlingX_Client_Name,
+
+  site_url,
+  page,
+  query,
+  country,
+  device,
+  search_type,
+
+  clicks,
+  impressions,
+  ctr,
+  position,
+FROM `rc-datamart-adminreport.google_search_console_kalishjaggars.fct_gsc_search_performance`
+ORDER BY data_date DESC
