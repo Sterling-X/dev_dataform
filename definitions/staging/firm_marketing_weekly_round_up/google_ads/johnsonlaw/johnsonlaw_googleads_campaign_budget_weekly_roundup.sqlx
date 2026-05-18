@@ -2,8 +2,8 @@ config {
     type: "table",
     database: "sterlingx-insights",
     schema: "firm_marketing_googleads_weekly_roundup",
-    name: "aurit_googleads_campaign_budget_weekly_roundup",
-    tags: ["google ads", "campaign budget", "marketing data", "aurit", "weekly roundup"],
+    name: "johnsonlaw_googleads_campaign_budget_weekly_roundup",
+    tags: ["google ads", "campaign budget", "marketing data", "johnsonlaw", "weekly roundup"],
 }
 
 WITH daily AS (
@@ -27,7 +27,7 @@ WITH daily AS (
     impressions,
     clicks,
     conversions_value
-  FROM `sterlingx-insights.firm_marketing_googleads.aurit_googleads_campaign_budget` 
+  FROM `sterlingx-insights.firm_marketing_googleads.johnsonlaw_googleads_campaign_budget` 
 )
 
 SELECT
