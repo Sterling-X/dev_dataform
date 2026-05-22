@@ -3,13 +3,15 @@ config {
   database: "sterlingx-insights",
   schema: "firm_marketing_googleads_weekly_roundup",
   name: "sterlinglawyers_googleads_localserviceads_weekly_roundup",
-  tags: ["google ads", "campaign", "marketing data", "weekly roundup", "sterling lawyers"],
+  tags: ["google ads", "local service ads", "marketing data", "weekly roundup", "sterling lawyers"],
 }
 
 WITH base AS (
 
   SELECT
     DATE(date) AS date,
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
 
     CAST(customer_id AS STRING) AS customer_id,
     customer_name,
@@ -24,6 +26,8 @@ weekly AS (
 
   SELECT
     DATE_TRUNC(date, WEEK(SUNDAY)) AS week_starting,
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
 
     customer_id,
     customer_name,
@@ -38,6 +42,8 @@ weekly AS (
   FROM base
   GROUP BY
     week_starting,
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
     customer_id,
     customer_name
 
@@ -45,8 +51,8 @@ weekly AS (
 
 SELECT
   week_starting,
-  '99584197-537f-4cf5-80b4-29c99205f07a' AS SterlingX_Client_ID,
-  'Sterling Lawyers' AS SterlingX_Client_Name,
+  SterlingX_Client_ID,
+  SterlingX_Client_Name,
   customer_id,
   customer_name,
   cost,

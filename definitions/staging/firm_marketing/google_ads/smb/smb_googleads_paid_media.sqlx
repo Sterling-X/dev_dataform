@@ -3,7 +3,7 @@ config {
     database: "sterlingx-insights",
     schema: "firm_marketing_googleads",
     name: "smb_googleads_paid_media",
-    tags: ["google ads", "campaign", "marketing data", "smb"],
+    tags: ["google ads", "paid media", "marketing data", "smb"],
 }
 
 WITH search_term_base AS (
@@ -40,7 +40,6 @@ WITH search_term_base AS (
     ON f.customer_id = ag.customer_id
    AND f.campaign_id = ag.campaign_id
    AND f.ad_group_id = ag.ad_group_id
-
   GROUP BY
     type_grain,
     f.customer_id,
@@ -91,7 +90,6 @@ landing_page_base AS (
     ON f.customer_id = ag.customer_id
    AND f.campaign_id = ag.campaign_id
    AND f.ad_group_id = ag.ad_group_id
-
   GROUP BY
     type_grain,
     f.customer_id,

@@ -3,7 +3,7 @@ config {
     database: "sterlingx-insights",
     schema: "firm_marketing_googleads",
     name: "kalishjaggars_googleads_localserviceads",
-    tags: ["google ads", "campaign", "marketing data", "kalish & jaggars"],
+    tags: ["google ads", "local service ads", "marketing data", "kalish & jaggars"],
 }
 
 WITH cte_local_service_ads AS

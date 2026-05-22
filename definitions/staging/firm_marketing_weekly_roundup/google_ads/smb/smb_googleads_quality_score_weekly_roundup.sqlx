@@ -3,13 +3,16 @@ config {
   database: "sterlingx-insights",
   schema: "firm_marketing_googleads_weekly_roundup",
   name: "smb_googleads_quality_score_weekly_roundup",
-  tags: ["google ads", "campaign", "marketing data", "weekly roundup", "smb"],
+  tags: ["google ads", "quality score", "marketing data", "weekly roundup", "smb"],
 }
 
 WITH base AS (
 
   SELECT
     CAST(customer_id AS STRING) AS customer_id,
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
+
     customer_name,
 
     CAST(campaign_id AS STRING) AS campaign_id,
@@ -32,6 +35,8 @@ weekly AS (
 
   SELECT
     DATE_TRUNC(segment_date, WEEK(SUNDAY)) AS week_starting,
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
 
     customer_id,
     customer_name,
@@ -56,6 +61,8 @@ weekly AS (
   FROM base
   GROUP BY
     week_starting,
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
     customer_id,
     customer_name,
     campaign_id,
@@ -67,8 +74,8 @@ weekly AS (
 
 SELECT
   week_starting,
-  '3cf419a4-3d2c-4a8b-8deb-d004496a971d' AS SterlingX_Client_ID,
-  'Scott M Brown' AS SterlingX_Client_Name,
+  SterlingX_Client_ID,
+  SterlingX_Client_Name,
   customer_id,
   customer_name,
 

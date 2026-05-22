@@ -3,7 +3,7 @@ config {
     database: "sterlingx-insights",
     schema: "firm_marketing_googleads",
     name: "drakelaw_googleads_quality_score",
-    tags: ["google ads", "campaign", "marketing data", "drake law"],
+    tags: ["google ads", "quality score", "marketing data", "drake law"],
 }
 
 SELECT

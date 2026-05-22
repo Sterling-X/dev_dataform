@@ -3,7 +3,7 @@ config {
     database: "sterlingx-insights",
     schema: "firm_marketing_googleads",
     name: "haffnerlaw_googleads_quality_score",
-    tags: ["google ads", "campaign", "marketing data", "haffner law"],
+    tags: ["google ads", "quality score", "marketing data", "haffner law"],
 }
 
 SELECT
