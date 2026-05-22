@@ -1,0 +1,73 @@
+config {
+  type: "table",
+  database: "sterlingx-insights",
+  schema: "firm_marketing_googleads_quarterly_roundup",
+  name: "cutrerlaw_googleads_localserviceads_quarterly_roundup",
+  tags: ["google ads", "local service ads", "marketing data", "quarterly roundup", "cutrerlaw"],
+}
+
+WITH base AS (
+
+  SELECT
+    DATE(date) AS date,
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
+    CAST(customer_id AS STRING) AS customer_id,
+    customer_name,
+
+    SAFE_CAST(cost AS NUMERIC) AS cost,
+    SAFE_CAST(conversions AS NUMERIC) AS conversions
+  FROM `sterlingx-insights.firm_marketing_googleads.cutrerlaw_googleads_localserviceads`
+
+),
+
+quarterly AS (
+
+  SELECT
+    DATE_TRUNC(date, QUARTER) AS quarter_starting,
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
+    EXTRACT(YEAR FROM date) AS year,
+    EXTRACT(QUARTER FROM date) AS quarter,
+
+    customer_id,
+    customer_name,
+
+    SUM(COALESCE(cost, 0)) AS cost,
+    SUM(COALESCE(conversions, 0)) AS conversions,
+
+    SAFE_DIVIDE(
+      SUM(COALESCE(cost, 0)),
+      SUM(COALESCE(conversions, 0))
+    ) AS cpl
+  FROM base
+  GROUP BY
+    quarter_starting,
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
+    year,
+    quarter,
+    customer_id,
+    customer_name
+
+)
+
+SELECT
+  SterlingX_Client_ID,
+  SterlingX_Client_Name,
+  quarter_starting,
+  FORMAT_DATE('%Y-Q%Q', quarter_starting) AS quarter_label,
+  year,
+  quarter,
+
+  customer_id,
+  customer_name,
+
+  cost,
+  conversions,
+  cpl
+FROM quarterly
+ORDER BY
+  quarter_starting DESC,
+  customer_name
+  

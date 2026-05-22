@@ -1,0 +1,73 @@
+config {
+  type: "table",
+  database: "sterlingx-insights",
+  schema: "firm_marketing_googleanalytics4_monthly_roundup",
+  name: "lafrance_googleanalytics4_custom_users_monthly_roundup",
+  tags: ["google analytics 4", "ga4", "custom users", "marketing data", "lafrance"],
+}
+
+WITH source AS (
+
+  SELECT
+    CAST(SterlingX_Client_ID AS STRING) AS SterlingX_Client_ID,
+    CAST(SterlingX_Client_Name AS STRING) AS SterlingX_Client_Name,
+    CAST(property_id AS STRING) AS property_id,
+    COALESCE(
+      SAFE_CAST(event_date AS DATE),
+      SAFE.PARSE_DATE('%Y-%m-%d', CAST(event_date AS STRING)),
+      SAFE.PARSE_DATE('%Y%m%d', CAST(`date` AS STRING))
+    ) AS event_date,
+    COALESCE(
+      SAFE_CAST(event_count AS INT64),
+      0
+    ) AS event_count
+  FROM `sterlingx-insights.firm_marketing_googleanalytics4.lafrance_googleanalytics4_custom_users`
+
+),
+
+cleaned AS (
+
+  SELECT
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
+    property_id,
+    event_date,
+    event_count
+  FROM source
+  WHERE event_date IS NOT NULL
+    AND SterlingX_Client_ID IS NOT NULL
+    AND SterlingX_Client_Name IS NOT NULL
+    AND property_id IS NOT NULL
+
+),
+
+monthly AS (
+
+  SELECT
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
+    property_id,
+    DATE_TRUNC(event_date, MONTH) AS month_starting,
+    SUM(event_count) AS total_events
+  FROM cleaned
+  GROUP BY
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
+    property_id,
+    month_starting
+
+)
+
+SELECT
+  SterlingX_Client_ID,
+  SterlingX_Client_Name,
+  property_id,
+  month_starting,
+  FORMAT_DATE('%Y%m%d', month_starting) AS month_starting_yyyymmdd,
+  total_events
+FROM monthly
+ORDER BY
+  SterlingX_Client_Name,
+  property_id,
+  month_starting DESC
+  

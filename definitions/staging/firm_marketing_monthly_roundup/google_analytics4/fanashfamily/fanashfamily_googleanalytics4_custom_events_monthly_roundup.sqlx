@@ -1,0 +1,88 @@
+config {
+  type: "table",
+  database: "sterlingx-insights",
+  schema: "firm_marketing_googleanalytics4_monthly_roundup",
+  name: "fanashfamily_googleanalytics4_custom_events_monthly_roundup",
+  tags: ["google analytics 4", "ga4", "custom events", "marketing data", "fanashfamily"],
+}
+
+WITH source AS (
+
+  SELECT
+    CAST(SterlingX_Client_ID AS STRING) AS SterlingX_Client_ID,
+    CAST(SterlingX_Client_Name AS STRING) AS SterlingX_Client_Name,
+    CAST(property_id AS STRING) AS property_id,
+    COALESCE(
+      SAFE_CAST(event_date AS DATE),
+      SAFE.PARSE_DATE('%Y-%m-%d', CAST(event_date AS STRING)),
+      SAFE.PARSE_DATE('%Y%m%d', CAST(`date` AS STRING))
+    ) AS event_date,
+    COALESCE(
+      NULLIF(TRIM(CAST(event_name AS STRING)), ''),
+      '(not set)'
+    ) AS event_name,
+    COALESCE(
+      NULLIF(TRIM(CAST(first_user_primary_channel_group AS STRING)), ''),
+      '(not set)'
+    ) AS first_user_primary_channel_group,
+    COALESCE(
+      SAFE_CAST(event_count AS INT64),
+      0
+    ) AS event_count
+  FROM `sterlingx-insights.firm_marketing_googleanalytics4.fanashfamily_googleanalytics4_custom_events`
+),
+
+cleaned AS (
+
+  SELECT
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
+    property_id,
+    event_date,
+    event_name,
+    first_user_primary_channel_group,
+    event_count
+  FROM source
+  WHERE event_date IS NOT NULL
+    AND SterlingX_Client_ID IS NOT NULL
+    AND SterlingX_Client_Name IS NOT NULL
+    AND property_id IS NOT NULL
+),
+
+monthly AS (
+
+  SELECT
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
+    property_id,
+    DATE_TRUNC(event_date, MONTH) AS month_starting,
+    first_user_primary_channel_group,
+    event_name,
+    SUM(event_count) AS event_count
+  FROM cleaned
+  GROUP BY
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
+    property_id,
+    month_starting,
+    first_user_primary_channel_group,
+    event_name
+)
+
+SELECT
+  SterlingX_Client_ID,
+  SterlingX_Client_Name,
+  property_id,
+  month_starting,
+  FORMAT_DATE('%Y%m%d', month_starting) AS month_starting_yyyymmdd,
+  first_user_primary_channel_group,
+  event_name,
+  event_count
+FROM monthly
+ORDER BY
+  SterlingX_Client_Name,
+  property_id,
+  month_starting DESC,
+  first_user_primary_channel_group,
+  event_name
+  

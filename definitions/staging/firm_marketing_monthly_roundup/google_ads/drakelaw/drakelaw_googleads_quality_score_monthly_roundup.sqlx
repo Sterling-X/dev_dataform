@@ -1,0 +1,97 @@
+config {
+  type: "table",
+  database: "sterlingx-insights",
+  schema: "firm_marketing_googleads_monthly_roundup",
+  name: "drakelaw_googleads_quality_score_monthly_roundup",
+  tags: ["google ads", "quality score", "marketing data", "weekly roundup", "drakelaw"],
+}
+
+WITH base AS (
+
+  SELECT
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
+    CAST(customer_id AS STRING) AS customer_id,
+    customer_name,
+
+    CAST(campaign_id AS STRING) AS campaign_id,
+    campaign_name,
+
+    keyword_text,
+    keyword_match_type,
+
+    DATE(segment_date) AS segment_date,
+
+    SAFE_CAST(quality_score AS INT64) AS quality_score,
+    quality_score_landing_page,
+    quality_score_ad_relevance,
+    quality_score_ctr
+  FROM `sterlingx-insights.firm_marketing_googleads.drakelaw_googleads_quality_score`
+
+),
+
+monthly AS (
+
+  SELECT
+    DATE_TRUNC(segment_date, MONTH) AS month_starting,
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
+    customer_id,
+    customer_name,
+
+    campaign_id,
+    campaign_name,
+
+    keyword_text,
+    keyword_match_type,
+
+    ARRAY_AGG(
+      STRUCT(
+        segment_date,
+        quality_score,
+        quality_score_landing_page,
+        quality_score_ad_relevance,
+        quality_score_ctr
+      )
+      ORDER BY segment_date DESC
+      LIMIT 1
+    )[OFFSET(0)] AS latest_record
+  FROM base
+  GROUP BY
+    month_starting,
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
+    customer_id,
+    customer_name,
+    campaign_id,
+    campaign_name,
+    keyword_text,
+    keyword_match_type
+
+)
+
+SELECT
+  month_starting,
+  SterlingX_Client_ID,
+  SterlingX_Client_Name,
+  customer_id,
+  customer_name,
+
+  campaign_id,
+  campaign_name,
+
+  keyword_text,
+  keyword_match_type,
+
+  latest_record.segment_date AS latest_segment_date,
+  latest_record.quality_score AS quality_score,
+  latest_record.quality_score_landing_page AS quality_score_landing_page,
+  latest_record.quality_score_ad_relevance AS quality_score_ad_relevance,
+  latest_record.quality_score_ctr AS quality_score_ctr
+FROM monthly
+ORDER BY
+  month_starting DESC,
+  customer_name,
+  campaign_name,
+  keyword_text,
+  keyword_match_type

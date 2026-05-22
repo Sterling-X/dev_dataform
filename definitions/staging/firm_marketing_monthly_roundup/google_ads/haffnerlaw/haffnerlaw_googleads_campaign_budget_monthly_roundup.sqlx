@@ -1,0 +1,91 @@
+config {
+    type: "table",
+    database: "sterlingx-insights",
+    schema: "firm_marketing_googleads_monthly_roundup",
+    name: "haffnerlaw_googleads_campaign_budget_monthly_roundup",
+    tags: ["google ads", "campaign budget", "marketing data", "haffnerlaw", "monthly roundup"],
+}
+
+WITH daily AS (
+  SELECT
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
+    segment_date,
+    DATE_TRUNC(segment_date, MONTH) AS month_starting,
+    customer_id,
+    campaign_id,
+    campaign_name,
+    campaign_status,
+    advertising_channel_type,
+    advertising_channel_sub_type,
+    campaign_budget_id,
+    budget_amount_micros,
+    currency_code,
+    actual_spend_micros,
+    actual_spend,
+    leads,
+    impressions,
+    clicks,
+    conversions_value
+  FROM `sterlingx-insights.firm_marketing_googleads.haffnerlaw_googleads_campaign_budget` 
+)
+
+SELECT
+  month_starting,
+  SterlingX_Client_ID,
+  SterlingX_Client_Name,
+  customer_id,
+  campaign_id,
+  campaign_name,
+  campaign_status,
+  advertising_channel_type,
+  advertising_channel_sub_type,
+  campaign_budget_id,
+
+  ARRAY_AGG(
+    budget_amount_micros IGNORE NULLS
+    ORDER BY segment_date DESC
+    LIMIT 1
+  )[SAFE_OFFSET(0)] AS budget_amount_micros,
+
+  currency_code,
+
+  SUM(actual_spend_micros) AS actual_spend_micros,
+  SAFE_DIVIDE(SUM(actual_spend_micros), 1000000) AS actual_spend,
+  SUM(leads) AS leads,
+
+  SAFE_DIVIDE(
+    SAFE_DIVIDE(SUM(actual_spend_micros), 1000000),
+    NULLIF(SUM(leads), 0)
+  ) AS cost_per_lead,
+
+  SUM(impressions) AS impressions,
+  SUM(clicks) AS clicks,
+
+  SAFE_DIVIDE(
+    SUM(clicks),
+    NULLIF(SUM(impressions), 0)
+  ) AS ctr,
+
+  SAFE_DIVIDE(
+    SAFE_DIVIDE(SUM(actual_spend_micros), 1000000),
+    NULLIF(SUM(clicks), 0)
+  ) AS average_cpc,
+
+  SUM(conversions_value) AS conversions_value
+FROM daily
+GROUP BY
+  month_starting,
+  SterlingX_Client_ID,
+  SterlingX_Client_Name,
+  customer_id,
+  campaign_id,
+  campaign_name,
+  campaign_status,
+  advertising_channel_type,
+  advertising_channel_sub_type,
+  campaign_budget_id,
+  currency_code
+ORDER BY
+  month_starting DESC
+  

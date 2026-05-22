@@ -1,0 +1,62 @@
+config {
+  type: "table",
+  database: "sterlingx-insights",
+  schema: "firm_marketing_googleads_monthly_roundup",
+  name: "drakelaw_googleads_localserviceads_monthly_roundup",
+  tags: ["google ads", "local service ads", "marketing data", "monthly roundup", "drakelaw"],
+}
+
+WITH base AS (
+
+  SELECT
+    DATE(date) AS date,
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
+    CAST(customer_id AS STRING) AS customer_id,
+    customer_name,
+
+    SAFE_CAST(cost AS NUMERIC) AS cost,
+    SAFE_CAST(conversions AS NUMERIC) AS conversions
+  FROM `sterlingx-insights.firm_marketing_googleads.drakelaw_googleads_localserviceads`
+
+),
+
+monthly AS (
+
+  SELECT
+    DATE_TRUNC(date, MONTH) AS month_starting,
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
+    customer_id,
+    customer_name,
+
+    SUM(COALESCE(cost, 0)) AS cost,
+    SUM(COALESCE(conversions, 0)) AS conversions,
+
+    SAFE_DIVIDE(
+      SUM(COALESCE(cost, 0)),
+      SUM(COALESCE(conversions, 0))
+    ) AS cpl
+  FROM base
+  GROUP BY
+    month_starting,
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
+    customer_id,
+    customer_name
+
+)
+
+SELECT
+  month_starting,
+  SterlingX_Client_ID,
+  SterlingX_Client_Name,
+  customer_id,
+  customer_name,
+  cost,
+  conversions,
+  cpl
+FROM monthly
+ORDER BY
+  month_starting DESC,
+  customer_name
