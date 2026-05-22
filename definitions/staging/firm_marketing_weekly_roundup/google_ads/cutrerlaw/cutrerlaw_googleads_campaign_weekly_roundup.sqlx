@@ -10,6 +10,8 @@ WITH base AS (
 
   SELECT
     DATE(segment_date) AS segment_date,
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
 
     CAST(customer_id AS STRING) AS customer_id,
     customer_name,
@@ -32,6 +34,8 @@ weekly AS (
 
   SELECT
     DATE_TRUNC(segment_date, WEEK(SUNDAY)) AS week_starting,
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
 
     customer_id,
     customer_name,
@@ -62,6 +66,8 @@ weekly AS (
   FROM base
   GROUP BY
     week_starting,
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
     customer_id,
     customer_name,
     campaign_id,
@@ -72,8 +78,8 @@ weekly AS (
 
 SELECT
   week_starting,
-  '2e0efe10-f122-4a03-bfa5-7215e2dd7b71' AS SterlingX_Client_ID,
-  'Cutrer' AS SterlingX_Client_Name,
+  SterlingX_Client_ID,
+  SterlingX_Client_Name,
 
   customer_id,
   customer_name,
