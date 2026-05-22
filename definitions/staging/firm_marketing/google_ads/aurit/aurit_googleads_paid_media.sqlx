@@ -3,7 +3,7 @@ config {
     database: "sterlingx-insights",
     schema: "firm_marketing_googleads",
     name: "aurit_googleads_paid_media",
-    tags: ["google ads", "campaign", "marketing data", "aurit"],
+    tags: ["google ads", "paid media", "marketing data", "aurit"],
 }
 
 WITH search_term_base AS (

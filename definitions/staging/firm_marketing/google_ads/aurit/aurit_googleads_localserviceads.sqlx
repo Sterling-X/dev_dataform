@@ -3,7 +3,7 @@ config {
     database: "sterlingx-insights",
     schema: "firm_marketing_googleads",
     name: "aurit_googleads_localserviceads",
-    tags: ["google ads", "campaign", "marketing data", "aurit"],
+    tags: ["google ads", "local service ads", "marketing data", "aurit"],
 }
 
 WITH cte_local_service_ads AS

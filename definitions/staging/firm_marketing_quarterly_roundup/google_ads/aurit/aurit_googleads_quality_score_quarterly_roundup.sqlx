@@ -1,8 +1,8 @@
 config {
   type: "table",
   database: "sterlingx-insights",
-  schema: "firm_marketing_googleads_weekly_roundup",
-  name: "aurit_googleads_quality_score_weekly_roundup",
+  schema: "firm_marketing_googleads_quarterly_roundup",
+  name: "aurit_googleads_quality_score_quarterly_roundup",
   tags: ["google ads", "quality score", "marketing data", "weekly roundup", "aurit"],
 }
 
@@ -30,10 +30,10 @@ WITH base AS (
 
 ),
 
-weekly AS (
+quarterly AS (
 
   SELECT
-    DATE_TRUNC(segment_date, WEEK(SUNDAY)) AS week_starting,
+    DATE_TRUNC(segment_date, QUARTER) AS quarter_starting,
     SterlingX_Client_ID,
     SterlingX_Client_Name,
     customer_id,
@@ -58,7 +58,7 @@ weekly AS (
     )[OFFSET(0)] AS latest_record
   FROM base
   GROUP BY
-    week_starting,
+    quarter_starting,
     SterlingX_Client_ID,
     SterlingX_Client_Name,
     customer_id,
@@ -71,9 +71,10 @@ weekly AS (
 )
 
 SELECT
-  week_starting,
   SterlingX_Client_ID,
   SterlingX_Client_Name,
+  quarter_starting,
+  FORMAT_DATE('%Y-Q%Q', quarter_starting) AS quarter_label,
 
   customer_id,
   customer_name,
@@ -89,9 +90,9 @@ SELECT
   latest_record.quality_score_landing_page AS quality_score_landing_page,
   latest_record.quality_score_ad_relevance AS quality_score_ad_relevance,
   latest_record.quality_score_ctr AS quality_score_ctr
-FROM weekly
+FROM quarterly
 ORDER BY
-  week_starting DESC,
+  quarter_starting DESC,
   customer_name,
   campaign_name,
   keyword_text,

@@ -1,20 +1,9 @@
 config {
   type: "table",
   database: "sterlingx-insights",
-  schema: "firm_marketing_googleanalytics4_weekly_roundup",
-  name: "drakelaw_googleanalytics4_custom_users_weekly_roundup",
-  tags: ["google analytics 4", "ga4", "engaged sessions", "marketing data", "drakelaw"],
-/*
-  bigquery: {
-    partitionBy: "week_starting",
-    clusterBy: [
-      "SterlingX_Client_ID",
-      "property_id",
-      "eventName",
-      "first_user_primary_channel_group"
-    ]
-  }
-*/
+  schema: "firm_marketing_googleanalytics4_monthly_roundup",
+  name: "drakelaw_googleanalytics4_custom_users_monthly_roundup",
+  tags: ["google analytics 4", "ga4", "custom users", "marketing data", "drakelaw"],
 }
 
 WITH source AS (
@@ -52,20 +41,20 @@ cleaned AS (
 
 ),
 
-weekly AS (
+monthly AS (
 
   SELECT
     SterlingX_Client_ID,
     SterlingX_Client_Name,
     property_id,
-    DATE_TRUNC(event_date, WEEK(SUNDAY)) AS week_starting,
+    DATE_TRUNC(event_date, MONTH) AS month_starting,
     SUM(event_count) AS total_events
   FROM cleaned
   GROUP BY
     SterlingX_Client_ID,
     SterlingX_Client_Name,
     property_id,
-    week_starting
+    month_starting
 
 )
 
@@ -73,12 +62,12 @@ SELECT
   SterlingX_Client_ID,
   SterlingX_Client_Name,
   property_id,
-  week_starting,
-  FORMAT_DATE('%Y%m%d', week_starting) AS week_starting_yyyymmdd,
+  month_starting,
+  FORMAT_DATE('%Y%m%d', month_starting) AS month_starting_yyyymmdd,
   total_events
-FROM weekly
+FROM monthly
 ORDER BY
   SterlingX_Client_Name,
   property_id,
-  week_starting DESC
+  month_starting DESC
   

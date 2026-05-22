@@ -1,9 +1,9 @@
 config {
     type: "table",
     database: "sterlingx-insights",
-    schema: "firm_marketing_googleads_weekly_roundup",
-    name: "aurit_googleads_campaign_budget_weekly_roundup",
-    tags: ["google ads", "campaign budget", "marketing data", "aurit", "weekly roundup"],
+    schema: "firm_marketing_googleads_monthly_roundup",
+    name: "aurit_googleads_campaign_budget_monthly_roundup",
+    tags: ["google ads", "campaign budget", "marketing data", "aurit", "monthly roundup"],
 }
 
 WITH daily AS (
@@ -11,7 +11,7 @@ WITH daily AS (
     SterlingX_Client_ID,
     SterlingX_Client_Name,
     segment_date,
-    DATE_TRUNC(segment_date, WEEK(SUNDAY)) AS week_starting,
+    DATE_TRUNC(segment_date, MONTH) AS month_starting,
     customer_id,
     campaign_id,
     campaign_name,
@@ -31,7 +31,7 @@ WITH daily AS (
 )
 
 SELECT
-  week_starting,
+  month_starting,
   SterlingX_Client_ID,
   SterlingX_Client_Name,
   customer_id,
@@ -42,21 +42,40 @@ SELECT
   advertising_channel_sub_type,
   campaign_budget_id,
 
-  ARRAY_AGG(budget_amount_micros IGNORE NULLS ORDER BY segment_date DESC LIMIT 1)[SAFE_OFFSET(0)] AS budget_amount_micros,
+  ARRAY_AGG(
+    budget_amount_micros IGNORE NULLS
+    ORDER BY segment_date DESC
+    LIMIT 1
+  )[SAFE_OFFSET(0)] AS budget_amount_micros,
+
   currency_code,
 
   SUM(actual_spend_micros) AS actual_spend_micros,
-  SUM(actual_spend) AS actual_spend,
+  SAFE_DIVIDE(SUM(actual_spend_micros), 1000000) AS actual_spend,
   SUM(leads) AS leads,
-  SAFE_DIVIDE(SUM(actual_spend), NULLIF(SUM(leads), 0)) AS cost_per_lead,
+
+  SAFE_DIVIDE(
+    SAFE_DIVIDE(SUM(actual_spend_micros), 1000000),
+    NULLIF(SUM(leads), 0)
+  ) AS cost_per_lead,
+
   SUM(impressions) AS impressions,
   SUM(clicks) AS clicks,
-  SAFE_DIVIDE(SUM(clicks), NULLIF(SUM(impressions), 0)) AS ctr,
-  SAFE_DIVIDE(SUM(actual_spend), NULLIF(SUM(clicks), 0)) AS average_cpc,
+
+  SAFE_DIVIDE(
+    SUM(clicks),
+    NULLIF(SUM(impressions), 0)
+  ) AS ctr,
+
+  SAFE_DIVIDE(
+    SAFE_DIVIDE(SUM(actual_spend_micros), 1000000),
+    NULLIF(SUM(clicks), 0)
+  ) AS average_cpc,
+
   SUM(conversions_value) AS conversions_value
 FROM daily
 GROUP BY
-  week_starting,
+  month_starting,
   SterlingX_Client_ID,
   SterlingX_Client_Name,
   customer_id,
@@ -67,4 +86,6 @@ GROUP BY
   advertising_channel_sub_type,
   campaign_budget_id,
   currency_code
-ORDER BY week_starting DESC
+ORDER BY
+  month_starting DESC
+  

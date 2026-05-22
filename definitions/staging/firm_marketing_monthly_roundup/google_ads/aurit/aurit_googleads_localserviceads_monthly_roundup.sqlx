@@ -1,9 +1,9 @@
 config {
   type: "table",
   database: "sterlingx-insights",
-  schema: "firm_marketing_googleads_weekly_roundup",
-  name: "aurit_googleads_localserviceads_weekly_roundup",
-  tags: ["google ads", "local service ads", "marketing data", "weekly roundup", "aurit"],
+  schema: "firm_marketing_googleads_monthly_roundup",
+  name: "aurit_googleads_localserviceads_monthly_roundup",
+  tags: ["google ads", "local service ads", "marketing data", "monthly roundup", "aurit"],
 }
 
 WITH base AS (
@@ -21,10 +21,10 @@ WITH base AS (
 
 ),
 
-weekly AS (
+monthly AS (
 
   SELECT
-    DATE_TRUNC(date, WEEK(SUNDAY)) AS week_starting,
+    DATE_TRUNC(date, MONTH) AS month_starting,
     SterlingX_Client_ID,
     SterlingX_Client_Name,
     customer_id,
@@ -39,7 +39,7 @@ weekly AS (
     ) AS cpl
   FROM base
   GROUP BY
-    week_starting,
+    month_starting,
     SterlingX_Client_ID,
     SterlingX_Client_Name,
     customer_id,
@@ -48,7 +48,7 @@ weekly AS (
 )
 
 SELECT
-  week_starting,
+  month_starting,
   SterlingX_Client_ID,
   SterlingX_Client_Name,
   customer_id,
@@ -56,8 +56,7 @@ SELECT
   cost,
   conversions,
   cpl
-FROM weekly
+FROM monthly
 ORDER BY
-  week_starting DESC,
+  month_starting DESC,
   customer_name
-  

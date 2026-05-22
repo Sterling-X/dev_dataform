@@ -1,9 +1,9 @@
 config {
   type: "table",
   database: "sterlingx-insights",
-  schema: "firm_marketing_googleads_weekly_roundup",
-  name: "aurit_googleads_paid_media_weekly_roundup",
-  tags: ["google ads", "paid media", "marketing data", "weekly roundup", "aurit"],
+  schema: "firm_marketing_googleads_monthly_roundup",
+  name: "aurit_googleads_paid_media_monthly_roundup",
+  tags: ["google ads", "paid media", "marketing data", "monthly roundup", "aurit"],
 }
 
 WITH base AS (
@@ -36,10 +36,10 @@ WITH base AS (
 
 ),
 
-weekly AS (
+monthly AS (
 
   SELECT
-    DATE_TRUNC(date, WEEK(SUNDAY)) AS week_starting,
+    DATE_TRUNC(date, MONTH) AS month_starting,
     SterlingX_Client_ID,
     SterlingX_Client_Name,
     customer_id,
@@ -86,7 +86,7 @@ weekly AS (
     SUM(COALESCE(cost_micros, 0)) AS cost_micros
   FROM base
   GROUP BY
-    week_starting,
+    month_starting,
     SterlingX_Client_ID,
     SterlingX_Client_Name,
     customer_id,
@@ -105,7 +105,7 @@ weekly AS (
 )
 
 SELECT
-  week_starting,
+  month_starting,
   SterlingX_Client_ID,
   SterlingX_Client_Name,
 
@@ -133,12 +133,13 @@ SELECT
   cpc,
   cost_micros,
   type_grain
-FROM weekly
+FROM monthly
 ORDER BY
-  week_starting DESC,
+  month_starting DESC,
   customer_id,
   campaign,
   ad_group,
   device,
   ad_network_type,
   type_grain
+  
