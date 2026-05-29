@@ -1,15 +1,15 @@
 config {
     type: "table",
     database: "sterlingx-insights",
-    schema: "firm_marketing_googlesearchconsole_weekly_roundup",
-    name: "kalishjaggars_googlesearchconsole_search_performance_weekly_roundup",
-    tags: ["google search console", "search performance", "kalishjaggars", "weekly roundup"],
+    schema: "firm_marketing_googlesearchconsole_monthly_roundup",
+    name: "sterlinglawyers_googlesearchconsole_search_performance_monthly_roundup",
+    tags: ["google search console", "search performance", "sterlinglawyers", "monthly roundup"],
 }
 
 WITH daily AS (
   SELECT
     data_date,
-    DATE_TRUNC(data_date, WEEK(SUNDAY)) AS week_starting,
+    DATE_TRUNC(data_date, MONTH) AS month_starting,
 
     SterlingX_Client_ID,
     SterlingX_Client_Name,
@@ -20,14 +20,15 @@ WITH daily AS (
     clicks,
     impressions,
     position
-  FROM `sterlingx-insights.firm_marketing_googlesearchconsole.kalishjaggars_googlesearchconsole_search_performance`
+  FROM `sterlingx-insights.firm_marketing_googlesearchconsole.sterlinglawyers_googlesearchconsole_search_performance`
 )
 
 SELECT
   SterlingX_Client_ID,
   SterlingX_Client_Name,
   
-  week_starting,
+  month_starting,
+  FORMAT_DATE('%Y%m%d', month_starting) AS month_starting_yyyymmdd,
 
   site_url,
   query,
@@ -41,9 +42,9 @@ SELECT
   ) AS position   -- SUM(position * impressions) / SUM(impressions)
 FROM daily
 GROUP BY
-  week_starting,
+  month_starting,
   SterlingX_Client_ID,
   SterlingX_Client_Name,
   site_url,
   query
-ORDER BY week_starting DESC
+ORDER BY month_starting DESC

@@ -15,36 +15,26 @@ WITH daily AS (
     SterlingX_Client_Name,
 
     site_url,
-    page,
     query,
-    country,
-    device,
-    search_type,
 
     clicks,
     impressions,
-    ctr,
     position
   FROM `sterlingx-insights.firm_marketing_googlesearchconsole.kalishjaggars_googlesearchconsole_search_performance`
 )
 
 SELECT
-  month_starting,
-  FORMAT_DATE('%Y%m%d', month_starting) AS month_starting_yyyymmdd,
   SterlingX_Client_ID,
   SterlingX_Client_Name,
+  
+  month_starting,
+  FORMAT_DATE('%Y%m%d', month_starting) AS month_starting_yyyymmdd,
 
   site_url,
-  page,
   query,
-  country,
-  device,
-  search_type,
 
   SUM(clicks) AS clicks,
   SUM(impressions) AS impressions,
-
-  SAFE_DIVIDE(SUM(clicks), NULLIF(SUM(impressions), 0)) AS ctr,
 
   SAFE_DIVIDE(
     SUM(position * impressions),
@@ -56,9 +46,5 @@ GROUP BY
   SterlingX_Client_ID,
   SterlingX_Client_Name,
   site_url,
-  page,
-  query,
-  country,
-  device,
-  search_type
+  query
 ORDER BY month_starting DESC

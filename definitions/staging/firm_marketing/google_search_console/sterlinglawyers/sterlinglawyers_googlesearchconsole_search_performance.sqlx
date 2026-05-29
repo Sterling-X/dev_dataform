@@ -1,0 +1,23 @@
+config {
+    type: "table",
+    database: "sterlingx-insights",
+    schema: "firm_marketing_googlesearchconsole",
+    name: "sterlinglawyers_googlesearchconsole_search_performance",
+    tags: ["google search console", "search performance", "sterlinglawyers"],
+}
+
+SELECT
+  '99584197-537f-4cf5-80b4-29c99205f07a' AS SterlingX_Client_ID,
+  'Sterling Lawyers' AS SterlingX_Client_Name,
+
+  data_date,
+  site_url,
+  query,
+
+  clicks,
+  impressions,
+  position,
+FROM `rc-datamart-adminreport.google_search_console_sterlinglawyers.fct_gsc_query_metrics`
+ORDER BY 
+data_date DESC,
+query ASC

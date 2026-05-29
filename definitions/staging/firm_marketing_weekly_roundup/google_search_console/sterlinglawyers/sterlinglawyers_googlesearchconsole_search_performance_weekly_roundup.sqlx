@@ -2,8 +2,8 @@ config {
     type: "table",
     database: "sterlingx-insights",
     schema: "firm_marketing_googlesearchconsole_weekly_roundup",
-    name: "kalishjaggars_googlesearchconsole_search_performance_weekly_roundup",
-    tags: ["google search console", "search performance", "kalishjaggars", "weekly roundup"],
+    name: "sterlinglawyers_googlesearchconsole_search_performance_weekly_roundup",
+    tags: ["google search console", "search performance", "sterlinglawyers", "weekly roundup"],
 }
 
 WITH daily AS (
@@ -20,7 +20,7 @@ WITH daily AS (
     clicks,
     impressions,
     position
-  FROM `sterlingx-insights.firm_marketing_googlesearchconsole.kalishjaggars_googlesearchconsole_search_performance`
+  FROM `sterlingx-insights.firm_marketing_googlesearchconsole.sterlinglawyers_googlesearchconsole_search_performance`
 )
 
 SELECT
