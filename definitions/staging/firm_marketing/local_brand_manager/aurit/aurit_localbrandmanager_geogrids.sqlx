@@ -1,0 +1,91 @@
+config {
+  type: "table",
+  database: "sterlingx-insights",
+  schema: "firm_marketing_localbrandmanager",
+  name: "aurit_localbrandmanager_geogrids",
+  tags: ["local brand manager", "geogrids", "marketing data", "aurit"]
+}
+
+/*
+ STATUS: WIP
+*/
+
+WITH source AS (
+  SELECT
+    *
+  FROM `rc-datamart-adminreport.local_brand_manager.raw_lbm_geogrids`
+),
+
+flattened AS (
+  SELECT
+    -- toplevel ingestion/source metadata
+    cast(record_key AS STRING) AS record_key,
+    cast(source_endpoint AS STRING) AS source_endpoint,
+    cast(remote_id AS STRING) AS remote_id,
+    cast(business_id AS STRING) AS business_id,
+    safe_cast(created_at AS TIMESTAMP) AS created_at,
+    safe_cast(updated_at AS TIMESTAMP) AS updated_at,
+    safe_cast(deleted_at AS TIMESTAMP) AS deleted_at,
+    safe_cast(ingested_at AS TIMESTAMP) AS ingested_at,
+    safe_cast(ingestion_date AS DATE) AS ingestion_date,
+    cast(run_id AS STRING) AS run_id,
+    cast(raw_hash AS STRING) AS raw_hash,
+
+    -- fields extracted from rawjson
+    cast(json_value(raw_json, '$.id') AS STRING) AS geogrid_id,
+    safe_cast(json_value(raw_json, '$.agr') AS NUMERIC) AS agr,
+    safe_cast(json_value(raw_json, '$.atgr') AS NUMERIC) AS atgr,
+    cast(json_value(raw_json, '$.business_address') AS STRING) AS business_address,
+    cast(json_value(raw_json, '$.business_country') AS STRING) AS business_country,
+    cast(json_value(raw_json, '$.business_name') AS STRING) AS business_name,
+    cast(json_value(raw_json, '$.business_place_id') AS STRING) AS business_place_id,
+    cast(json_value(raw_json, '$.business_store_code') AS STRING) AS business_store_code,
+    safe_cast(json_value(raw_json, '$.created_at') AS TIMESTAMP) AS geogrid_created_at,
+    cast(json_value(raw_json, '$.created_at_formatted') AS STRING) AS geogrid_created_at_formatted,
+    safe_cast(json_value(raw_json, '$.finished_at') AS TIMESTAMP) AS finished_at,
+    cast(json_value(raw_json, '$.gbp_id') AS STRING) AS gbp_id,
+    cast(json_value(raw_json, '$.geogrid_config_id') AS STRING) AS geogrid_config_id,
+    safe_cast(json_value(raw_json, '$.grid_center_lat') AS FLOAT64) AS grid_center_lat,
+    safe_cast(json_value(raw_json, '$.grid_center_lng') AS FLOAT64) AS grid_center_lng,
+    cast(json_value(raw_json, '$.grid_distance_measure') AS STRING) AS grid_distance_measure,
+    safe_cast(json_value(raw_json, '$.grid_point_distance') AS NUMERIC) AS grid_point_distance,
+    cast(json_value(raw_json, '$.grid_ranks_str') AS STRING) AS grid_ranks_str,
+    safe_cast(json_value(raw_json, '$.grid_size') AS INT64) AS grid_size,
+    cast(json_value(raw_json, '$.headless_image_url') AS STRING) AS headless_image_url,
+    json_query(raw_json, '$.hightlighted_positions') AS hightlighted_positions_json,
+    cast(json_value(raw_json, '$.image_url') AS STRING) AS image_url,
+    safe_cast(json_value(raw_json, '$.local') AS BOOL) AS is_local,
+    cast(json_value(raw_json, '$.location_id') AS STRING) AS location_id,
+    cast(json_value(raw_json, '$.public_url') AS STRING) AS public_url,
+    json_query(raw_json, '$.ranks') AS ranks_json,
+    cast(json_value(raw_json, '$.search_term') AS STRING) AS search_term,
+    safe_cast(json_value(raw_json, '$.solv') AS NUMERIC) AS solv,
+    cast(json_value(raw_json, '$.state') AS STRING) AS state,
+
+    -- keep the original JSON for traceability
+    raw_json
+  FROM source
+)
+
+SELECT 
+   source_endpoint
+   , created_at
+  --  , updated_at
+   , geogrid_id
+   , agr
+   , atgr
+   , solv
+   , search_term
+   , business_address
+   , business_country
+   , business_name
+   , business_store_code
+   , grid_center_lat
+   , grid_center_lng
+   , grid_distance_measure
+   , grid_size
+   , geogrid_created_at
+   , geogrid_created_at_formatted
+FROM flattened
+WHERE LOWER(business_name) LIKE '%aurit%'
+ORDER BY created_at DESC
