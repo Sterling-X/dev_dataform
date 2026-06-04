@@ -1,0 +1,55 @@
+config {
+    type: "table",
+    database: "sterlingx-insights",
+    schema: "firm_marketing_googlesearchconsole_quarterly_roundup",
+    name: "meyerpinklaw_googlesearchconsole_search_performance_quarterly_roundup",
+    tags: ["google search console", "search performance", "meyerpinklaw", "quarterly roundup"],
+}
+
+WITH daily AS (
+  SELECT
+    data_date,
+    DATE_TRUNC(data_date, QUARTER) AS quarter_starting,
+
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
+
+    site_url,
+    query,
+
+    clicks,
+    impressions,
+    position
+  FROM `sterlingx-insights.firm_marketing_googlesearchconsole.meyerpinklaw_googlesearchconsole_search_performance`
+)
+
+SELECT
+  SterlingX_Client_ID,
+  SterlingX_Client_Name,
+  
+  quarter_starting,
+  FORMAT_DATE('%Y%m%d', quarter_starting) AS quarter_starting_yyyymmdd,
+  CONCAT(
+    CAST(EXTRACT(YEAR FROM quarter_starting) AS STRING),
+    '-Q',
+    CAST(EXTRACT(QUARTER FROM quarter_starting) AS STRING)
+  ) AS quarter_label,
+
+  site_url,
+  query,
+
+  SUM(clicks) AS clicks,
+  SUM(impressions) AS impressions,
+
+  SAFE_DIVIDE(
+    SUM(position * impressions),
+    NULLIF(SUM(impressions), 0)
+  ) AS position   -- SUM(position * impressions) / SUM(impressions)
+FROM daily
+GROUP BY
+  quarter_starting,
+  SterlingX_Client_ID,
+  SterlingX_Client_Name,
+  site_url,
+  query
+ORDER BY quarter_starting DESC
