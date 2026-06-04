@@ -1,0 +1,23 @@
+config {
+    type: "table",
+    database: "sterlingx-insights",
+    schema: "firm_marketing_googlesearchconsole",
+    name: "ramagelaw_googlesearchconsole_search_performance",
+    tags: ["google search console", "search performance", "ramagelaw"],
+}
+
+SELECT
+   'f3e5ceb5-3957-4541-a076-f51d3dd4cec5' AS SterlingX_Client_ID,
+   'The Ramage Law Group' AS SterlingX_Client_Name,
+
+  data_date,
+  site_url,
+  query,
+
+  clicks,
+  impressions,
+  position,
+FROM `rc-datamart-adminreport.google_search_console_ramagelaw.fct_gsc_query_metrics`
+ORDER BY 
+data_date DESC,
+query ASC

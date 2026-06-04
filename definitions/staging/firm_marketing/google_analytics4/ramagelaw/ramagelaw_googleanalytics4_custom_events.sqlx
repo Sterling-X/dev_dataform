@@ -1,0 +1,24 @@
+config {
+    type: "table",
+    database: "sterlingx-insights",
+    schema: "firm_marketing_googleanalytics4",
+    name: "ramagelaw_googleanalytics4_custom_events",
+    tags: ["google analytics 4", "ga4", "custom events", "marketing data", "ramagelaw"],
+}
+
+SELECT
+   'f3e5ceb5-3957-4541-a076-f51d3dd4cec5' AS SterlingX_Client_ID,
+   'The Ramage Law Group' AS SterlingX_Client_Name,
+    fa.property_id,
+    fa.event_date,
+    -- dimensions
+    JSON_VALUE(fa.dimension_values_json, '$.date') AS date,
+    JSON_VALUE(fa.dimension_values_json, '$.eventName') AS event_name,
+    JSON_VALUE(fa.dimension_values_json, '$.firstUserPrimaryChannelGroup') AS first_user_primary_channel_group,
+    -- metrics
+    SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.eventCount') AS INT64) AS event_count
+FROM `rc-datamart-adminreport.google_analytics4_ramagelaw.fact_ga4_daily_analysis` fa
+LEFT JOIN `rc-datamart-adminreport.google_analytics4_ramagelaw.dim_ga4_report` dr
+    ON fa.report_id = dr.report_id
+WHERE dr.report_category = 'events'
+    AND dr.report_name = 'custom_events_daily'

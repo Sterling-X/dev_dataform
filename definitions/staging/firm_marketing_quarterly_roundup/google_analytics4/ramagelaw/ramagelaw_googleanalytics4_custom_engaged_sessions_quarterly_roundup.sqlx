@@ -1,0 +1,120 @@
+config {
+  type: "table",
+  database: "sterlingx-insights",
+  schema: "firm_marketing_googleanalytics4_quarterly_roundup",
+  name: "ramagelaw_googleanalytics4_custom_engaged_sessions_quarterly_roundup",
+  tags: ["google analytics 4", "ga4", "engaged sessions", "marketing data", "ramagelaw"],
+}
+
+WITH source AS (
+
+  SELECT
+    CAST(SterlingX_Client_ID AS STRING) AS SterlingX_Client_ID,
+    CAST(SterlingX_Client_Name AS STRING) AS SterlingX_Client_Name,
+    CAST(property_id AS STRING) AS property_id,
+    COALESCE(
+      SAFE.PARSE_DATE('%Y-%m-%d', CAST(event_date AS STRING)),
+      SAFE.PARSE_DATE('%Y%m%d', CAST(event_date AS STRING)),
+      SAFE.PARSE_DATE('%Y%m%d', CAST(`date` AS STRING))
+    ) AS event_date,
+    CAST(eventName AS STRING) AS eventName,
+    COALESCE(
+      NULLIF(CAST(first_user_primary_channel_group AS STRING), ''),
+      '(not set)'
+    ) AS first_user_primary_channel_group,
+    COALESCE(
+      NULLIF(CAST(first_user_default_channel_group AS STRING), ''),
+      '(not set)'
+    ) AS first_user_default_channel_group,
+    COALESCE(
+      NULLIF(CAST(session_google_ads_campaignid AS STRING), ''),
+      '(not set)'
+    ) AS session_google_ads_campaignid,
+    COALESCE(
+      NULLIF(CAST(session_google_ads_campaign_name AS STRING), ''),
+      '(not set)'
+    ) AS session_google_ads_campaign_name,
+    SAFE_CAST(engaged_sessions AS INT64) AS engaged_sessions,
+    SAFE_CAST(sessions AS INT64) AS sessions,
+    SAFE_CAST(new_users AS INT64) AS new_users,
+    SAFE_CAST(event_count AS INT64) AS event_count
+  FROM `sterlingx-insights.firm_marketing_googleanalytics4.ramagelaw_googleanalytics4_custom_engaged_sessions`
+),
+
+cleaned AS (
+
+  SELECT
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
+    property_id,
+    event_date,
+    eventName,
+    first_user_primary_channel_group,
+    first_user_default_channel_group,
+    session_google_ads_campaignid,
+    session_google_ads_campaign_name,
+    COALESCE(engaged_sessions, 0) AS engaged_sessions,
+    COALESCE(sessions, 0) AS sessions,
+    COALESCE(new_users, 0) AS new_users,
+    COALESCE(event_count, 0) AS event_count
+  FROM source
+  WHERE event_date IS NOT NULL
+    AND SterlingX_Client_ID IS NOT NULL
+    AND SterlingX_Client_Name IS NOT NULL
+    AND property_id IS NOT NULL
+    AND eventName IS NOT NULL
+),
+
+quarterly AS (
+
+  SELECT
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
+    property_id,
+    DATE_TRUNC(event_date, QUARTER) AS quarter_starting,
+    eventName,
+    first_user_primary_channel_group,
+    first_user_default_channel_group,
+    session_google_ads_campaignid,
+    session_google_ads_campaign_name,
+    SUM(engaged_sessions) AS engaged_sessions,
+    SUM(sessions) AS sessions,
+    SUM(new_users) AS new_users,
+    SUM(event_count) AS event_count
+  FROM cleaned
+  GROUP BY
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
+    property_id,
+    quarter_starting,
+    eventName,
+    first_user_primary_channel_group,
+    first_user_default_channel_group,
+    session_google_ads_campaignid,
+    session_google_ads_campaign_name
+)
+
+SELECT
+  SterlingX_Client_ID,
+  SterlingX_Client_Name,
+  property_id,
+  quarter_starting,
+  FORMAT_DATE('%Y%m%d', quarter_starting) AS quarter_starting_yyyymmdd,
+  FORMAT_DATE('%Y-Q%Q', quarter_starting) AS quarter_label,
+  eventName,
+  first_user_primary_channel_group,
+  first_user_default_channel_group,
+  session_google_ads_campaignid,
+  session_google_ads_campaign_name,
+  engaged_sessions,
+  sessions,
+  new_users,
+  event_count
+FROM quarterly
+ORDER BY
+  SterlingX_Client_Name,
+  property_id,
+  quarter_starting DESC,
+  eventName,
+  first_user_primary_channel_group,
+  session_google_ads_campaign_name

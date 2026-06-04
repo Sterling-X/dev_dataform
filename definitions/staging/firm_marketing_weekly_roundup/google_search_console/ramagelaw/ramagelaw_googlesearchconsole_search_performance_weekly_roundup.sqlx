@@ -1,0 +1,49 @@
+config {
+    type: "table",
+    database: "sterlingx-insights",
+    schema: "firm_marketing_googlesearchconsole_weekly_roundup",
+    name: "ramagelaw_googlesearchconsole_search_performance_weekly_roundup",
+    tags: ["google search console", "search performance", "ramagelaw", "weekly roundup"],
+}
+
+WITH daily AS (
+  SELECT
+    data_date,
+    DATE_TRUNC(data_date, WEEK(SUNDAY)) AS week_starting,
+
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
+
+    site_url,
+    query,
+
+    clicks,
+    impressions,
+    position
+  FROM `sterlingx-insights.firm_marketing_googlesearchconsole.ramagelaw_googlesearchconsole_search_performance`
+)
+
+SELECT
+  SterlingX_Client_ID,
+  SterlingX_Client_Name,
+  
+  week_starting,
+
+  site_url,
+  query,
+
+  SUM(clicks) AS clicks,
+  SUM(impressions) AS impressions,
+
+  SAFE_DIVIDE(
+    SUM(position * impressions),
+    NULLIF(SUM(impressions), 0)
+  ) AS position   -- SUM(position * impressions) / SUM(impressions)
+FROM daily
+GROUP BY
+  week_starting,
+  SterlingX_Client_ID,
+  SterlingX_Client_Name,
+  site_url,
+  query
+ORDER BY week_starting DESC
