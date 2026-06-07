@@ -2,8 +2,8 @@ config {
   type: "table",
   database: "sterlingx-insights",
   schema: "firm_marketing_localbrandmanager",
-  name: "aurit_localbrandmanager_geogrids",
-  tags: ["local brand manager", "geogrids", "marketing data", "aurit"]
+  name: "lisavance_localbrandmanager_geogrids",
+  tags: ["local brand manager", "geogrids", "marketing data", "lisavance"]
 }
 
 /*
@@ -66,8 +66,8 @@ flattened AS (
 )
 
 SELECT 
-  '916fb7c7-13bc-4725-8bca-e11e0749da31' AS SterlingX_Client_ID
-   , 'Aurit mediation' AS SterlingX_Client_Name
+  'NA' AS SterlingX_Client_ID
+   , 'Lisa Vance' AS SterlingX_Client_Name
    , geogrid_id
    , agr
    , atgr
@@ -87,5 +87,5 @@ SELECT
    , created_at
    , updated_at
 FROM flattened
-WHERE LOWER(business_name) LIKE '%aurit%'
+WHERE LOWER(business_name) LIKE '%lisa a. vance%'
 ORDER BY created_at DESC
