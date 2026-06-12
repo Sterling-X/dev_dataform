@@ -1,0 +1,62 @@
+config {
+    type: "table",
+    database: "sterlingx-insights",
+    schema: "firm_marketing_googleanalytics4_quarterly_roundup",
+    name: "fanashfamily_googleanalytics4_custom_newusers_engaged_quarterly_roundup",
+    tags: ["google analytics 4", "ga4", "newusers engaged sessions", "marketing data", "fanashfamily"],
+}
+
+WITH base AS (
+    SELECT
+        SterlingX_Client_ID,
+        SterlingX_Client_Name,
+        property_id,
+        PARSE_DATE('%Y%m%d', CAST(date AS STRING)) AS report_date,
+        first_user_default_channel_group,
+        session_default_channel_group,
+        engaged_sessions,
+        new_users,
+        sessions
+    FROM `sterlingx-insights.firm_marketing_googleanalytics4.fanashfamily_googleanalytics4_custom_newusers_engaged_sessions`
+),
+
+quarterly AS (
+    SELECT
+        SterlingX_Client_ID,
+        SterlingX_Client_Name,
+        property_id,
+
+        DATE_TRUNC(report_date, QUARTER) AS quarter_starting,
+        DATE_SUB(DATE_ADD(DATE_TRUNC(report_date, QUARTER), INTERVAL 1 QUARTER), INTERVAL 1 DAY) AS quarter_ending,
+
+        first_user_default_channel_group,
+        session_default_channel_group,
+
+        SUM(engaged_sessions) AS engaged_sessions,
+        SUM(new_users) AS new_users,
+        SUM(sessions) AS sessions
+    FROM base
+    GROUP BY 1, 2, 3, 4, 5, 6, 7
+)
+
+SELECT
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
+    property_id,
+
+    quarter_starting,
+    quarter_ending,
+
+    CONCAT(
+        CAST(EXTRACT(YEAR FROM quarter_starting) AS STRING),
+        '-Q',
+        CAST(EXTRACT(QUARTER FROM quarter_starting) AS STRING)
+    ) AS quarter_label,
+
+    first_user_default_channel_group,
+    session_default_channel_group,
+
+    engaged_sessions,
+    new_users,
+    sessions
+FROM quarterly

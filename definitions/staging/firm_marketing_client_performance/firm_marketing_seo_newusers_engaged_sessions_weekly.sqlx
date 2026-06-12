@@ -1,0 +1,218 @@
+config {
+    type: "table",
+    database: "sterlingx-insights",
+    schema: "firm_marketing_client_performance",
+    name: "firm_marketing_seo_newusers_engaged_sessions_weekly",
+    tags: ["google analytics 4", "ga4", "seo", "new users", "engaged sessions", "weekly", "client performance data"],
+}
+
+WITH am_roster AS (
+    SELECT *
+    FROM UNNEST([
+        STRUCT('Fanash Family Law' AS client, 'Garrett' AS AM),
+        STRUCT('Johnson Law Group' AS client, 'Garrett' AS AM),
+
+
+        STRUCT('Gjesdahl Law' AS client, 'Dani' AS AM),
+        STRUCT('Kalish & Jaggars' AS client, 'Dani' AS AM),
+        STRUCT('MeyerPink' AS client, 'Dani' AS AM),
+        STRUCT('Ramage Law Firm' AS client, 'Dani' AS AM),
+        STRUCT('Scott M Brown Law' AS client, 'Dani' AS AM),
+        STRUCT('Sterling Lawyers' AS client, 'Dani' AS AM) 
+
+    ])
+),
+
+channel_scope AS (
+    SELECT
+        CAST(NULL AS STRING) AS channel_group
+        -- Use NULL for all session default channel groups.
+        -- Use 'Organic Search' for SEO-only reporting.
+),
+
+base AS (
+    SELECT
+        SterlingX_Client_ID,
+        SterlingX_Client_Name,
+        'Fanash Family Law' AS client,
+        week_start_date,
+        week_end_date,
+        session_default_channel_group,
+        new_users,
+        engaged_sessions
+    FROM `sterlingx-insights.firm_marketing_googleanalytics4_weekly_roundup.fanashfamily_googleanalytics4_custom_newusers_engaged_sessions_weekly_roundup`
+
+    UNION ALL
+
+    SELECT
+        SterlingX_Client_ID,
+        SterlingX_Client_Name,
+        'Gjesdahl Law' AS client,
+        week_start_date,
+        week_end_date,
+        session_default_channel_group,
+        new_users,
+        engaged_sessions
+    FROM `sterlingx-insights.firm_marketing_googleanalytics4_weekly_roundup.gjesdahllaw_googleanalytics4_custom_newusers_engaged_sessions_weekly_roundup`
+    
+    UNION ALL
+
+    SELECT
+        SterlingX_Client_ID,
+        SterlingX_Client_Name,
+        'Johnson Law Group' AS client,
+        week_start_date,
+        week_end_date,
+        session_default_channel_group,
+        new_users,
+        engaged_sessions
+    FROM `sterlingx-insights.firm_marketing_googleanalytics4_weekly_roundup.johnsonlaw_googleanalytics4_custom_newusers_engaged_sessions_weekly_roundup`
+
+    UNION ALL
+
+    SELECT
+        SterlingX_Client_ID,
+        SterlingX_Client_Name,
+        'Kalish & Jaggars' AS client,
+        week_start_date,
+        week_end_date,
+        session_default_channel_group,
+        new_users,
+        engaged_sessions
+    FROM `sterlingx-insights.firm_marketing_googleanalytics4_weekly_roundup.kalishjaggars_googleanalytics4_custom_newusers_engaged_sessions_weekly_roundup`
+
+    UNION ALL
+
+    SELECT
+        SterlingX_Client_ID,
+        SterlingX_Client_Name,
+        'MeyerPink' AS client,
+        week_start_date,
+        week_end_date,
+        session_default_channel_group,
+        new_users,
+        engaged_sessions
+    FROM `sterlingx-insights.firm_marketing_googleanalytics4_weekly_roundup.meyerpinklaw_googleanalytics4_custom_newusers_engaged_sessions_weekly_roundup`
+
+    UNION ALL
+
+    SELECT
+        SterlingX_Client_ID,
+        SterlingX_Client_Name,
+        'Ramage Law Firm' AS client,
+        week_start_date,
+        week_end_date,
+        session_default_channel_group,
+        new_users,
+        engaged_sessions
+    FROM `sterlingx-insights.firm_marketing_googleanalytics4_weekly_roundup.ramagelaw_googleanalytics4_custom_newusers_engaged_sessions_weekly_roundup`
+
+    UNION ALL
+
+    SELECT
+        SterlingX_Client_ID,
+        SterlingX_Client_Name,
+        'Scott M Brown Law' AS client,
+        week_start_date,
+        week_end_date,
+        session_default_channel_group,
+        new_users,
+        engaged_sessions
+    FROM `sterlingx-insights.firm_marketing_googleanalytics4_weekly_roundup.smb_googleanalytics4_custom_newusers_engaged_sessions_weekly_roundup`
+
+    UNION ALL
+
+    SELECT
+        SterlingX_Client_ID,
+        SterlingX_Client_Name,
+        'Sterling Lawyers' AS client,
+        week_start_date,
+        week_end_date,
+        session_default_channel_group,
+        new_users,
+        engaged_sessions
+    FROM `sterlingx-insights.firm_marketing_googleanalytics4_weekly_roundup.sterlinglawyers_googleanalytics4_custom_newusers_engaged_sessions_weekly_roundup`
+
+),
+
+reporting_periods AS (
+    SELECT
+        SterlingX_Client_ID,
+        SterlingX_Client_Name,
+        client,
+        MAX(week_start_date) AS current_week_start,
+        DATE_SUB(MAX(week_start_date), INTERVAL 1 WEEK) AS prior_week_start
+    FROM base
+    GROUP BY 1, 2, 3
+),
+
+weekly_metrics AS (
+    SELECT
+        base.SterlingX_Client_ID,
+        base.SterlingX_Client_Name,
+        base.client,
+        base.session_default_channel_group AS channel_group,
+
+        SUM(
+            CASE
+                WHEN base.week_start_date = reporting_periods.prior_week_start
+                THEN COALESCE(base.new_users, 0)
+                ELSE 0
+            END
+        ) AS new_users_prior_week,
+
+        SUM(
+            CASE
+                WHEN base.week_start_date = reporting_periods.current_week_start
+                THEN COALESCE(base.new_users, 0)
+                ELSE 0
+            END
+        ) AS new_users_current_week,
+
+        SUM(
+            CASE
+                WHEN base.week_start_date = reporting_periods.prior_week_start
+                THEN COALESCE(base.engaged_sessions, 0)
+                ELSE 0
+            END
+        ) AS engaged_sessions_prior_week,
+
+        SUM(
+            CASE
+                WHEN base.week_start_date = reporting_periods.current_week_start
+                THEN COALESCE(base.engaged_sessions, 0)
+                ELSE 0
+            END
+        ) AS engaged_sessions_current_week
+    FROM base
+    INNER JOIN reporting_periods
+        ON base.client = reporting_periods.client
+    CROSS JOIN channel_scope
+    WHERE base.week_start_date IN (
+        reporting_periods.prior_week_start,
+        reporting_periods.current_week_start
+    )
+        AND (
+            channel_scope.channel_group IS NULL
+            OR base.session_default_channel_group = channel_scope.channel_group
+        )
+    GROUP BY 1, 2, 3, 4
+)
+
+SELECT
+    am_roster.client AS Client,
+    am_roster.am AS AM,
+    weekly_metrics.channel_group,
+
+    COALESCE(weekly_metrics.new_users_prior_week, 0) AS new_users_prior_week,
+    COALESCE(weekly_metrics.new_users_current_week, 0) AS new_users_current_week,
+    COALESCE(weekly_metrics.engaged_sessions_prior_week, 0) AS engaged_sessions_prior_week,
+    COALESCE(weekly_metrics.engaged_sessions_current_week, 0) AS engaged_sessions_current_week,
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
+FROM am_roster
+LEFT JOIN weekly_metrics
+    ON am_roster.client = weekly_metrics.client
+ORDER BY
+    am_roster.client,
+    weekly_metrics.channel_group

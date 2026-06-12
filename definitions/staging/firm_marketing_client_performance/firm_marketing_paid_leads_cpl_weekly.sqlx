@@ -1,0 +1,161 @@
+config {
+    type: "table",
+    database: "sterlingx-insights",
+    schema: "firm_marketing_client_performance",
+    name: "firm_marketing_paid_leads_cpl_weekly",
+    tags: ["google analytics 4", "ga4", "paid", "leads", "cpl", "weekly", "client performance data"],
+}
+
+WITH client_roster AS (
+  SELECT *
+  FROM UNNEST([
+    STRUCT('Aurit Mediation' AS client, 'Garrett' AS am, '916fb7c7-13bc-4725-8bca-e11e0749da31' AS SterlingX_Client_ID, 'Aurit mediation' AS SterlingX_Client_Name),
+    STRUCT('Cutrer Family Law' AS client, 'Dani' AS am, '2e0efe10-f122-4a03-bfa5-7215e2dd7b71' AS SterlingX_Client_ID, 'Cutrer' AS SterlingX_Client_Name),
+    STRUCT('Fanash Family Law' AS client, 'Garrett' AS am, '8a4bb5d3-2988-4b58-901a-d7ebdb015a10' AS SterlingX_Client_ID, 'Fanash Family Law' AS SterlingX_Client_Name),
+    STRUCT('Gjesdahl Law' AS client, 'Dani' AS am, '17c0939a-2e3d-4728-933d-564183626ec3' AS SterlingX_Client_ID, 'Gjesdahl Law' AS SterlingX_Client_Name),
+    STRUCT('Haffner Law' AS client, 'Dani' AS am, 'ca859f21-4206-4fda-af68-102f24c0b67e' AS SterlingX_Client_ID, 'Haffner Law' AS SterlingX_Client_Name),
+    STRUCT('Johnson Law Group' AS client, 'Garrett' AS am, '0c4e2f26-cf3d-41e3-978f-8cd31726062f' AS SterlingX_Client_ID, 'Johnson Law Group' AS SterlingX_Client_Name),
+    STRUCT('Kalish & Jaggars' AS client, 'Dani' AS am, '085566ed-07da-44fc-9292-e77dafdf1b68' AS SterlingX_Client_ID, 'Kalish and Jaggars' AS SterlingX_Client_Name),
+    STRUCT('Lancaster Family Law' AS client, 'Dani' AS am, '331dae6a-d0e7-48fe-866e-b068ec98059e' AS SterlingX_Client_ID, 'Lancaster' AS SterlingX_Client_Name),
+    STRUCT('MeyerPink' AS client, 'Dani' AS am, '5537c7d2-eb93-4748-bc6a-e236641db089' AS SterlingX_Client_ID, 'Meyer Pink' AS SterlingX_Client_Name),
+    STRUCT('Scott M Brown Law' AS client, 'Dani' AS am, '3cf419a4-3d2c-4a8b-8deb-d004496a971d' AS SterlingX_Client_ID, 'Scott M Brown' AS SterlingX_Client_Name),
+    STRUCT('Sterling Lawyers' AS client, 'Dani' AS am, '99584197-537f-4cf5-80b4-29c99205f07a' AS SterlingX_Client_ID, 'Sterling Lawyers' AS SterlingX_Client_Name)
+  ])
+),
+
+google_ads_campaign_union AS (
+  SELECT 'Aurit Mediation' AS client, 'Garrett' AS am, g.*
+  FROM `rc-datamart-adminreport.google_ads_aurit.fct_gads_campaign_daily` g
+
+  UNION ALL
+
+  SELECT 'Cutrer Family Law' AS client, 'Dani' AS am, g.*
+  FROM `rc-datamart-adminreport.google_ads_cutrerlaw.fct_gads_campaign_daily` g
+
+  UNION ALL
+
+  SELECT 'Fanash Family Law' AS client, 'Garrett' AS am, g.*
+  FROM `rc-datamart-adminreport.google_ads_fanashfamily.fct_gads_campaign_daily` g
+
+  UNION ALL
+
+  SELECT 'Gjesdahl Law' AS client, 'Dani' AS am, g.*
+  FROM `rc-datamart-adminreport.google_ads_gjesdahllaw.fct_gads_campaign_daily` g
+
+  UNION ALL
+
+  SELECT 'Haffner Law' AS client, 'Dani' AS am, g.*
+  FROM `rc-datamart-adminreport.google_ads_haffnerlaw.fct_gads_campaign_daily` g
+
+  UNION ALL
+
+  SELECT 'Johnson Law Group' AS client, 'Garrett' AS am, g.*
+  FROM `rc-datamart-adminreport.google_ads_johnsonlaw.fct_gads_campaign_daily` g
+
+  UNION ALL
+
+  SELECT 'Kalish & Jaggars' AS client, 'Dani' AS am, g.*
+  FROM `rc-datamart-adminreport.google_ads_kalishjaggars.fct_gads_campaign_daily` g
+
+  UNION ALL
+
+  SELECT 'Lancaster Family Law' AS client, 'Dani' AS am, g.*
+  FROM `rc-datamart-adminreport.google_ads_lancasterlaw.fct_gads_campaign_daily` g
+
+  UNION ALL
+
+  SELECT 'MeyerPink' AS client, 'Dani' AS am, g.*
+  FROM `rc-datamart-adminreport.google_ads_meyerpinklaw.fct_gads_campaign_daily` g
+
+  UNION ALL
+
+  SELECT 'Scott M Brown Law' AS client, 'Dani' AS am, g.*
+  FROM `rc-datamart-adminreport.google_ads_smb.fct_gads_campaign_daily` g
+
+  UNION ALL
+
+  SELECT 'Sterling Lawyers' AS client, 'Dani' AS am, g.*
+  FROM `rc-datamart-adminreport.google_ads_sterlinglawyers.fct_gads_campaign_daily` g
+),
+
+week_windows AS (
+  SELECT
+    DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 1 WEEK), WEEK(MONDAY)) AS current_week,
+    DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 2 WEEK), WEEK(MONDAY)) AS prior_week,
+    DATE_TRUNC(CURRENT_DATE(), WEEK(MONDAY)) AS next_week
+),
+
+google_ads_weekly AS (
+  SELECT
+    g.client,
+    g.am,
+    DATE_TRUNC(g.segment_date, WEEK(MONDAY)) AS report_week,
+
+    COUNT(*) AS row_count,
+    MAX(g.segment_date) AS latest_data_date,
+    SUM(COALESCE(g.conversions, 0)) AS paid_leads,
+    SUM(COALESCE(g.cost_micros, 0)) / 1000000 AS paid_cost
+  FROM google_ads_campaign_union g
+  CROSS JOIN week_windows ww
+  WHERE g.segment_date >= ww.prior_week
+    AND g.segment_date < ww.next_week
+  GROUP BY
+    g.client,
+    g.am,
+    report_week
+),
+
+client_rollup AS (
+  SELECT
+    r.client,
+    r.am,
+    r.SterlingX_Client_ID,
+    r.SterlingX_Client_Name,
+
+    ww.prior_week,
+    ww.current_week,
+
+    MAX(g.latest_data_date) AS latest_data_date,
+
+    SUM(CASE WHEN g.report_week = ww.prior_week THEN g.row_count ELSE 0 END) AS prior_week_row_count,
+    SUM(CASE WHEN g.report_week = ww.current_week THEN g.row_count ELSE 0 END) AS current_week_row_count,
+
+    SUM(CASE WHEN g.report_week = ww.prior_week THEN g.paid_leads ELSE NULL END) AS paid_leads_prior_week,
+    SUM(CASE WHEN g.report_week = ww.current_week THEN g.paid_leads ELSE NULL END) AS paid_leads_current_week,
+
+    SUM(CASE WHEN g.report_week = ww.prior_week THEN g.paid_cost ELSE NULL END) AS paid_cost_prior_week,
+    SUM(CASE WHEN g.report_week = ww.current_week THEN g.paid_cost ELSE NULL END) AS paid_cost_current_week
+  FROM client_roster r
+  CROSS JOIN week_windows ww
+  LEFT JOIN google_ads_weekly g
+    ON r.client = g.client
+   AND r.am = g.am
+  GROUP BY
+    r.client,
+    r.am,
+    r.SterlingX_Client_ID,
+    r.SterlingX_Client_Name,
+    ww.prior_week,
+    ww.current_week
+)
+
+SELECT
+  client,
+  am,
+
+  prior_week,
+  current_week,
+
+  paid_leads_prior_week,
+  paid_leads_current_week,
+
+  SAFE_DIVIDE(paid_cost_prior_week, NULLIF(paid_leads_prior_week, 0)) AS paid_cpl_prior_week,
+  SAFE_DIVIDE(paid_cost_current_week, NULLIF(paid_leads_current_week, 0)) AS paid_cpl_current_week,
+
+  SterlingX_Client_ID,
+  SterlingX_Client_Name
+  -- paid_cost_prior_week,
+  -- paid_cost_current_week
+FROM client_rollup
+ORDER BY
+  client

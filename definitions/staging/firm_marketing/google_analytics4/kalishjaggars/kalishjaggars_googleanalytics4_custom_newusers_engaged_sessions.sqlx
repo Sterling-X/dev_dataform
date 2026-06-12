@@ -1,0 +1,29 @@
+config {
+    type: "table",
+    database: "sterlingx-insights",
+    schema: "firm_marketing_googleanalytics4",
+    name: "kalishjaggars_googleanalytics4_custom_newusers_engaged_sessions",
+    tags: ["google analytics 4", "ga4", "newusers engaged sessions", "marketing data", "kalishjaggars"],
+}
+
+SELECT
+    '085566ed-07da-44fc-9292-e77dafdf1b68' AS SterlingX_Client_ID,
+    'Kalish and Jaggars' AS SterlingX_Client_Name,
+    fa.property_id,
+    fa.event_date,
+
+    -- dimensions
+    JSON_VALUE(fa.dimension_values_json, '$.date') AS date,
+    JSON_VALUE(fa.dimension_values_json, '$.firstUserDefaultChannelGroup') AS first_user_default_channel_group,
+    JSON_VALUE(fa.dimension_values_json, '$.sessionDefaultChannelGroup') AS session_default_channel_group,
+
+    -- metrics
+    SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.engagedSessions') AS INT64) AS engaged_sessions,
+    SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.newUsers') AS INT64) AS new_users,
+    SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.sessions') AS INT64) AS sessions
+
+FROM `rc-datamart-adminreport.google_analytics4_kalishjaggars.fact_ga4_daily_analysis` fa
+LEFT JOIN `rc-datamart-adminreport.google_analytics4_kalishjaggars.dim_ga4_report` dr
+    ON fa.report_id = dr.report_id
+WHERE dr.report_category = 'newusers_engaged_sessions'
+    AND dr.report_name = 'custom_newusers_engaged_sessions_daily'
