@@ -78,39 +78,47 @@ google_ads_campaign_union AS (
   FROM `rc-datamart-adminreport.google_ads_sterlinglawyers.fct_gads_campaign_daily` g
 ),
 
+data_availability AS (
+  SELECT
+    MAX(segment_date) AS report_end_date
+  FROM google_ads_campaign_union
+  WHERE segment_date IS NOT NULL
+),
+
 date_windows AS (
   SELECT
-    CURRENT_DATE() AS report_end_date,
+    report_end_date,
 
     -- 90 Days
-    DATE_SUB(CURRENT_DATE(), INTERVAL 89 DAY) AS current_90_days_start_date,
-    CURRENT_DATE() AS current_90_days_end_date,
+    DATE_SUB(report_end_date, INTERVAL 89 DAY) AS current_90_days_start_date,
+    report_end_date AS current_90_days_end_date,
 
-    DATE_SUB(CURRENT_DATE(), INTERVAL 179 DAY) AS prior_90_days_start_date,
-    DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY) AS prior_90_days_end_date,
+    DATE_SUB(report_end_date, INTERVAL 179 DAY) AS prior_90_days_start_date,
+    DATE_SUB(report_end_date, INTERVAL 90 DAY) AS prior_90_days_end_date,
 
-    DATE_SUB(DATE_SUB(CURRENT_DATE(), INTERVAL 89 DAY), INTERVAL 1 YEAR) AS yoy_90_days_start_date,
-    DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) AS yoy_90_days_end_date,
+    DATE_SUB(DATE_SUB(report_end_date, INTERVAL 89 DAY), INTERVAL 1 YEAR) AS yoy_90_days_start_date,
+    DATE_SUB(report_end_date, INTERVAL 1 YEAR) AS yoy_90_days_end_date,
 
     -- 30 Days
-    DATE_SUB(CURRENT_DATE(), INTERVAL 29 DAY) AS current_30_days_start_date,
-    CURRENT_DATE() AS current_30_days_end_date,
+    DATE_SUB(report_end_date, INTERVAL 29 DAY) AS current_30_days_start_date,
+    report_end_date AS current_30_days_end_date,
 
-    DATE_SUB(CURRENT_DATE(), INTERVAL 59 DAY) AS prior_30_days_start_date,
-    DATE_SUB(CURRENT_DATE(), INTERVAL 30 DAY) AS prior_30_days_end_date,
+    DATE_SUB(report_end_date, INTERVAL 59 DAY) AS prior_30_days_start_date,
+    DATE_SUB(report_end_date, INTERVAL 30 DAY) AS prior_30_days_end_date,
 
-    DATE_SUB(DATE_SUB(CURRENT_DATE(), INTERVAL 29 DAY), INTERVAL 1 YEAR) AS yoy_30_days_start_date,
-    DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) AS yoy_30_days_end_date,
+    DATE_SUB(DATE_SUB(report_end_date, INTERVAL 29 DAY), INTERVAL 1 YEAR) AS yoy_30_days_start_date,
+    DATE_SUB(report_end_date, INTERVAL 1 YEAR) AS yoy_30_days_end_date,
 
     -- 14 Days
-    DATE_SUB(CURRENT_DATE(), INTERVAL 13 DAY) AS current_14_days_start_date,
-    CURRENT_DATE() AS current_14_days_end_date,
+    DATE_SUB(report_end_date, INTERVAL 13 DAY) AS current_14_days_start_date,
+    report_end_date AS current_14_days_end_date,
 
-    DATE_SUB(CURRENT_DATE(), INTERVAL 27 DAY) AS prior_14_days_start_date,
-    DATE_SUB(CURRENT_DATE(), INTERVAL 14 DAY) AS prior_14_days_end_date,
+    DATE_SUB(report_end_date, INTERVAL 27 DAY) AS prior_14_days_start_date,
+    DATE_SUB(report_end_date, INTERVAL 14 DAY) AS prior_14_days_end_date,
 
-    DATE_SUB(DATE_SUB(CURRENT_DATE(), INTERVAL 13 DAY), INTERVAL 1 YEAR) AS yoy_14_days_start_date,
-    DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) AS yoy_14_days_end_date
+    DATE_SUB(DATE_SUB(report_end_date, INTERVAL 13 DAY), INTERVAL 1 YEAR) AS yoy_14_days_start_date,
+    DATE_SUB(report_end_date, INTERVAL 1 YEAR) AS yoy_14_days_end_date
+  FROM data_availability
 ),
 
 client_rollup AS (
@@ -248,7 +256,6 @@ SELECT
   COALESCE(SAFE_DIVIDE(paid_cost_14_days_yoy, NULLIF(paid_leads_14_days_yoy, 0)), 0) AS paid_cpl_14_days_yoy,
 
   -- Date Frames
-  -- report_end_date,
   latest_reporting_data_date,
 
   current_90_days_start_date,
