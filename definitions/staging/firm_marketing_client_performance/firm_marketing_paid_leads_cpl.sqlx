@@ -248,7 +248,7 @@ SELECT
   COALESCE(SAFE_DIVIDE(paid_cost_14_days_yoy, NULLIF(paid_leads_14_days_yoy, 0)), 0) AS paid_cpl_14_days_yoy,
 
   -- Date Frames
-  report_end_date,
+  -- report_end_date,
   latest_reporting_data_date,
 
   current_90_days_start_date,
