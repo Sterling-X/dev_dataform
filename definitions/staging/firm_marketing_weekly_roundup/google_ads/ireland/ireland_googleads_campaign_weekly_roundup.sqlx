@@ -1,0 +1,101 @@
+config {
+  type: "table",
+  database: "sterlingx-insights",
+  schema: "firm_marketing_googleads_weekly_roundup",
+  name: "ireland_googleads_campaign_weekly_roundup",
+  tags: ["google ads", "campaign", "marketing data", "weekly roundup", "ireland"],
+}
+
+WITH base AS (
+
+  SELECT
+    DATE(segment_date) AS segment_date,
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
+    CAST(customer_id AS STRING) AS customer_id,
+    customer_name,
+
+    CAST(campaign_id AS STRING) AS campaign_id,
+    campaign_name,
+    device,
+
+    SAFE_CAST(impressions AS INT64) AS impressions,
+    SAFE_CAST(clicks AS INT64) AS clicks,
+    SAFE_CAST(spend_cost AS NUMERIC) AS spend_cost,
+    SAFE_CAST(interactions AS INT64) AS interactions,
+
+    SAFE_CAST(conversions AS NUMERIC) AS conversions,
+  FROM `sterlingx-insights.firm_marketing_googleads.ireland_googleads_campaign`
+
+),
+
+weekly AS (
+
+  SELECT
+    DATE_TRUNC(segment_date, WEEK(SUNDAY)) AS week_starting,
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
+    customer_id,
+    customer_name,
+
+    campaign_id,
+    campaign_name,
+    device,
+
+    SUM(COALESCE(impressions, 0)) AS impressions,
+    SUM(COALESCE(clicks, 0)) AS clicks,
+    SUM(COALESCE(spend_cost, 0)) AS spend_cost,
+    SUM(COALESCE(interactions, 0)) AS interactions,
+
+    SAFE_DIVIDE(
+      SUM(COALESCE(clicks, 0)),
+      SUM(COALESCE(impressions, 0))
+    ) AS ctr,
+
+    SAFE_DIVIDE(
+      SUM(COALESCE(spend_cost, 0)),
+      SUM(COALESCE(clicks, 0))
+    ) AS average_cpc,
+
+    SAFE_DIVIDE(
+      SUM(COALESCE(spend_cost, 0)),
+      SUM(COALESCE(conversions, 0))
+    ) AS cost_per_conversion
+  FROM base
+  GROUP BY
+    week_starting,
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
+    customer_id,
+    customer_name,
+    campaign_id,
+    campaign_name,
+    device
+
+)
+
+SELECT
+  week_starting,
+  SterlingX_Client_ID,
+  SterlingX_Client_Name,
+
+  customer_id,
+  customer_name,
+
+  campaign_id,
+  campaign_name,
+  device,
+
+  impressions,
+  clicks,
+  spend_cost,
+  interactions,
+  ctr,
+  average_cpc,
+  cost_per_conversion,
+FROM weekly
+ORDER BY
+  week_starting DESC,
+  customer_name,
+  campaign_name,
+  device

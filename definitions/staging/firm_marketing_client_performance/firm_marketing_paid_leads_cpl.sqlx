@@ -13,7 +13,7 @@ WITH client_roster AS (
     STRUCT('Cutrer Family Law' AS client, 'Dani' AS am, '2e0efe10-f122-4a03-bfa5-7215e2dd7b71' AS SterlingX_Client_ID, 'Cutrer' AS SterlingX_Client_Name),
     STRUCT('Fanash Family Law' AS client, 'Garrett' AS am, '8a4bb5d3-2988-4b58-901a-d7ebdb015a10' AS SterlingX_Client_ID, 'Fanash Family Law' AS SterlingX_Client_Name),
     STRUCT('Gjesdahl Law' AS client, 'Dani' AS am, '17c0939a-2e3d-4728-933d-564183626ec3' AS SterlingX_Client_ID, 'Gjesdahl Law' AS SterlingX_Client_Name),
-    STRUCT('Haffner Law' AS client, 'Dani' AS am, 'ca859f21-4206-4fda-af68-102f24c0b67e' AS SterlingX_Client_ID, 'Haffner Law' AS SterlingX_Client_Name),
+    STRUCT('Michael Ireland & Associates' AS client, 'Dani' AS am, 'a9b10ec7-4dfe-4058-bdb5-a53e66176eed' AS SterlingX_Client_ID, 'Michael Ireland & Associates' AS SterlingX_Client_Name),
     STRUCT('Johnson Law Group' AS client, 'Garrett' AS am, '0c4e2f26-cf3d-41e3-978f-8cd31726062f' AS SterlingX_Client_ID, 'Johnson Law Group' AS SterlingX_Client_Name),
     STRUCT('Kalish & Jaggars' AS client, 'Dani' AS am, '085566ed-07da-44fc-9292-e77dafdf1b68' AS SterlingX_Client_ID, 'Kalish and Jaggars' AS SterlingX_Client_Name),
     STRUCT('Lancaster Family Law' AS client, 'Dani' AS am, '331dae6a-d0e7-48fe-866e-b068ec98059e' AS SterlingX_Client_ID, 'Lancaster' AS SterlingX_Client_Name),
@@ -44,8 +44,8 @@ google_ads_campaign_union AS (
 
   UNION ALL
 
-  SELECT 'Haffner Law' AS client, 'Dani' AS am, g.*
-  FROM `rc-datamart-adminreport.google_ads_haffnerlaw.fct_gads_campaign_daily` g
+  SELECT 'Michael Ireland & Associates' AS client, 'Dani' AS am, g.*
+  FROM `rc-datamart-adminreport.google_ads_ireland.fct_gads_campaign_daily` g
 
   UNION ALL
 
@@ -78,50 +78,39 @@ google_ads_campaign_union AS (
   FROM `rc-datamart-adminreport.google_ads_sterlinglawyers.fct_gads_campaign_daily` g
 ),
 
-reporting_windows AS (
-  SELECT
-    -- All data is based on the most recent Saturday.
-    -- Weeks run Sunday to Saturday.
-    DATE_SUB(
-      CURRENT_DATE(),
-      INTERVAL MOD(EXTRACT(DAYOFWEEK FROM CURRENT_DATE()), 7) DAY
-    ) AS reporting_week_end_date
-),
-
 date_windows AS (
   SELECT
-    reporting_week_end_date,
+    CURRENT_DATE() AS report_end_date,
 
-    -- Monthly: current month through the latest completed Saturday
-    DATE_TRUNC(reporting_week_end_date, MONTH) AS current_month_start_date,
-    reporting_week_end_date AS current_month_end_date,
+    -- 90 Days
+    DATE_SUB(CURRENT_DATE(), INTERVAL 89 DAY) AS current_90_days_start_date,
+    CURRENT_DATE() AS current_90_days_end_date,
 
-    -- Prior month: same day-of-month cutoff as current month
-    DATE_TRUNC(DATE_SUB(reporting_week_end_date, INTERVAL 1 MONTH), MONTH) AS prior_month_start_date,
-    LEAST(
-      DATE_ADD(
-        DATE_TRUNC(DATE_SUB(reporting_week_end_date, INTERVAL 1 MONTH), MONTH),
-        INTERVAL (EXTRACT(DAY FROM reporting_week_end_date) - 1) DAY
-      ),
-      LAST_DAY(DATE_TRUNC(DATE_SUB(reporting_week_end_date, INTERVAL 1 MONTH), MONTH))
-    ) AS prior_month_end_date,
+    DATE_SUB(CURRENT_DATE(), INTERVAL 179 DAY) AS prior_90_days_start_date,
+    DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY) AS prior_90_days_end_date,
 
-    -- Last 2 weeks: Sunday to Saturday
-    DATE_SUB(reporting_week_end_date, INTERVAL 13 DAY) AS last_2_weeks_start_date,
-    reporting_week_end_date AS last_2_weeks_end_date,
+    DATE_SUB(DATE_SUB(CURRENT_DATE(), INTERVAL 89 DAY), INTERVAL 1 YEAR) AS yoy_90_days_start_date,
+    DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) AS yoy_90_days_end_date,
 
-    -- Prior 2 weeks: Sunday to Saturday
-    DATE_SUB(reporting_week_end_date, INTERVAL 27 DAY) AS prior_2_weeks_start_date,
-    DATE_SUB(reporting_week_end_date, INTERVAL 14 DAY) AS prior_2_weeks_end_date,
+    -- 30 Days
+    DATE_SUB(CURRENT_DATE(), INTERVAL 29 DAY) AS current_30_days_start_date,
+    CURRENT_DATE() AS current_30_days_end_date,
 
-    -- Last week: Sunday to Saturday
-    DATE_SUB(reporting_week_end_date, INTERVAL 6 DAY) AS last_week_start_date,
-    reporting_week_end_date AS last_week_end_date,
+    DATE_SUB(CURRENT_DATE(), INTERVAL 59 DAY) AS prior_30_days_start_date,
+    DATE_SUB(CURRENT_DATE(), INTERVAL 30 DAY) AS prior_30_days_end_date,
 
-    -- Prior week: Sunday to Saturday
-    DATE_SUB(reporting_week_end_date, INTERVAL 13 DAY) AS prior_week_start_date,
-    DATE_SUB(reporting_week_end_date, INTERVAL 7 DAY) AS prior_week_end_date
-  FROM reporting_windows
+    DATE_SUB(DATE_SUB(CURRENT_DATE(), INTERVAL 29 DAY), INTERVAL 1 YEAR) AS yoy_30_days_start_date,
+    DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) AS yoy_30_days_end_date,
+
+    -- 14 Days
+    DATE_SUB(CURRENT_DATE(), INTERVAL 13 DAY) AS current_14_days_start_date,
+    CURRENT_DATE() AS current_14_days_end_date,
+
+    DATE_SUB(CURRENT_DATE(), INTERVAL 27 DAY) AS prior_14_days_start_date,
+    DATE_SUB(CURRENT_DATE(), INTERVAL 14 DAY) AS prior_14_days_end_date,
+
+    DATE_SUB(DATE_SUB(CURRENT_DATE(), INTERVAL 13 DAY), INTERVAL 1 YEAR) AS yoy_14_days_start_date,
+    DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) AS yoy_14_days_end_date
 ),
 
 client_rollup AS (
@@ -131,195 +120,157 @@ client_rollup AS (
     r.SterlingX_Client_ID,
     r.SterlingX_Client_Name,
 
-    dw.reporting_week_end_date,
+    dw.report_end_date,
 
-    dw.current_month_start_date,
-    dw.current_month_end_date,
-    dw.prior_month_start_date,
-    dw.prior_month_end_date,
+    dw.current_90_days_start_date,
+    dw.current_90_days_end_date,
+    dw.prior_90_days_start_date,
+    dw.prior_90_days_end_date,
+    dw.yoy_90_days_start_date,
+    dw.yoy_90_days_end_date,
 
-    dw.last_2_weeks_start_date,
-    dw.last_2_weeks_end_date,
-    dw.prior_2_weeks_start_date,
-    dw.prior_2_weeks_end_date,
+    dw.current_30_days_start_date,
+    dw.current_30_days_end_date,
+    dw.prior_30_days_start_date,
+    dw.prior_30_days_end_date,
+    dw.yoy_30_days_start_date,
+    dw.yoy_30_days_end_date,
 
-    dw.last_week_start_date,
-    dw.last_week_end_date,
-    dw.prior_week_start_date,
-    dw.prior_week_end_date,
+    dw.current_14_days_start_date,
+    dw.current_14_days_end_date,
+    dw.prior_14_days_start_date,
+    dw.prior_14_days_end_date,
+    dw.yoy_14_days_start_date,
+    dw.yoy_14_days_end_date,
 
     MAX(g.segment_date) AS latest_reporting_data_date,
 
-    -- Monthly Leads
-    SUM(
-      CASE
-        WHEN g.segment_date BETWEEN dw.current_month_start_date AND dw.current_month_end_date
-        THEN COALESCE(g.conversions, 0)
-        ELSE 0
-      END
-    ) AS paid_leads_current_month,
+    -- 90 Days Leads
+    SUM(CASE WHEN g.segment_date BETWEEN dw.current_90_days_start_date AND dw.current_90_days_end_date THEN COALESCE(g.conversions, 0) ELSE 0 END) AS paid_leads_90_days_current,
+    SUM(CASE WHEN g.segment_date BETWEEN dw.prior_90_days_start_date AND dw.prior_90_days_end_date THEN COALESCE(g.conversions, 0) ELSE 0 END) AS paid_leads_90_days_prior,
+    SUM(CASE WHEN g.segment_date BETWEEN dw.yoy_90_days_start_date AND dw.yoy_90_days_end_date THEN COALESCE(g.conversions, 0) ELSE 0 END) AS paid_leads_90_days_yoy,
 
-    SUM(
-      CASE
-        WHEN g.segment_date BETWEEN dw.prior_month_start_date AND dw.prior_month_end_date
-        THEN COALESCE(g.conversions, 0)
-        ELSE 0
-      END
-    ) AS paid_leads_prior_month,
+    -- 90 Days Cost
+    SUM(CASE WHEN g.segment_date BETWEEN dw.current_90_days_start_date AND dw.current_90_days_end_date THEN COALESCE(g.cost_micros, 0) / 1000000 ELSE 0 END) AS paid_cost_90_days_current,
+    SUM(CASE WHEN g.segment_date BETWEEN dw.prior_90_days_start_date AND dw.prior_90_days_end_date THEN COALESCE(g.cost_micros, 0) / 1000000 ELSE 0 END) AS paid_cost_90_days_prior,
+    SUM(CASE WHEN g.segment_date BETWEEN dw.yoy_90_days_start_date AND dw.yoy_90_days_end_date THEN COALESCE(g.cost_micros, 0) / 1000000 ELSE 0 END) AS paid_cost_90_days_yoy,
 
-    -- Monthly Cost
-    SUM(
-      CASE
-        WHEN g.segment_date BETWEEN dw.current_month_start_date AND dw.current_month_end_date
-        THEN COALESCE(g.cost_micros, 0) / 1000000
-        ELSE 0
-      END
-    ) AS paid_cost_current_month,
+    -- 30 Days Leads
+    SUM(CASE WHEN g.segment_date BETWEEN dw.current_30_days_start_date AND dw.current_30_days_end_date THEN COALESCE(g.conversions, 0) ELSE 0 END) AS paid_leads_30_days_current,
+    SUM(CASE WHEN g.segment_date BETWEEN dw.prior_30_days_start_date AND dw.prior_30_days_end_date THEN COALESCE(g.conversions, 0) ELSE 0 END) AS paid_leads_30_days_prior,
+    SUM(CASE WHEN g.segment_date BETWEEN dw.yoy_30_days_start_date AND dw.yoy_30_days_end_date THEN COALESCE(g.conversions, 0) ELSE 0 END) AS paid_leads_30_days_yoy,
 
-    SUM(
-      CASE
-        WHEN g.segment_date BETWEEN dw.prior_month_start_date AND dw.prior_month_end_date
-        THEN COALESCE(g.cost_micros, 0) / 1000000
-        ELSE 0
-      END
-    ) AS paid_cost_prior_month,
+    -- 30 Days Cost
+    SUM(CASE WHEN g.segment_date BETWEEN dw.current_30_days_start_date AND dw.current_30_days_end_date THEN COALESCE(g.cost_micros, 0) / 1000000 ELSE 0 END) AS paid_cost_30_days_current,
+    SUM(CASE WHEN g.segment_date BETWEEN dw.prior_30_days_start_date AND dw.prior_30_days_end_date THEN COALESCE(g.cost_micros, 0) / 1000000 ELSE 0 END) AS paid_cost_30_days_prior,
+    SUM(CASE WHEN g.segment_date BETWEEN dw.yoy_30_days_start_date AND dw.yoy_30_days_end_date THEN COALESCE(g.cost_micros, 0) / 1000000 ELSE 0 END) AS paid_cost_30_days_yoy,
 
-    -- Last 2 Weeks Leads
-    SUM(
-      CASE
-        WHEN g.segment_date BETWEEN dw.last_2_weeks_start_date AND dw.last_2_weeks_end_date
-        THEN COALESCE(g.conversions, 0)
-        ELSE 0
-      END
-    ) AS paid_leads_last_2_weeks,
+    -- 14 Days Leads
+    SUM(CASE WHEN g.segment_date BETWEEN dw.current_14_days_start_date AND dw.current_14_days_end_date THEN COALESCE(g.conversions, 0) ELSE 0 END) AS paid_leads_14_days_current,
+    SUM(CASE WHEN g.segment_date BETWEEN dw.prior_14_days_start_date AND dw.prior_14_days_end_date THEN COALESCE(g.conversions, 0) ELSE 0 END) AS paid_leads_14_days_prior,
+    SUM(CASE WHEN g.segment_date BETWEEN dw.yoy_14_days_start_date AND dw.yoy_14_days_end_date THEN COALESCE(g.conversions, 0) ELSE 0 END) AS paid_leads_14_days_yoy,
 
-    SUM(
-      CASE
-        WHEN g.segment_date BETWEEN dw.prior_2_weeks_start_date AND dw.prior_2_weeks_end_date
-        THEN COALESCE(g.conversions, 0)
-        ELSE 0
-      END
-    ) AS paid_leads_prior_2_weeks,
-
-    -- Last 2 Weeks Cost
-    SUM(
-      CASE
-        WHEN g.segment_date BETWEEN dw.last_2_weeks_start_date AND dw.last_2_weeks_end_date
-        THEN COALESCE(g.cost_micros, 0) / 1000000
-        ELSE 0
-      END
-    ) AS paid_cost_last_2_weeks,
-
-    SUM(
-      CASE
-        WHEN g.segment_date BETWEEN dw.prior_2_weeks_start_date AND dw.prior_2_weeks_end_date
-        THEN COALESCE(g.cost_micros, 0) / 1000000
-        ELSE 0
-      END
-    ) AS paid_cost_prior_2_weeks,
-
-    -- Weekly Leads
-    SUM(
-      CASE
-        WHEN g.segment_date BETWEEN dw.last_week_start_date AND dw.last_week_end_date
-        THEN COALESCE(g.conversions, 0)
-        ELSE 0
-      END
-    ) AS paid_leads_last_week,
-
-    SUM(
-      CASE
-        WHEN g.segment_date BETWEEN dw.prior_week_start_date AND dw.prior_week_end_date
-        THEN COALESCE(g.conversions, 0)
-        ELSE 0
-      END
-    ) AS paid_leads_prior_week,
-
-    -- Weekly Cost
-    SUM(
-      CASE
-        WHEN g.segment_date BETWEEN dw.last_week_start_date AND dw.last_week_end_date
-        THEN COALESCE(g.cost_micros, 0) / 1000000
-        ELSE 0
-      END
-    ) AS paid_cost_last_week,
-
-    SUM(
-      CASE
-        WHEN g.segment_date BETWEEN dw.prior_week_start_date AND dw.prior_week_end_date
-        THEN COALESCE(g.cost_micros, 0) / 1000000
-        ELSE 0
-      END
-    ) AS paid_cost_prior_week
+    -- 14 Days Cost
+    SUM(CASE WHEN g.segment_date BETWEEN dw.current_14_days_start_date AND dw.current_14_days_end_date THEN COALESCE(g.cost_micros, 0) / 1000000 ELSE 0 END) AS paid_cost_14_days_current,
+    SUM(CASE WHEN g.segment_date BETWEEN dw.prior_14_days_start_date AND dw.prior_14_days_end_date THEN COALESCE(g.cost_micros, 0) / 1000000 ELSE 0 END) AS paid_cost_14_days_prior,
+    SUM(CASE WHEN g.segment_date BETWEEN dw.yoy_14_days_start_date AND dw.yoy_14_days_end_date THEN COALESCE(g.cost_micros, 0) / 1000000 ELSE 0 END) AS paid_cost_14_days_yoy
 
   FROM client_roster r
   CROSS JOIN date_windows dw
   LEFT JOIN google_ads_campaign_union g
     ON r.client = g.client
    AND r.am = g.am
-   AND g.segment_date BETWEEN LEAST(dw.prior_month_start_date, dw.prior_2_weeks_start_date)
-                          AND dw.current_month_end_date
+   AND g.segment_date BETWEEN LEAST(
+                            dw.yoy_90_days_start_date,
+                            dw.prior_90_days_start_date,
+                            dw.current_90_days_start_date
+                          )
+                          AND dw.report_end_date
   GROUP BY
     r.client,
     r.am,
     r.SterlingX_Client_ID,
     r.SterlingX_Client_Name,
-    dw.reporting_week_end_date,
-    dw.current_month_start_date,
-    dw.current_month_end_date,
-    dw.prior_month_start_date,
-    dw.prior_month_end_date,
-    dw.last_2_weeks_start_date,
-    dw.last_2_weeks_end_date,
-    dw.prior_2_weeks_start_date,
-    dw.prior_2_weeks_end_date,
-    dw.last_week_start_date,
-    dw.last_week_end_date,
-    dw.prior_week_start_date,
-    dw.prior_week_end_date
+
+    dw.report_end_date,
+
+    dw.current_90_days_start_date,
+    dw.current_90_days_end_date,
+    dw.prior_90_days_start_date,
+    dw.prior_90_days_end_date,
+    dw.yoy_90_days_start_date,
+    dw.yoy_90_days_end_date,
+
+    dw.current_30_days_start_date,
+    dw.current_30_days_end_date,
+    dw.prior_30_days_start_date,
+    dw.prior_30_days_end_date,
+    dw.yoy_30_days_start_date,
+    dw.yoy_30_days_end_date,
+
+    dw.current_14_days_start_date,
+    dw.current_14_days_end_date,
+    dw.prior_14_days_start_date,
+    dw.prior_14_days_end_date,
+    dw.yoy_14_days_start_date,
+    dw.yoy_14_days_end_date
 )
 
 SELECT
   client,
   am,
 
-  -- Monthly
-  paid_leads_current_month,
-  paid_leads_prior_month,
-  COALESCE(SAFE_DIVIDE(paid_cost_current_month, NULLIF(paid_leads_current_month, 0)), 0) AS paid_cpl_current_month,
-  COALESCE(SAFE_DIVIDE(paid_cost_prior_month, NULLIF(paid_leads_prior_month, 0)), 0) AS paid_cpl_prior_month,
+  -- 90 Days
+  paid_leads_90_days_current,
+  paid_leads_90_days_prior,
+  paid_leads_90_days_yoy,
 
-  -- Bi-Weekly / Last 2 Weeks
-  paid_leads_last_2_weeks,
-  paid_leads_prior_2_weeks,
-  COALESCE(SAFE_DIVIDE(paid_cost_last_2_weeks, NULLIF(paid_leads_last_2_weeks, 0)), 0) AS paid_cpl_last_2_weeks,
-  COALESCE(SAFE_DIVIDE(paid_cost_prior_2_weeks, NULLIF(paid_leads_prior_2_weeks, 0)), 0) AS paid_cpl_prior_2_weeks,
+  COALESCE(SAFE_DIVIDE(paid_cost_90_days_current, NULLIF(paid_leads_90_days_current, 0)), 0) AS paid_cpl_90_days_current,
+  COALESCE(SAFE_DIVIDE(paid_cost_90_days_prior, NULLIF(paid_leads_90_days_prior, 0)), 0) AS paid_cpl_90_days_prior,
+  COALESCE(SAFE_DIVIDE(paid_cost_90_days_yoy, NULLIF(paid_leads_90_days_yoy, 0)), 0) AS paid_cpl_90_days_yoy,
 
-  -- Weekly / Last Week
-  paid_leads_last_week,
-  paid_leads_prior_week,
-  COALESCE(SAFE_DIVIDE(paid_cost_last_week, NULLIF(paid_leads_last_week, 0)), 0) AS paid_cpl_last_week,
-  COALESCE(SAFE_DIVIDE(paid_cost_prior_week, NULLIF(paid_leads_prior_week, 0)), 0) AS paid_cpl_prior_week,
+  -- 30 Days
+  paid_leads_30_days_current,
+  paid_leads_30_days_prior,
+  paid_leads_30_days_yoy,
+
+  COALESCE(SAFE_DIVIDE(paid_cost_30_days_current, NULLIF(paid_leads_30_days_current, 0)), 0) AS paid_cpl_30_days_current,
+  COALESCE(SAFE_DIVIDE(paid_cost_30_days_prior, NULLIF(paid_leads_30_days_prior, 0)), 0) AS paid_cpl_30_days_prior,
+  COALESCE(SAFE_DIVIDE(paid_cost_30_days_yoy, NULLIF(paid_leads_30_days_yoy, 0)), 0) AS paid_cpl_30_days_yoy,
+
+  -- 14 Days
+  paid_leads_14_days_current,
+  paid_leads_14_days_prior,
+  paid_leads_14_days_yoy,
+
+  COALESCE(SAFE_DIVIDE(paid_cost_14_days_current, NULLIF(paid_leads_14_days_current, 0)), 0) AS paid_cpl_14_days_current,
+  COALESCE(SAFE_DIVIDE(paid_cost_14_days_prior, NULLIF(paid_leads_14_days_prior, 0)), 0) AS paid_cpl_14_days_prior,
+  COALESCE(SAFE_DIVIDE(paid_cost_14_days_yoy, NULLIF(paid_leads_14_days_yoy, 0)), 0) AS paid_cpl_14_days_yoy,
 
   -- Date Frames
-  reporting_week_end_date,
-
-  current_month_start_date,
-  current_month_end_date,
-  prior_month_start_date,
-  prior_month_end_date,
-
-  last_2_weeks_start_date,
-  last_2_weeks_end_date,
-  prior_2_weeks_start_date,
-  prior_2_weeks_end_date,
-
-  last_week_start_date,
-  last_week_end_date,
-  prior_week_start_date,
-  prior_week_end_date,
-
+  report_end_date,
   latest_reporting_data_date,
+
+  current_90_days_start_date,
+  current_90_days_end_date,
+  prior_90_days_start_date,
+  prior_90_days_end_date,
+  yoy_90_days_start_date,
+  yoy_90_days_end_date,
+
+  current_30_days_start_date,
+  current_30_days_end_date,
+  prior_30_days_start_date,
+  prior_30_days_end_date,
+  yoy_30_days_start_date,
+  yoy_30_days_end_date,
+
+  current_14_days_start_date,
+  current_14_days_end_date,
+  prior_14_days_start_date,
+  prior_14_days_end_date,
+  yoy_14_days_start_date,
+  yoy_14_days_end_date,
 
   SterlingX_Client_ID,
   SterlingX_Client_Name
@@ -327,3 +278,329 @@ SELECT
 FROM client_rollup
 ORDER BY
   client
+
+
+
+
+
+-- WITH client_roster AS (
+--   SELECT *
+--   FROM UNNEST([
+--     STRUCT('Aurit Mediation' AS client, 'Garrett' AS am, '916fb7c7-13bc-4725-8bca-e11e0749da31' AS SterlingX_Client_ID, 'Aurit mediation' AS SterlingX_Client_Name),
+--     STRUCT('Cutrer Family Law' AS client, 'Dani' AS am, '2e0efe10-f122-4a03-bfa5-7215e2dd7b71' AS SterlingX_Client_ID, 'Cutrer' AS SterlingX_Client_Name),
+--     STRUCT('Fanash Family Law' AS client, 'Garrett' AS am, '8a4bb5d3-2988-4b58-901a-d7ebdb015a10' AS SterlingX_Client_ID, 'Fanash Family Law' AS SterlingX_Client_Name),
+--     STRUCT('Gjesdahl Law' AS client, 'Dani' AS am, '17c0939a-2e3d-4728-933d-564183626ec3' AS SterlingX_Client_ID, 'Gjesdahl Law' AS SterlingX_Client_Name),
+--     STRUCT('Haffner Law' AS client, 'Dani' AS am, 'ca859f21-4206-4fda-af68-102f24c0b67e' AS SterlingX_Client_ID, 'Haffner Law' AS SterlingX_Client_Name),
+--     STRUCT('Johnson Law Group' AS client, 'Garrett' AS am, '0c4e2f26-cf3d-41e3-978f-8cd31726062f' AS SterlingX_Client_ID, 'Johnson Law Group' AS SterlingX_Client_Name),
+--     STRUCT('Kalish & Jaggars' AS client, 'Dani' AS am, '085566ed-07da-44fc-9292-e77dafdf1b68' AS SterlingX_Client_ID, 'Kalish and Jaggars' AS SterlingX_Client_Name),
+--     STRUCT('Lancaster Family Law' AS client, 'Dani' AS am, '331dae6a-d0e7-48fe-866e-b068ec98059e' AS SterlingX_Client_ID, 'Lancaster' AS SterlingX_Client_Name),
+--     STRUCT('MeyerPink' AS client, 'Dani' AS am, '5537c7d2-eb93-4748-bc6a-e236641db089' AS SterlingX_Client_ID, 'Meyer Pink' AS SterlingX_Client_Name),
+--     STRUCT('Scott M Brown Law' AS client, 'Dani' AS am, '3cf419a4-3d2c-4a8b-8deb-d004496a971d' AS SterlingX_Client_ID, 'Scott M Brown' AS SterlingX_Client_Name),
+--     STRUCT('Sterling Lawyers' AS client, 'Dani' AS am, '99584197-537f-4cf5-80b4-29c99205f07a' AS SterlingX_Client_ID, 'Sterling Lawyers' AS SterlingX_Client_Name)
+--   ])
+-- ),
+
+-- google_ads_campaign_union AS (
+--   SELECT 'Aurit Mediation' AS client, 'Garrett' AS am, g.*
+--   FROM `rc-datamart-adminreport.google_ads_aurit.fct_gads_campaign_daily` g
+
+--   UNION ALL
+
+--   SELECT 'Cutrer Family Law' AS client, 'Dani' AS am, g.*
+--   FROM `rc-datamart-adminreport.google_ads_cutrerlaw.fct_gads_campaign_daily` g
+
+--   UNION ALL
+
+--   SELECT 'Fanash Family Law' AS client, 'Garrett' AS am, g.*
+--   FROM `rc-datamart-adminreport.google_ads_fanashfamily.fct_gads_campaign_daily` g
+
+--   UNION ALL
+
+--   SELECT 'Gjesdahl Law' AS client, 'Dani' AS am, g.*
+--   FROM `rc-datamart-adminreport.google_ads_gjesdahllaw.fct_gads_campaign_daily` g
+
+--   UNION ALL
+
+--   SELECT 'Haffner Law' AS client, 'Dani' AS am, g.*
+--   FROM `rc-datamart-adminreport.google_ads_haffnerlaw.fct_gads_campaign_daily` g
+
+--   UNION ALL
+
+--   SELECT 'Johnson Law Group' AS client, 'Garrett' AS am, g.*
+--   FROM `rc-datamart-adminreport.google_ads_johnsonlaw.fct_gads_campaign_daily` g
+
+--   UNION ALL
+
+--   SELECT 'Kalish & Jaggars' AS client, 'Dani' AS am, g.*
+--   FROM `rc-datamart-adminreport.google_ads_kalishjaggars.fct_gads_campaign_daily` g
+
+--   UNION ALL
+
+--   SELECT 'Lancaster Family Law' AS client, 'Dani' AS am, g.*
+--   FROM `rc-datamart-adminreport.google_ads_lancasterlaw.fct_gads_campaign_daily` g
+
+--   UNION ALL
+
+--   SELECT 'MeyerPink' AS client, 'Dani' AS am, g.*
+--   FROM `rc-datamart-adminreport.google_ads_meyerpinklaw.fct_gads_campaign_daily` g
+
+--   UNION ALL
+
+--   SELECT 'Scott M Brown Law' AS client, 'Dani' AS am, g.*
+--   FROM `rc-datamart-adminreport.google_ads_smb.fct_gads_campaign_daily` g
+
+--   UNION ALL
+
+--   SELECT 'Sterling Lawyers' AS client, 'Dani' AS am, g.*
+--   FROM `rc-datamart-adminreport.google_ads_sterlinglawyers.fct_gads_campaign_daily` g
+-- ),
+
+-- reporting_windows AS (
+--   SELECT
+--     -- All data is based on the most recent Saturday.
+--     -- Weeks run Sunday to Saturday.
+--     DATE_SUB(
+--       CURRENT_DATE(),
+--       INTERVAL MOD(EXTRACT(DAYOFWEEK FROM CURRENT_DATE()), 7) DAY
+--     ) AS reporting_week_end_date
+-- ),
+
+-- date_windows AS (
+--   SELECT
+--     reporting_week_end_date,
+
+--     -- Monthly: current month through the latest completed Saturday
+--     DATE_TRUNC(reporting_week_end_date, MONTH) AS current_month_start_date,
+--     reporting_week_end_date AS current_month_end_date,
+
+--     -- Prior month: same day-of-month cutoff as current month
+--     DATE_TRUNC(DATE_SUB(reporting_week_end_date, INTERVAL 1 MONTH), MONTH) AS prior_month_start_date,
+--     LEAST(
+--       DATE_ADD(
+--         DATE_TRUNC(DATE_SUB(reporting_week_end_date, INTERVAL 1 MONTH), MONTH),
+--         INTERVAL (EXTRACT(DAY FROM reporting_week_end_date) - 1) DAY
+--       ),
+--       LAST_DAY(DATE_TRUNC(DATE_SUB(reporting_week_end_date, INTERVAL 1 MONTH), MONTH))
+--     ) AS prior_month_end_date,
+
+--     -- Last 2 weeks: Sunday to Saturday
+--     DATE_SUB(reporting_week_end_date, INTERVAL 13 DAY) AS last_2_weeks_start_date,
+--     reporting_week_end_date AS last_2_weeks_end_date,
+
+--     -- Prior 2 weeks: Sunday to Saturday
+--     DATE_SUB(reporting_week_end_date, INTERVAL 27 DAY) AS prior_2_weeks_start_date,
+--     DATE_SUB(reporting_week_end_date, INTERVAL 14 DAY) AS prior_2_weeks_end_date,
+
+--     -- Last week: Sunday to Saturday
+--     DATE_SUB(reporting_week_end_date, INTERVAL 6 DAY) AS last_week_start_date,
+--     reporting_week_end_date AS last_week_end_date,
+
+--     -- Prior week: Sunday to Saturday
+--     DATE_SUB(reporting_week_end_date, INTERVAL 13 DAY) AS prior_week_start_date,
+--     DATE_SUB(reporting_week_end_date, INTERVAL 7 DAY) AS prior_week_end_date
+--   FROM reporting_windows
+-- ),
+
+-- client_rollup AS (
+--   SELECT
+--     r.client,
+--     r.am,
+--     r.SterlingX_Client_ID,
+--     r.SterlingX_Client_Name,
+
+--     dw.reporting_week_end_date,
+
+--     dw.current_month_start_date,
+--     dw.current_month_end_date,
+--     dw.prior_month_start_date,
+--     dw.prior_month_end_date,
+
+--     dw.last_2_weeks_start_date,
+--     dw.last_2_weeks_end_date,
+--     dw.prior_2_weeks_start_date,
+--     dw.prior_2_weeks_end_date,
+
+--     dw.last_week_start_date,
+--     dw.last_week_end_date,
+--     dw.prior_week_start_date,
+--     dw.prior_week_end_date,
+
+--     MAX(g.segment_date) AS latest_reporting_data_date,
+
+--     -- Monthly Leads
+--     SUM(
+--       CASE
+--         WHEN g.segment_date BETWEEN dw.current_month_start_date AND dw.current_month_end_date
+--         THEN COALESCE(g.conversions, 0)
+--         ELSE 0
+--       END
+--     ) AS paid_leads_current_month,
+
+--     SUM(
+--       CASE
+--         WHEN g.segment_date BETWEEN dw.prior_month_start_date AND dw.prior_month_end_date
+--         THEN COALESCE(g.conversions, 0)
+--         ELSE 0
+--       END
+--     ) AS paid_leads_prior_month,
+
+--     -- Monthly Cost
+--     SUM(
+--       CASE
+--         WHEN g.segment_date BETWEEN dw.current_month_start_date AND dw.current_month_end_date
+--         THEN COALESCE(g.cost_micros, 0) / 1000000
+--         ELSE 0
+--       END
+--     ) AS paid_cost_current_month,
+
+--     SUM(
+--       CASE
+--         WHEN g.segment_date BETWEEN dw.prior_month_start_date AND dw.prior_month_end_date
+--         THEN COALESCE(g.cost_micros, 0) / 1000000
+--         ELSE 0
+--       END
+--     ) AS paid_cost_prior_month,
+
+--     -- Last 2 Weeks Leads
+--     SUM(
+--       CASE
+--         WHEN g.segment_date BETWEEN dw.last_2_weeks_start_date AND dw.last_2_weeks_end_date
+--         THEN COALESCE(g.conversions, 0)
+--         ELSE 0
+--       END
+--     ) AS paid_leads_last_2_weeks,
+
+--     SUM(
+--       CASE
+--         WHEN g.segment_date BETWEEN dw.prior_2_weeks_start_date AND dw.prior_2_weeks_end_date
+--         THEN COALESCE(g.conversions, 0)
+--         ELSE 0
+--       END
+--     ) AS paid_leads_prior_2_weeks,
+
+--     -- Last 2 Weeks Cost
+--     SUM(
+--       CASE
+--         WHEN g.segment_date BETWEEN dw.last_2_weeks_start_date AND dw.last_2_weeks_end_date
+--         THEN COALESCE(g.cost_micros, 0) / 1000000
+--         ELSE 0
+--       END
+--     ) AS paid_cost_last_2_weeks,
+
+--     SUM(
+--       CASE
+--         WHEN g.segment_date BETWEEN dw.prior_2_weeks_start_date AND dw.prior_2_weeks_end_date
+--         THEN COALESCE(g.cost_micros, 0) / 1000000
+--         ELSE 0
+--       END
+--     ) AS paid_cost_prior_2_weeks,
+
+--     -- Weekly Leads
+--     SUM(
+--       CASE
+--         WHEN g.segment_date BETWEEN dw.last_week_start_date AND dw.last_week_end_date
+--         THEN COALESCE(g.conversions, 0)
+--         ELSE 0
+--       END
+--     ) AS paid_leads_last_week,
+
+--     SUM(
+--       CASE
+--         WHEN g.segment_date BETWEEN dw.prior_week_start_date AND dw.prior_week_end_date
+--         THEN COALESCE(g.conversions, 0)
+--         ELSE 0
+--       END
+--     ) AS paid_leads_prior_week,
+
+--     -- Weekly Cost
+--     SUM(
+--       CASE
+--         WHEN g.segment_date BETWEEN dw.last_week_start_date AND dw.last_week_end_date
+--         THEN COALESCE(g.cost_micros, 0) / 1000000
+--         ELSE 0
+--       END
+--     ) AS paid_cost_last_week,
+
+--     SUM(
+--       CASE
+--         WHEN g.segment_date BETWEEN dw.prior_week_start_date AND dw.prior_week_end_date
+--         THEN COALESCE(g.cost_micros, 0) / 1000000
+--         ELSE 0
+--       END
+--     ) AS paid_cost_prior_week
+
+--   FROM client_roster r
+--   CROSS JOIN date_windows dw
+--   LEFT JOIN google_ads_campaign_union g
+--     ON r.client = g.client
+--    AND r.am = g.am
+--    AND g.segment_date BETWEEN LEAST(dw.prior_month_start_date, dw.prior_2_weeks_start_date)
+--                           AND dw.current_month_end_date
+--   GROUP BY
+--     r.client,
+--     r.am,
+--     r.SterlingX_Client_ID,
+--     r.SterlingX_Client_Name,
+--     dw.reporting_week_end_date,
+--     dw.current_month_start_date,
+--     dw.current_month_end_date,
+--     dw.prior_month_start_date,
+--     dw.prior_month_end_date,
+--     dw.last_2_weeks_start_date,
+--     dw.last_2_weeks_end_date,
+--     dw.prior_2_weeks_start_date,
+--     dw.prior_2_weeks_end_date,
+--     dw.last_week_start_date,
+--     dw.last_week_end_date,
+--     dw.prior_week_start_date,
+--     dw.prior_week_end_date
+-- )
+
+-- SELECT
+--   client,
+--   am,
+
+--   -- Monthly
+--   paid_leads_current_month,
+--   paid_leads_prior_month,
+--   COALESCE(SAFE_DIVIDE(paid_cost_current_month, NULLIF(paid_leads_current_month, 0)), 0) AS paid_cpl_current_month,
+--   COALESCE(SAFE_DIVIDE(paid_cost_prior_month, NULLIF(paid_leads_prior_month, 0)), 0) AS paid_cpl_prior_month,
+
+--   -- Bi-Weekly / Last 2 Weeks
+--   paid_leads_last_2_weeks,
+--   paid_leads_prior_2_weeks,
+--   COALESCE(SAFE_DIVIDE(paid_cost_last_2_weeks, NULLIF(paid_leads_last_2_weeks, 0)), 0) AS paid_cpl_last_2_weeks,
+--   COALESCE(SAFE_DIVIDE(paid_cost_prior_2_weeks, NULLIF(paid_leads_prior_2_weeks, 0)), 0) AS paid_cpl_prior_2_weeks,
+
+--   -- Weekly / Last Week
+--   paid_leads_last_week,
+--   paid_leads_prior_week,
+--   COALESCE(SAFE_DIVIDE(paid_cost_last_week, NULLIF(paid_leads_last_week, 0)), 0) AS paid_cpl_last_week,
+--   COALESCE(SAFE_DIVIDE(paid_cost_prior_week, NULLIF(paid_leads_prior_week, 0)), 0) AS paid_cpl_prior_week,
+
+--   -- Date Frames
+--   reporting_week_end_date,
+
+--   current_month_start_date,
+--   current_month_end_date,
+--   prior_month_start_date,
+--   prior_month_end_date,
+
+--   last_2_weeks_start_date,
+--   last_2_weeks_end_date,
+--   prior_2_weeks_start_date,
+--   prior_2_weeks_end_date,
+
+--   last_week_start_date,
+--   last_week_end_date,
+--   prior_week_start_date,
+--   prior_week_end_date,
+
+--   latest_reporting_data_date,
+
+--   SterlingX_Client_ID,
+--   SterlingX_Client_Name
+
+-- FROM client_rollup
+-- ORDER BY
+--   client

@@ -1,0 +1,35 @@
+config {
+    type: "table",
+    database: "sterlingx-insights",
+    schema: "firm_marketing_googleads",
+    name: "ireland_googleads_localserviceads",
+    tags: ["google ads", "local service ads", "marketing data", "ireland"],
+}
+
+WITH cte_local_service_ads AS
+(
+  SELECT
+    d.customer_id,
+    dc.customer_name,
+    d.segment_date AS date,
+    (d.cost_micros / 1000000.0) AS cost,
+    d.conversions
+  FROM `rc-datamart-adminreport.google_ads_ireland.fct_gads_campaign_daily` d
+  JOIN `rc-datamart-adminreport.google_ads_ireland.dim_gads_campaign` c
+    ON d.campaign_id = c.campaign_id
+  LEFT JOIN `rc-datamart-adminreport.google_ads_ireland.dim_gads_customer` dc
+    ON d.customer_id = dc.customer_id
+  WHERE c.advertising_channel_type = 'LOCAL_SERVICES'
+)
+
+SELECT
+  'a9b10ec7-4dfe-4058-bdb5-a53e66176eed' AS SterlingX_Client_ID,
+  'Michael Ireland & Associates' AS SterlingX_Client_Name,
+  customer_id,
+  customer_name,
+  date,
+  SUM(cost) AS cost,
+  SUM(conversions) AS conversions,
+  IFNULL(SAFE_DIVIDE(SUM(cost), SUM(conversions)), 0.0) AS cpl
+FROM cte_local_service_ads
+GROUP BY ALL
