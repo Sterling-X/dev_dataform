@@ -3,7 +3,7 @@ config {
     database: "sterlingx-insights",
     schema: "firm_marketing_client_performance",
     name: "firm_marketing_paid_leads_cpl",
-    tags: ["google analytics 4", "ga4", "paid", "leads", "cpl", "monthly", "weekly", "bi-weekly", "client performance data"],
+    tags: ["google analytics 4", "ga4", "paid", "leads", "cpl", "client performance data"],
 }
 
 WITH client_roster AS (
@@ -117,7 +117,18 @@ date_windows AS (
     DATE_SUB(report_end_date, INTERVAL 14 DAY) AS prior_14_days_end_date,
 
     DATE_SUB(DATE_SUB(report_end_date, INTERVAL 13 DAY), INTERVAL 1 YEAR) AS yoy_14_days_start_date,
-    DATE_SUB(report_end_date, INTERVAL 1 YEAR) AS yoy_14_days_end_date
+    DATE_SUB(report_end_date, INTERVAL 1 YEAR) AS yoy_14_days_end_date,
+
+    -- 12 Month YoY
+    -- Uses YEAR intervals instead of 365 days to stay calendar-aligned during leap years.
+    -- Example when report_end_date = 2026-06-29:
+    -- current_yoy: 2025-06-30 through 2026-06-29
+    -- prior_yoy:   2024-06-30 through 2025-06-29
+    DATE_ADD(DATE_SUB(report_end_date, INTERVAL 1 YEAR), INTERVAL 1 DAY) AS current_yoy_start_date,
+    report_end_date AS current_yoy_end_date,
+
+    DATE_ADD(DATE_SUB(report_end_date, INTERVAL 2 YEAR), INTERVAL 1 DAY) AS prior_yoy_start_date,
+    DATE_SUB(report_end_date, INTERVAL 1 YEAR) AS prior_yoy_end_date
   FROM data_availability
 ),
 
@@ -151,6 +162,11 @@ client_rollup AS (
     dw.yoy_14_days_start_date,
     dw.yoy_14_days_end_date,
 
+    dw.current_yoy_start_date,
+    dw.current_yoy_end_date,
+    dw.prior_yoy_start_date,
+    dw.prior_yoy_end_date,
+
     MAX(g.segment_date) AS latest_reporting_data_date,
 
     -- 90 Days Leads
@@ -181,7 +197,15 @@ client_rollup AS (
     -- 14 Days Cost
     SUM(CASE WHEN g.segment_date BETWEEN dw.current_14_days_start_date AND dw.current_14_days_end_date THEN COALESCE(g.cost_micros, 0) / 1000000 ELSE 0 END) AS paid_cost_14_days_current,
     SUM(CASE WHEN g.segment_date BETWEEN dw.prior_14_days_start_date AND dw.prior_14_days_end_date THEN COALESCE(g.cost_micros, 0) / 1000000 ELSE 0 END) AS paid_cost_14_days_prior,
-    SUM(CASE WHEN g.segment_date BETWEEN dw.yoy_14_days_start_date AND dw.yoy_14_days_end_date THEN COALESCE(g.cost_micros, 0) / 1000000 ELSE 0 END) AS paid_cost_14_days_yoy
+    SUM(CASE WHEN g.segment_date BETWEEN dw.yoy_14_days_start_date AND dw.yoy_14_days_end_date THEN COALESCE(g.cost_micros, 0) / 1000000 ELSE 0 END) AS paid_cost_14_days_yoy,
+
+    -- Trailing 12-Month YoY Leads
+    SUM(CASE WHEN g.segment_date BETWEEN dw.current_yoy_start_date AND dw.current_yoy_end_date THEN COALESCE(g.conversions, 0) ELSE 0 END) AS paid_leads_yoy_current,
+    SUM(CASE WHEN g.segment_date BETWEEN dw.prior_yoy_start_date AND dw.prior_yoy_end_date THEN COALESCE(g.conversions, 0) ELSE 0 END) AS paid_leads_yoy_prior,
+
+    -- Trailing 12-Month YoY Cost
+    SUM(CASE WHEN g.segment_date BETWEEN dw.current_yoy_start_date AND dw.current_yoy_end_date THEN COALESCE(g.cost_micros, 0) / 1000000 ELSE 0 END) AS paid_cost_yoy_current,
+    SUM(CASE WHEN g.segment_date BETWEEN dw.prior_yoy_start_date AND dw.prior_yoy_end_date THEN COALESCE(g.cost_micros, 0) / 1000000 ELSE 0 END) AS paid_cost_yoy_prior
 
   FROM client_roster r
   CROSS JOIN date_windows dw
@@ -189,6 +213,7 @@ client_rollup AS (
     ON r.client = g.client
    AND r.am = g.am
    AND g.segment_date BETWEEN LEAST(
+                            dw.prior_yoy_start_date,
                             dw.yoy_90_days_start_date,
                             dw.prior_90_days_start_date,
                             dw.current_90_days_start_date
@@ -221,7 +246,12 @@ client_rollup AS (
     dw.prior_14_days_start_date,
     dw.prior_14_days_end_date,
     dw.yoy_14_days_start_date,
-    dw.yoy_14_days_end_date
+    dw.yoy_14_days_end_date,
+
+    dw.current_yoy_start_date,
+    dw.current_yoy_end_date,
+    dw.prior_yoy_start_date,
+    dw.prior_yoy_end_date
 )
 
 SELECT
@@ -255,6 +285,13 @@ SELECT
   COALESCE(SAFE_DIVIDE(paid_cost_14_days_prior, NULLIF(paid_leads_14_days_prior, 0)), 0) AS paid_cpl_14_days_prior,
   COALESCE(SAFE_DIVIDE(paid_cost_14_days_yoy, NULLIF(paid_leads_14_days_yoy, 0)), 0) AS paid_cpl_14_days_yoy,
 
+  -- 12 Month YoY
+  paid_leads_yoy_current,
+  paid_leads_yoy_prior,
+
+  COALESCE(SAFE_DIVIDE(paid_cost_yoy_current, NULLIF(paid_leads_yoy_current, 0)), 0) AS paid_cpl_yoy_current,
+  COALESCE(SAFE_DIVIDE(paid_cost_yoy_prior, NULLIF(paid_leads_yoy_prior, 0)), 0) AS paid_cpl_yoy_prior,
+
   -- Date Frames
   latest_reporting_data_date,
 
@@ -279,14 +316,17 @@ SELECT
   yoy_14_days_start_date,
   yoy_14_days_end_date,
 
+  current_yoy_start_date,
+  current_yoy_end_date,
+  prior_yoy_start_date,
+  prior_yoy_end_date,
+
   SterlingX_Client_ID,
   SterlingX_Client_Name
 
 FROM client_rollup
 ORDER BY
   client
-
-
 
 
 

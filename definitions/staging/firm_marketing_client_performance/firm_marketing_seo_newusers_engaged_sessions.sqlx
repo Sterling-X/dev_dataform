@@ -156,7 +156,18 @@ date_windows AS (
     DATE_SUB(report_end_date, INTERVAL 14 DAY) AS prior_14_days_end_date,
 
     DATE_SUB(DATE_SUB(report_end_date, INTERVAL 13 DAY), INTERVAL 1 YEAR) AS yoy_14_days_start_date,
-    DATE_SUB(report_end_date, INTERVAL 1 YEAR) AS yoy_14_days_end_date
+    DATE_SUB(report_end_date, INTERVAL 1 YEAR) AS yoy_14_days_end_date,
+
+    -- 12-Month YoY
+    -- Uses YEAR intervals instead of 365 days to stay calendar-aligned during leap years.
+    -- Example when report_end_date = 2026-06-29:
+    -- current_yoy: 2025-06-30 through 2026-06-29
+    -- prior_yoy:   2024-06-30 through 2025-06-29
+    DATE_ADD(DATE_SUB(report_end_date, INTERVAL 1 YEAR), INTERVAL 1 DAY) AS current_yoy_start_date,
+    report_end_date AS current_yoy_end_date,
+
+    DATE_ADD(DATE_SUB(report_end_date, INTERVAL 2 YEAR), INTERVAL 1 DAY) AS prior_yoy_start_date,
+    DATE_SUB(report_end_date, INTERVAL 1 YEAR) AS prior_yoy_end_date
   FROM data_availability
 ),
 
@@ -192,6 +203,11 @@ client_rollup AS (
     dw.yoy_14_days_start_date,
     dw.yoy_14_days_end_date,
 
+    dw.current_yoy_start_date,
+    dw.current_yoy_end_date,
+    dw.prior_yoy_start_date,
+    dw.prior_yoy_end_date,
+
     MAX(b.event_date) AS latest_reporting_data_date,
 
     -- 90 Days New Users
@@ -222,13 +238,22 @@ client_rollup AS (
     -- 14 Days Engaged Sessions
     SUM(CASE WHEN b.event_date BETWEEN dw.current_14_days_start_date AND dw.current_14_days_end_date THEN COALESCE(b.engaged_sessions, 0) ELSE 0 END) AS engaged_sessions_14_days_current,
     SUM(CASE WHEN b.event_date BETWEEN dw.prior_14_days_start_date AND dw.prior_14_days_end_date THEN COALESCE(b.engaged_sessions, 0) ELSE 0 END) AS engaged_sessions_14_days_prior,
-    SUM(CASE WHEN b.event_date BETWEEN dw.yoy_14_days_start_date AND dw.yoy_14_days_end_date THEN COALESCE(b.engaged_sessions, 0) ELSE 0 END) AS engaged_sessions_14_days_yoy
+    SUM(CASE WHEN b.event_date BETWEEN dw.yoy_14_days_start_date AND dw.yoy_14_days_end_date THEN COALESCE(b.engaged_sessions, 0) ELSE 0 END) AS engaged_sessions_14_days_yoy,
+
+    -- 12-Month YoY New Users
+    SUM(CASE WHEN b.event_date BETWEEN dw.current_yoy_start_date AND dw.current_yoy_end_date THEN COALESCE(b.new_users, 0) ELSE 0 END) AS new_users_yoy_current,
+    SUM(CASE WHEN b.event_date BETWEEN dw.prior_yoy_start_date AND dw.prior_yoy_end_date THEN COALESCE(b.new_users, 0) ELSE 0 END) AS new_users_yoy_prior,
+
+    -- 12-Month YoY Engaged Sessions
+    SUM(CASE WHEN b.event_date BETWEEN dw.current_yoy_start_date AND dw.current_yoy_end_date THEN COALESCE(b.engaged_sessions, 0) ELSE 0 END) AS engaged_sessions_yoy_current,
+    SUM(CASE WHEN b.event_date BETWEEN dw.prior_yoy_start_date AND dw.prior_yoy_end_date THEN COALESCE(b.engaged_sessions, 0) ELSE 0 END) AS engaged_sessions_yoy_prior
 
   FROM am_roster r
   CROSS JOIN date_windows dw
   LEFT JOIN base b
     ON r.client = b.client
    AND b.event_date BETWEEN LEAST(
+                          dw.prior_yoy_start_date,
                           dw.yoy_90_days_start_date,
                           dw.prior_90_days_start_date,
                           dw.current_90_days_start_date
@@ -260,7 +285,12 @@ client_rollup AS (
     dw.prior_14_days_start_date,
     dw.prior_14_days_end_date,
     dw.yoy_14_days_start_date,
-    dw.yoy_14_days_end_date
+    dw.yoy_14_days_end_date,
+
+    dw.current_yoy_start_date,
+    dw.current_yoy_end_date,
+    dw.prior_yoy_start_date,
+    dw.prior_yoy_end_date
 )
 
 SELECT
@@ -295,6 +325,13 @@ SELECT
   COALESCE(engaged_sessions_14_days_prior, 0) AS engaged_sessions_14_days_prior,
   COALESCE(engaged_sessions_14_days_yoy, 0) AS engaged_sessions_14_days_yoy,
 
+  -- Trailing 12-Month YoY
+  COALESCE(new_users_yoy_current, 0) AS new_users_yoy_current,
+  COALESCE(new_users_yoy_prior, 0) AS new_users_yoy_prior,
+
+  COALESCE(engaged_sessions_yoy_current, 0) AS engaged_sessions_yoy_current,
+  COALESCE(engaged_sessions_yoy_prior, 0) AS engaged_sessions_yoy_prior,
+
   -- Date Frames
   latest_reporting_data_date,
 
@@ -318,6 +355,11 @@ SELECT
   prior_14_days_end_date,
   yoy_14_days_start_date,
   yoy_14_days_end_date,
+
+  current_yoy_start_date,
+  current_yoy_end_date,
+  prior_yoy_start_date,
+  prior_yoy_end_date,
 
   SterlingX_Client_ID,
   SterlingX_Client_Name
