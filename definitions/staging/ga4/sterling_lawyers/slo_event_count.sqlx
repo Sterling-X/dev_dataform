@@ -40,6 +40,8 @@ WHERE
   e.event_name IN (
     'form_fill_all',
     'CTM_Inbound_Tracking_Call_InboundCall'
+    'CTM_Inbound_Tracking_Call_InboundCall_Re'
+    'CTM_Inbound_Tracking_Call_InboundCall_Fi'
   )
 
 GROUP BY
