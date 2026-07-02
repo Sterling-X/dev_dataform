@@ -1,0 +1,54 @@
+-- ============================================================================
+-- FINAL TABLE: slo_event_count
+-- Writes to: rc-datamart-adminreport.ga4_sterlinglawyers_scorecard_tables
+-- Form Fill & Call Tracking events, per day per channel per event.
+-- Covers ALL dates present in the source (no date filter).
+-- ============================================================================
+
+CREATE OR REPLACE TABLE
+  `rc-datamart-adminreport.ga4_sterlinglawyers_scorecard_tables.slo_event_count`
+AS
+SELECT
+  f.event_date                                                         AS date,
+  COALESCE(ts.session_default_channel_group, '(not set)')              AS session_default_channel_group,
+  e.event_name,
+
+  SUM(f.total_users)                                                   AS total_users,
+  SUM(f.key_events)                                                    AS key_events,
+  SUM(f.event_count)                                                   AS event_count,
+
+  SUM(f.user_key_event_rate)                                           AS user_key_event_rate_native,
+  SAFE_DIVIDE(SUM(f.key_events), NULLIF(SUM(f.total_users), 0))         AS user_key_event_rate_derived
+
+FROM
+  `rc-datamart-adminreport.google_analytics4_sterlinglawyers.fact_ga4_daily_analysis`   f
+
+JOIN
+  `rc-datamart-adminreport.google_analytics4_sterlinglawyers.dim_ga4_report`            r
+  ON  f.report_id   = r.report_id
+  AND r.report_name = 'slo_key_events_by_channel_daily'
+
+LEFT JOIN
+  `rc-datamart-adminreport.google_analytics4_sterlinglawyers.dim_ga4_event`             e
+  ON f.event_id = e.event_id
+
+LEFT JOIN
+  `rc-datamart-adminreport.google_analytics4_sterlinglawyers.dim_ga4_traffic_source`   ts
+  ON f.source_medium_id = ts.source_medium_id
+
+WHERE
+  e.event_name IN (
+    'form_fill_all',
+    'CTM_Inbound_Tracking_Call_InboundCall'
+  )
+
+GROUP BY
+  f.event_date,
+  ts.session_default_channel_group,
+  e.event_name
+
+ORDER BY
+  f.event_date        ASC,
+  e.event_name        ASC,
+  event_count         DESC
+;
