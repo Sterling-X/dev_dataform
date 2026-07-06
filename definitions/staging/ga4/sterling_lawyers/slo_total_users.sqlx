@@ -17,13 +17,13 @@ SELECT
   SUM(f.key_events)                                        AS key_events,
   SUM(f.total_revenue)                                     AS total_revenue
 FROM
-  `rc-datamart-adminreport.google_analytics4_sterlinglawyers.fact_ga4_daily_analysis` f
+  `rc-datamart-adminreport.ga4_sterlinglawyers_scorecard_tables.fact_ga4_daily_analysis` f
 JOIN
-  `rc-datamart-adminreport.google_analytics4_sterlinglawyers.dim_ga4_report` r
+  `rc-datamart-adminreport.ga4_sterlinglawyers_scorecard_tables.dim_ga4_report` r
   ON f.report_id = r.report_id
   AND r.report_name = 'slo_total_users_by_channel_daily'
 LEFT JOIN
-  `rc-datamart-adminreport.google_analytics4_sterlinglawyers.dim_ga4_traffic_source` ts
+  `rc-datamart-adminreport.ga4_sterlinglawyers_scorecard_tables.dim_ga4_traffic_source` ts
   ON f.source_medium_id = ts.source_medium_id
 GROUP BY
   f.event_date,
@@ -51,9 +51,9 @@ SELECT
   SUM(f.key_events)     AS key_events,
   SUM(f.total_revenue)  AS total_revenue
 FROM
-  `rc-datamart-adminreport.google_analytics4_sterlinglawyers.fact_ga4_daily_analysis` f
+  `rc-datamart-adminreport.ga4_sterlinglawyers_scorecard_tables.fact_ga4_daily_analysis` f
 JOIN
-  `rc-datamart-adminreport.google_analytics4_sterlinglawyers.dim_ga4_report` r
+  `rc-datamart-adminreport.ga4_sterlinglawyers_scorecard_tables.dim_ga4_report` r
   ON f.report_id = r.report_id
   AND r.report_name = 'slo_total_users_daily'
 GROUP BY

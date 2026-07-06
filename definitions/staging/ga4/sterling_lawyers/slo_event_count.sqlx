@@ -21,19 +21,19 @@ SELECT
   SAFE_DIVIDE(SUM(f.key_events), NULLIF(SUM(f.total_users), 0))         AS user_key_event_rate_derived
 
 FROM
-  `rc-datamart-adminreport.google_analytics4_sterlinglawyers.fact_ga4_daily_analysis`   f
+  `rc-datamart-adminreport.ga4_sterlinglawyers_scorecard_tables.fact_ga4_daily_analysis`   f
 
 JOIN
-  `rc-datamart-adminreport.google_analytics4_sterlinglawyers.dim_ga4_report`            r
+  `rc-datamart-adminreport.ga4_sterlinglawyers_scorecard_tables.dim_ga4_report`            r
   ON  f.report_id   = r.report_id
   AND r.report_name = 'slo_key_events_by_channel_daily'
 
 LEFT JOIN
-  `rc-datamart-adminreport.google_analytics4_sterlinglawyers.dim_ga4_event`             e
+  `rc-datamart-adminreport.ga4_sterlinglawyers_scorecard_tables.dim_ga4_event`             e
   ON f.event_id = e.event_id
 
 LEFT JOIN
-  `rc-datamart-adminreport.google_analytics4_sterlinglawyers.dim_ga4_traffic_source`   ts
+  `rc-datamart-adminreport.ga4_sterlinglawyers_scorecard_tables.dim_ga4_traffic_source`   ts
   ON f.source_medium_id = ts.source_medium_id
 
 WHERE
