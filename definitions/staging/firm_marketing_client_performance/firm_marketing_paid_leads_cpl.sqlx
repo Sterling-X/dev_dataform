@@ -80,8 +80,8 @@ google_ads_campaign_union AS (
 
 data_availability AS (
   SELECT
-    -- MAX(segment_date) AS report_end_date
-    LEAST(MAX(segment_date), DATE '2026-07-05') AS report_end_date
+    MAX(segment_date) AS report_end_date
+    -- LEAST(MAX(segment_date), DATE '2026-07-05') AS report_end_date
   FROM google_ads_campaign_union
   WHERE segment_date IS NOT NULL
 ),
