@@ -1,0 +1,23 @@
+config {
+    type: "table",
+    database: "sterlingx-insights",
+    schema: "firm_marketing_googlesearchconsole",
+    name: "ireland_googlesearchconsole_search_performance",
+    tags: ["google search console", "search performance", "ireland"],
+}
+
+SELECT
+  'a9b10ec7-4dfe-4058-bdb5-a53e66176eed' AS SterlingX_Client_ID,
+  'Michael Ireland & Associates' AS SterlingX_Client_Name,
+
+  data_date,
+  site_url,
+  query,
+
+  clicks,
+  impressions,
+  position,
+FROM `rc-datamart-adminreport.google_search_console_ireland.fct_gsc_query_metrics`
+ORDER BY 
+data_date DESC,
+query ASC

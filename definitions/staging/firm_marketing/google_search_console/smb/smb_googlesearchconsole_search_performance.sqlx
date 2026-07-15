@@ -1,0 +1,23 @@
+config {
+    type: "table",
+    database: "sterlingx-insights",
+    schema: "firm_marketing_googlesearchconsole",
+    name: "smb_googlesearchconsole_search_performance",
+    tags: ["google search console", "search performance", "smb"],
+}
+
+SELECT
+  '3cf419a4-3d2c-4a8b-8deb-d004496a971d' AS SterlingX_Client_ID,
+  'Scott M Brown' AS SterlingX_Client_Name,
+
+  data_date,
+  site_url,
+  query,
+
+  clicks,
+  impressions,
+  position,
+FROM `rc-datamart-adminreport.google_search_console_smb.fct_gsc_query_metrics`
+ORDER BY 
+data_date DESC,
+query ASC
