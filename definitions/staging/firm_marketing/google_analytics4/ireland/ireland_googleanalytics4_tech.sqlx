@@ -1,0 +1,39 @@
+config {
+    type: "table",
+    database: "sterlingx-insights",
+    schema: "firm_marketing_googleanalytics4",
+    name: "ireland_googleanalytics4_tech",
+    tags: ["google analytics 4", "ga4", "tech", "marketing data", "ireland"],
+}
+
+SELECT
+  'a9b10ec7-4dfe-4058-bdb5-a53e66176eed' AS SterlingX_Client_ID,
+  'Michael Ireland & Associates' AS SterlingX_Client_Name,
+    fa.property_id,
+    fa.event_date,
+    -- dimensions
+    JSON_VALUE(fa.dimension_values_json, '$.date') AS date,
+    JSON_VALUE(fa.dimension_values_json, '$.platform') AS platform,
+    JSON_VALUE(fa.dimension_values_json, '$.deviceCategory') AS device_category,
+    JSON_VALUE(fa.dimension_values_json, '$.browser') AS browser,
+    JSON_VALUE(fa.dimension_values_json, '$.operatingSystem') AS operating_system,
+    JSON_VALUE(fa.dimension_values_json, '$.mobileDeviceBranding') AS mobile_device_branding,
+    JSON_VALUE(fa.dimension_values_json, '$.mobileDeviceModel') AS mobile_device_model,
+    JSON_VALUE(fa.dimension_values_json, '$.screenResolution') AS screen_resolution,
+    JSON_VALUE(fa.dimension_values_json, '$.country') AS country,
+
+    -- metrics
+    SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.sessions') AS INT64) AS sessions,
+    SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.engagedSessions') AS INT64) AS engaged_sessions,
+    SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.activeUsers') AS INT64) AS active_users,
+    SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.newUsers') AS INT64) AS new_users,
+    SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.totalUsers') AS INT64) AS total_users,
+    SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.screenPageViews') AS INT64) AS screen_page_views,
+    SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.eventCount') AS INT64) AS event_count,
+    SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.keyEvents') AS FLOAT64) AS key_events,
+    SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.totalRevenue') AS FLOAT64) AS total_revenue
+FROM `rc-datamart-adminreport.google_analytics4_ireland.fact_ga4_daily_analysis` fa
+LEFT JOIN `rc-datamart-adminreport.google_analytics4_ireland.dim_ga4_report` dr
+    ON fa.report_id = dr.report_id
+WHERE dr.report_category = 'technology'
+    AND dr.report_name = 'tech_daily'
