@@ -10,14 +10,22 @@ WITH client_roster AS (
   SELECT *
   FROM UNNEST([
     STRUCT('Aurit Mediation' AS client, 'Garrett' AS am, '916fb7c7-13bc-4725-8bca-e11e0749da31' AS SterlingX_Client_ID, 'Aurit mediation' AS SterlingX_Client_Name),
+    STRUCT('Badger Meter' AS client, 'Garrett' AS am, 'NA' AS SterlingX_Client_ID, 'Badger Meter' AS SterlingX_Client_Name),
+    STRUCT('Bank Five Nine' AS client, 'Garrett' AS am, 'NA' AS SterlingX_Client_ID, 'Bank Five Nine' AS SterlingX_Client_Name),
     STRUCT('Cutrer Family Law' AS client, 'Dani' AS am, '2e0efe10-f122-4a03-bfa5-7215e2dd7b71' AS SterlingX_Client_ID, 'Cutrer' AS SterlingX_Client_Name),
+    STRUCT('Elkus & Sisson' AS client, 'Dani' AS am, 'NA' AS SterlingX_Client_ID, 'Elkus & Sisson' AS SterlingX_Client_Name),
     STRUCT('Fanash Family Law' AS client, 'Garrett' AS am, '8a4bb5d3-2988-4b58-901a-d7ebdb015a10' AS SterlingX_Client_ID, 'Fanash Family Law' AS SterlingX_Client_Name),
+    STRUCT('Five Star Bodies' AS client, 'Garrett' AS am, 'NA' AS SterlingX_Client_ID, 'Five Star Bodies' AS SterlingX_Client_Name),
     STRUCT('Gjesdahl Law' AS client, 'Dani' AS am, '17c0939a-2e3d-4728-933d-564183626ec3' AS SterlingX_Client_ID, 'Gjesdahl Law' AS SterlingX_Client_Name),
     STRUCT('Michael Ireland & Associates' AS client, 'Dani' AS am, 'a9b10ec7-4dfe-4058-bdb5-a53e66176eed' AS SterlingX_Client_ID, 'Michael Ireland & Associates' AS SterlingX_Client_Name),
     STRUCT('Johnson Law Group' AS client, 'Garrett' AS am, '0c4e2f26-cf3d-41e3-978f-8cd31726062f' AS SterlingX_Client_ID, 'Johnson Law Group' AS SterlingX_Client_Name),
     STRUCT('Kalish & Jaggars' AS client, 'Dani' AS am, '085566ed-07da-44fc-9292-e77dafdf1b68' AS SterlingX_Client_ID, 'Kalish and Jaggars' AS SterlingX_Client_Name),
     STRUCT('Lancaster Family Law' AS client, 'Dani' AS am, '331dae6a-d0e7-48fe-866e-b068ec98059e' AS SterlingX_Client_ID, 'Lancaster' AS SterlingX_Client_Name),
     STRUCT('MeyerPink' AS client, 'Dani' AS am, '5537c7d2-eb93-4748-bc6a-e236641db089' AS SterlingX_Client_ID, 'Meyer Pink' AS SterlingX_Client_Name),
+    STRUCT('Moran Wealth' AS client, 'Dani' AS am, 'NA' AS SterlingX_Client_ID, 'Moran Wealth' AS SterlingX_Client_Name),
+    STRUCT('Neuro Endo' AS client, 'Dani' AS am, 'NA' AS SterlingX_Client_ID, 'Neuro Endo' AS SterlingX_Client_Name),
+    STRUCT('Omnipress' AS client, 'Dani' AS am, 'NA' AS SterlingX_Client_ID, 'Omnipress' AS SterlingX_Client_Name),
+    STRUCT('Porcello Law Offices' AS client, 'Dani' AS am, 'NA' AS SterlingX_Client_ID, 'Porcello Law Offices' AS SterlingX_Client_Name),
     STRUCT('Scott M Brown Law' AS client, 'Dani' AS am, '3cf419a4-3d2c-4a8b-8deb-d004496a971d' AS SterlingX_Client_ID, 'Scott M Brown' AS SterlingX_Client_Name),
     STRUCT('Sterling Lawyers' AS client, 'Dani' AS am, '99584197-537f-4cf5-80b4-29c99205f07a' AS SterlingX_Client_ID, 'Sterling Lawyers' AS SterlingX_Client_Name)
   ])
@@ -29,13 +37,33 @@ google_ads_campaign_union AS (
 
   UNION ALL
 
+  SELECT 'Badger Meter' AS client, 'Garrett' AS am, g.*
+  FROM `rc-datamart-adminreport.google_ads_badgermeter.fct_gads_campaign_daily` g
+
+  UNION ALL
+
+  SELECT 'Bank Five Nine' AS client, 'Garrett' AS am, g.*
+  FROM `rc-datamart-adminreport.google_ads_bankfivenine.fct_gads_campaign_daily` g
+
+  UNION ALL
+
   SELECT 'Cutrer Family Law' AS client, 'Dani' AS am, g.*
   FROM `rc-datamart-adminreport.google_ads_cutrerlaw.fct_gads_campaign_daily` g
 
   UNION ALL
 
+  SELECT 'Elkus & Sisson' AS client, 'Dani' AS am, g.*
+  FROM `rc-datamart-adminreport.google_ads_elkussisson.fct_gads_campaign_daily` g
+
+  UNION ALL
+
   SELECT 'Fanash Family Law' AS client, 'Garrett' AS am, g.*
   FROM `rc-datamart-adminreport.google_ads_fanashfamily.fct_gads_campaign_daily` g
+
+  UNION ALL
+
+  SELECT 'Five Star Bodies' AS client, 'Garrett' AS am, g.*
+  FROM `rc-datamart-adminreport.google_ads_fivestarbodies.fct_gads_campaign_daily` g
 
   UNION ALL
 
@@ -66,6 +94,26 @@ google_ads_campaign_union AS (
 
   SELECT 'MeyerPink' AS client, 'Dani' AS am, g.*
   FROM `rc-datamart-adminreport.google_ads_meyerpinklaw.fct_gads_campaign_daily` g
+
+  UNION ALL
+
+  SELECT 'Moran Wealth' AS client, 'Dani' AS am, g.*
+  FROM `rc-datamart-adminreport.google_ads_moranwealth.fct_gads_campaign_daily` g
+
+  UNION ALL
+
+  SELECT 'Neuro Endo' AS client, 'Dani' AS am, g.*
+  FROM `rc-datamart-adminreport.google_ads_neuroendo.fct_gads_campaign_daily` g
+
+  UNION ALL
+
+  SELECT 'Omnipress' AS client, 'Dani' AS am, g.*
+  FROM `rc-datamart-adminreport.google_ads_omnipress.fct_gads_campaign_daily` g
+
+  UNION ALL
+
+  SELECT 'Porcello Law Offices' AS client, 'Dani' AS am, g.*
+  FROM `rc-datamart-adminreport.google_ads_porcellolawoffices.fct_gads_campaign_daily` g
 
   UNION ALL
 
@@ -121,7 +169,7 @@ date_windows AS (
     DATE_SUB(report_end_date, INTERVAL 1 YEAR) AS yoy_14_days_end_date,
 
     -- 12 Month YoY
-    -- Uses YEAR intervals instead of 365 days to stay calendar-aligned during leap years.
+    -- Uses YEAR intervals instead of 365 days to stay calendar-aligned during leap years
     -- Example when report_end_date = 2026-06-29:
     -- current_yoy: 2025-06-30 through 2026-06-29
     -- prior_yoy:   2024-06-30 through 2025-06-29
