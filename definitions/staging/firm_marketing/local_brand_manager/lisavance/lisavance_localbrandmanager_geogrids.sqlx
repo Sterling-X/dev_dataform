@@ -66,7 +66,7 @@ flattened AS (
 )
 
 SELECT 
-  'NA' AS SterlingX_Client_ID
+  '84daafc1-503c-47e2-8fed-410f56f64a96' AS SterlingX_Client_ID
    , 'Lisa Vance' AS SterlingX_Client_Name
    , geogrid_id
    , agr

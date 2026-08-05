@@ -23,7 +23,7 @@ WITH cte_local_service_ads AS
 )
 
 SELECT
-  'NA' AS SterlingX_Client_ID,
+  'eb3cb793-c3ea-4476-90f5-702c1b421f17' AS SterlingX_Client_ID,
   'Bank Five Nine' AS SterlingX_Client_Name,
   customer_id,
   customer_name,

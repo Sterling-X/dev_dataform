@@ -26,7 +26,7 @@ WITH campaign_dim AS (
 )
 
 SELECT
-  'NA' AS SterlingX_Client_ID,
+  '2cdee080-147c-4540-9a80-18a0835d2c0d' AS SterlingX_Client_ID,
   'Moran Wealth Management' AS SterlingX_Client_Name,
   f.segment_date,
   f.customer_id,

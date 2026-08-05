@@ -26,7 +26,7 @@ WITH campaign_dim AS (
 )
 
 SELECT
-  'NA' AS SterlingX_Client_ID,
+  '1a402c5a-b3e7-4fc6-9f2e-cbd4c5ffe02a' AS SterlingX_Client_ID,
   'Omnipress' AS SterlingX_Client_Name,
   f.segment_date,
   f.customer_id,

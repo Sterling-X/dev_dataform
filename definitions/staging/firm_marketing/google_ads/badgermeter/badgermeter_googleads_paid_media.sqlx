@@ -113,7 +113,7 @@ combined AS (
 )
 
 SELECT
-  'NA' AS SterlingX_Client_ID,
+  'b7ed6a47-a695-4ebf-a5c0-77b3dec6bfa3' AS SterlingX_Client_ID,
   'Badger Meter' AS SterlingX_Client_Name,
   customer_id,
   campaign_id,

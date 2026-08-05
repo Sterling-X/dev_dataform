@@ -2,8 +2,8 @@ config {
     type: "table",
     database: "sterlingx-insights",
     schema: "firm_marketing_googleads",
-    name: "moranwealth_googleads_paid_media",
-    tags: ["google ads", "paid media", "marketing data", "moranwealth"],
+    name: "blattnerfamilylaw_googleads_paid_media",
+    tags: ["google ads", "paid media", "marketing data", "blattnerfamilylaw"],
 }
 
 WITH search_term_base AS (
@@ -32,11 +32,11 @@ WITH search_term_base AS (
     SUM(f.clicks) AS clicks,
 
     'SEARCH_TERM' AS type_grain
-  FROM `rc-datamart-adminreport.google_ads_moranwealth.fct_gads_search_term_daily` f
-  LEFT JOIN `rc-datamart-adminreport.google_ads_moranwealth.dim_gads_campaign` c
+  FROM `rc-datamart-adminreport.google_ads_blattnerfamilylaw.fct_gads_search_term_daily` f
+  LEFT JOIN `rc-datamart-adminreport.google_ads_blattnerfamilylaw.dim_gads_campaign` c
     ON f.customer_id = c.customer_id
    AND f.campaign_id = c.campaign_id
-  LEFT JOIN `rc-datamart-adminreport.google_ads_moranwealth.dim_gads_ad_group` ag
+  LEFT JOIN `rc-datamart-adminreport.google_ads_blattnerfamilylaw.dim_gads_ad_group` ag
     ON f.customer_id = ag.customer_id
    AND f.campaign_id = ag.campaign_id
    AND f.ad_group_id = ag.ad_group_id
@@ -82,11 +82,11 @@ landing_page_base AS (
     SUM(f.clicks) AS clicks,
 
     'LANDING_PAGE' AS type_grain
-  FROM `rc-datamart-adminreport.google_ads_moranwealth.fct_gads_landing_page_daily` f
-  LEFT JOIN `rc-datamart-adminreport.google_ads_moranwealth.dim_gads_campaign` c
+  FROM `rc-datamart-adminreport.google_ads_blattnerfamilylaw.fct_gads_landing_page_daily` f
+  LEFT JOIN `rc-datamart-adminreport.google_ads_blattnerfamilylaw.dim_gads_campaign` c
     ON f.customer_id = c.customer_id
    AND f.campaign_id = c.campaign_id
-  LEFT JOIN `rc-datamart-adminreport.google_ads_moranwealth.dim_gads_ad_group` ag
+  LEFT JOIN `rc-datamart-adminreport.google_ads_blattnerfamilylaw.dim_gads_ad_group` ag
     ON f.customer_id = ag.customer_id
    AND f.campaign_id = ag.campaign_id
    AND f.ad_group_id = ag.ad_group_id
@@ -113,8 +113,8 @@ combined AS (
 )
 
 SELECT
-  '2cdee080-147c-4540-9a80-18a0835d2c0d' AS SterlingX_Client_ID,
-  'Moran Wealth Management' AS SterlingX_Client_Name,
+  '66588887-f466-46e0-9650-b94e9f9801cf' AS SterlingX_Client_ID,
+  'Blattner Family Law Group' AS SterlingX_Client_Name,
   customer_id,
   campaign_id,
   ad_group_id,

@@ -23,7 +23,7 @@ WITH cte_local_service_ads AS
 )
 
 SELECT
-  'NA' AS SterlingX_Client_ID,
+  '1a402c5a-b3e7-4fc6-9f2e-cbd4c5ffe02a' AS SterlingX_Client_ID,
   'Omnipress' AS SterlingX_Client_Name,
   customer_id,
   customer_name,

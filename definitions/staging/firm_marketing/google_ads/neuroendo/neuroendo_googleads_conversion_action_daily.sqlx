@@ -23,7 +23,7 @@ config {
 */
 
 SELECT
-  'NA' AS SterlingX_Client_ID,
+  'c469e634-8986-4161-9b8e-b8d38b5fd826' AS SterlingX_Client_ID,
   'NeuroEndoMKE' AS SterlingX_Client_Name,
 
     fc.segment_date,

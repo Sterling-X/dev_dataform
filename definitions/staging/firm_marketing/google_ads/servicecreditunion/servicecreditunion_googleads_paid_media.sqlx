@@ -113,7 +113,7 @@ combined AS (
 )
 
 SELECT
-  'NA' AS SterlingX_Client_ID,
+  'dfb1117c-1e5f-462a-8c0e-5977a216dc5c' AS SterlingX_Client_ID,
   'Service Credit Union' AS SterlingX_Client_Name,
   customer_id,
   campaign_id,

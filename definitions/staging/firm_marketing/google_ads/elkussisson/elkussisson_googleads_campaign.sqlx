@@ -11,7 +11,7 @@ config {
 }
 
 SELECT
-    'NA' AS SterlingX_Client_ID,
+    'b861c480-0aa3-4af5-a7c7-6081e9623458' AS SterlingX_Client_ID,
     'Elkus & Sisson' AS SterlingX_Client_Name,
     fc.segment_date,
     fc.customer_id,

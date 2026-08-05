@@ -7,7 +7,7 @@ config {
 }
 
 SELECT
-  'NA' AS SterlingX_Client_ID,
+  'd990f128-e1bb-4467-b6c9-2e52317ba7ed' AS SterlingX_Client_ID,
   'Five Star Bodies' AS SterlingX_Client_Name,
     qs.customer_id,
     dc.customer_name,

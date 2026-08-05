@@ -11,7 +11,7 @@ config {
 }
 
 SELECT
-  'NA' AS SterlingX_Client_ID,
+  '2cdee080-147c-4540-9a80-18a0835d2c0d' AS SterlingX_Client_ID,
   'Moran Wealth Management' AS SterlingX_Client_Name,
     fc.segment_date,
     fc.customer_id,

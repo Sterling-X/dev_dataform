@@ -2,8 +2,8 @@ config {
     type: "table",
     database: "sterlingx-insights",
     schema: "firm_marketing_googleads",
-    name: "neuroendo_googleads_campaign_budget",
-    tags: ["google ads", "campaign budget", "marketing data", "neuroendo"],
+    name: "blattnerfamilylaw_googleads_campaign_budget",
+    tags: ["google ads", "campaign budget", "marketing data", "blattnerfamilylaw"],
 }
 
 WITH campaign_dim AS (
@@ -17,17 +17,17 @@ WITH campaign_dim AS (
     REGEXP_EXTRACT(c.campaign_budget_resource_name, r'campaignBudgets/([0-9]+)') AS campaign_budget_id,
     b.amount_micros AS budget_amount_micros,
     cust.currency_code
-  FROM `rc-datamart-adminreport.google_ads_neuroendo.dim_gads_campaign` c 
-  LEFT JOIN `rc-datamart-adminreport.google_ads_neuroendo.dim_gads_customer` cust
+  FROM `rc-datamart-adminreport.google_ads_blattnerfamilylaw.dim_gads_campaign` c 
+  LEFT JOIN `rc-datamart-adminreport.google_ads_blattnerfamilylaw.dim_gads_customer` cust
     ON cust.customer_id = c.customer_id
-  LEFT JOIN `rc-datamart-adminreport.google_ads_neuroendo.dim_gads_campaign_budget` b 
+  LEFT JOIN `rc-datamart-adminreport.google_ads_blattnerfamilylaw.dim_gads_campaign_budget` b 
     ON b.customer_id = c.customer_id
    AND b.campaign_budget_id = REGEXP_EXTRACT(c.campaign_budget_resource_name, r'campaignBudgets/([0-9]+)')
 )
 
 SELECT
-  'c469e634-8986-4161-9b8e-b8d38b5fd826' AS SterlingX_Client_ID,
-  'NeuroEndoMKE' AS SterlingX_Client_Name,
+  '66588887-f466-46e0-9650-b94e9f9801cf' AS SterlingX_Client_ID,
+  'Blattner Family Law Group' AS SterlingX_Client_Name,
   f.segment_date,
   f.customer_id,
   f.campaign_id,
@@ -54,7 +54,7 @@ SELECT
     NULLIF(SUM(f.clicks), 0)
   ) AS average_cpc,
   SUM(f.conversions_value) AS conversions_value
-FROM `rc-datamart-adminreport.google_ads_neuroendo.fct_gads_campaign_daily` f
+FROM `rc-datamart-adminreport.google_ads_blattnerfamilylaw.fct_gads_campaign_daily` f
 LEFT JOIN campaign_dim d
   ON d.customer_id = f.customer_id
  AND d.campaign_id = f.campaign_id

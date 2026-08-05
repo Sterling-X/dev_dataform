@@ -26,7 +26,7 @@ WITH campaign_dim AS (
 )
 
 SELECT
-  'NA' AS SterlingX_Client_ID,
+  'dfb1117c-1e5f-462a-8c0e-5977a216dc5c' AS SterlingX_Client_ID,
   'Service Credit Union' AS SterlingX_Client_Name,
   f.segment_date,
   f.customer_id,

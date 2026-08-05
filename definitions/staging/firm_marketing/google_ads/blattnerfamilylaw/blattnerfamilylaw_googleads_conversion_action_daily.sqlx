@@ -2,8 +2,8 @@ config {
     type: "table",
     database: "sterlingx-insights",
     schema: "firm_marketing_googleads",
-    name: "servicecreditunion_googleads_conversion_action_daily",
-    tags: ["google ads", "conversion action", "marketing data", "servicecreditunion"],
+    name: "blattnerfamilylaw_googleads_conversion_action_daily",
+    tags: ["google ads", "conversion action", "marketing data", "blattnerfamilylaw"],
     bigquery: {
         partitionBy: "segment_date",
         clusterBy: ["customer_id", "campaign_id", "conversion_action_id"]
@@ -23,8 +23,8 @@ config {
 */
 
 SELECT
-  'dfb1117c-1e5f-462a-8c0e-5977a216dc5c' AS SterlingX_Client_ID,
-  'Service Credit Union' AS SterlingX_Client_Name,
+  '66588887-f466-46e0-9650-b94e9f9801cf' AS SterlingX_Client_ID,
+  'Blattner Family Law Group' AS SterlingX_Client_Name,
 
     fc.segment_date,
     fc.customer_id,
@@ -57,13 +57,13 @@ SELECT
     fc.all_conversions_value,
     -- fc.view_through_conversions
 
-FROM `rc-datamart-adminreport.google_ads_servicecreditunion.fct_gads_campaign_conversion_action_daily` fc
-LEFT JOIN `rc-datamart-adminreport.google_ads_servicecreditunion.dim_gads_customer` dc
+FROM `rc-datamart-adminreport.google_ads_blattnerfamilylaw.fct_gads_campaign_conversion_action_daily` fc
+LEFT JOIN `rc-datamart-adminreport.google_ads_blattnerfamilylaw.dim_gads_customer` dc
     ON fc.customer_id = dc.customer_id
-LEFT JOIN `rc-datamart-adminreport.google_ads_servicecreditunion.dim_gads_campaign` dp
+LEFT JOIN `rc-datamart-adminreport.google_ads_blattnerfamilylaw.dim_gads_campaign` dp
     ON fc.customer_id = dp.customer_id
     AND fc.campaign_id = dp.campaign_id
-LEFT JOIN `rc-datamart-adminreport.google_ads_servicecreditunion.dim_gads_conversion_action` dca
+LEFT JOIN `rc-datamart-adminreport.google_ads_blattnerfamilylaw.dim_gads_conversion_action` dca
     ON fc.customer_id = dca.customer_id
     AND fc.conversion_action_id = dca.conversion_action_id
     

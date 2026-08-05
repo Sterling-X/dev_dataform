@@ -2,8 +2,8 @@ config {
     type: "table",
     database: "sterlingx-insights",
     schema: "firm_marketing_googleads",
-    name: "fivestarbodies_googleads_campaign",
-    tags: ["google ads", "campaign", "marketing data", "fivestarbodies"],
+    name: "blattnerfamilylaw_googleads_campaign",
+    tags: ["google ads", "campaign", "marketing data", "blattnerfamilylaw"],
     bigquery: {
         partitionBy: "segment_date",
         clusterBy: ["customer_id", "campaign_id"]
@@ -11,8 +11,8 @@ config {
 }
 
 SELECT
-  'd990f128-e1bb-4467-b6c9-2e52317ba7ed' AS SterlingX_Client_ID,
-  'Five Star Bodies' AS SterlingX_Client_Name,
+  '66588887-f466-46e0-9650-b94e9f9801cf' AS SterlingX_Client_ID,
+  'Blattner Family Law Group' AS SterlingX_Client_Name,
     fc.segment_date,
     fc.customer_id,
     dc.customer_name,
@@ -47,8 +47,8 @@ SELECT
     fc.video_quartile_p50_rate,
     fc.video_quartile_p75_rate,
     fc.video_quartile_p100_rate
-FROM `rc-datamart-adminreport.google_ads_fivestarbodies.fct_gads_campaign_daily` fc
-LEFT JOIN `rc-datamart-adminreport.google_ads_fivestarbodies.dim_gads_customer` dc
+FROM `rc-datamart-adminreport.google_ads_blattnerfamilylaw.fct_gads_campaign_daily` fc
+LEFT JOIN `rc-datamart-adminreport.google_ads_blattnerfamilylaw.dim_gads_customer` dc
     ON fc.customer_id = dc.customer_id
-LEFT JOIN `rc-datamart-adminreport.google_ads_fivestarbodies.dim_gads_campaign` dp
+LEFT JOIN `rc-datamart-adminreport.google_ads_blattnerfamilylaw.dim_gads_campaign` dp
     ON fc.campaign_id = dp.campaign_id

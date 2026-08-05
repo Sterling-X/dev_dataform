@@ -2,13 +2,13 @@ config {
     type: "table",
     database: "sterlingx-insights",
     schema: "firm_marketing_pagespeedinsights",
-    name: "lisavance_pagespeedinsights_performance",
-    tags: ["pagespeed insights", "performance", "marketing data", "lisa vance"]
+    name: "porcellolawoffices_pagespeedinsights_performance",
+    tags: ["pagespeed insights", "performance", "marketing data", "porcellolawoffices"]
 }
 
 SELECT
-  '84daafc1-503c-47e2-8fed-410f56f64a96' AS SterlingX_Client_ID
-  , 'Lisa Vance' AS SterlingX_Client_Name
+  '6e2f5f01-f691-4603-8f7d-d5644a5bbb0e' AS SterlingX_Client_ID
+  , 'Porcello Law Offices' AS SterlingX_Client_Name
   , DATE(timestamp) AS date
   , timestamp	
   , url	
@@ -19,4 +19,4 @@ SELECT
   , ROUND(tbt, 0) as total_blocking_display_ms
   , ROUND(speed_index / 1000, 2) as speed_index_seconds
   , ROUND(cls, 3) as cumulative_layout_shift_display
-FROM `rc-datamart-adminreport.pagespeed_insights.psi_lisavance`
+FROM `rc-datamart-adminreport.pagespeed_insights.psi_porcellolawoffices`
