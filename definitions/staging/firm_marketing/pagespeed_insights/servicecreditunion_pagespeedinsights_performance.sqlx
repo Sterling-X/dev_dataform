@@ -1,0 +1,22 @@
+config {
+    type: "table",
+    database: "sterlingx-insights",
+    schema: "firm_marketing_pagespeedinsights",
+    name: "servicecreditunion_pagespeedinsights_performance",
+    tags: ["pagespeed insights", "performance", "marketing data", "servicecreditunion"]
+}
+
+SELECT
+  'dfb1117c-1e5f-462a-8c0e-5977a216dc5c' AS SterlingX_Client_ID
+  , 'Service Credit Union' AS SterlingX_Client_Name
+  , DATE(timestamp) AS date
+  , timestamp	
+  , url	
+  , strategy	
+  , ROUND(performance_score * 100, 2) as performance_score	
+  , ROUND(fcp / 1000, 2) as first_contentful_paint_seconds
+  , ROUND(lcp / 1000, 2) as last_contentful_paint_seconds
+  , ROUND(tbt, 0) as total_blocking_display_ms
+  , ROUND(speed_index / 1000, 2) as speed_index_seconds
+  , ROUND(cls, 3) as cumulative_layout_shift_display
+FROM `rc-datamart-adminreport.pagespeed_insights.psi_servicecreditunion`

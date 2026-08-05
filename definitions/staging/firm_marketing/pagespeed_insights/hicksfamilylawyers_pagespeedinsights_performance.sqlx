@@ -1,0 +1,22 @@
+config {
+    type: "table",
+    database: "sterlingx-insights",
+    schema: "firm_marketing_pagespeedinsights",
+    name: "hicksfamilylawyers_pagespeedinsights_performance",
+    tags: ["pagespeed insights", "performance", "marketing data", "hicksfamilylawyers"]
+}
+
+SELECT
+  '41406391-4166-4c73-ab0a-db73d34a18dd' AS SterlingX_Client_ID
+  , 'Hicks Family Lawyers' AS SterlingX_Client_Name
+  , DATE(timestamp) AS date
+  , timestamp	
+  , url	
+  , strategy	
+  , ROUND(performance_score * 100, 2) as performance_score	
+  , ROUND(fcp / 1000, 2) as first_contentful_paint_seconds
+  , ROUND(lcp / 1000, 2) as last_contentful_paint_seconds
+  , ROUND(tbt, 0) as total_blocking_display_ms
+  , ROUND(speed_index / 1000, 2) as speed_index_seconds
+  , ROUND(cls, 3) as cumulative_layout_shift_display
+FROM `rc-datamart-adminreport.pagespeed_insights.psi_hicksfamilylawyers`
