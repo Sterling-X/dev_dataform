@@ -1,0 +1,23 @@
+config {
+    type: "table",
+    database: "sterlingx-insights",
+    schema: "firm_marketing_googlesearchconsole",
+    name: "fanashfamily_googlesearchconsole_search_performance",
+    tags: ["google search console", "search performance", "fanashfamily"],
+}
+
+SELECT
+  '8a4bb5d3-2988-4b58-901a-d7ebdb015a10' AS SterlingX_Client_ID,
+  'Fanash Family Law' AS SterlingX_Client_Name,
+
+  data_date,
+  site_url,
+  query,
+
+  clicks,
+  impressions,
+  position,
+FROM `rc-datamart-adminreport.google_search_console_fanashfamily.fct_gsc_query_metrics`
+ORDER BY 
+data_date DESC,
+query ASC

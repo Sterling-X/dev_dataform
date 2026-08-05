@@ -1,0 +1,23 @@
+config {
+    type: "table",
+    database: "sterlingx-insights",
+    schema: "firm_marketing_googlesearchconsole",
+    name: "lancasterlaw_googlesearchconsole_search_performance",
+    tags: ["google search console", "search performance", "lancasterlaw"],
+}
+
+SELECT
+  '331dae6a-d0e7-48fe-866e-b068ec98059e' AS SterlingX_Client_ID,
+  'Lancaster' AS SterlingX_Client_Name,
+
+  data_date,
+  site_url,
+  query,
+
+  clicks,
+  impressions,
+  position,
+FROM `rc-datamart-adminreport.google_search_console_lancasterlaw.fct_gsc_query_metrics`
+ORDER BY 
+data_date DESC,
+query ASC

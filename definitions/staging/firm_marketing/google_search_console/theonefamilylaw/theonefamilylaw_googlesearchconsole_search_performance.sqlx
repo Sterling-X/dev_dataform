@@ -1,0 +1,23 @@
+config {
+    type: "table",
+    database: "sterlingx-insights",
+    schema: "firm_marketing_googlesearchconsole",
+    name: "theonefamilylaw_googlesearchconsole_search_performance",
+    tags: ["google search console", "search performance", "theonefamilylaw"],
+}
+
+SELECT
+  '030e704b-5142-453c-9313-9befd2111b31' AS SterlingX_Client_ID, 
+  'The One Family Law' AS SterlingX_Client_Name, 
+
+  data_date,
+  site_url,
+  query,
+
+  clicks,
+  impressions,
+  position,
+FROM `rc-datamart-adminreport.google_search_console_theonefamilylaw.fct_gsc_query_metrics`
+ORDER BY 
+data_date DESC,
+query ASC

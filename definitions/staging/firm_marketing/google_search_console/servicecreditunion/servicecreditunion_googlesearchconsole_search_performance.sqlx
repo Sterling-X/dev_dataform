@@ -1,0 +1,23 @@
+config {
+    type: "table",
+    database: "sterlingx-insights",
+    schema: "firm_marketing_googlesearchconsole",
+    name: "servicecreditunion_googlesearchconsole_search_performance",
+    tags: ["google search console", "search performance", "servicecreditunion"],
+}
+
+SELECT
+  'dfb1117c-1e5f-462a-8c0e-5977a216dc5c' AS SterlingX_Client_ID,
+  'Service Credit Union' AS SterlingX_Client_Name,
+
+  data_date,
+  site_url,
+  query,
+
+  clicks,
+  impressions,
+  position,
+FROM `rc-datamart-adminreport.google_search_console_servicecreditunion.fct_gsc_query_metrics`
+ORDER BY 
+data_date DESC,
+query ASC
