@@ -40,29 +40,29 @@ WITH am_roster AS (
 ),
 
 base AS (
-  -- SELECT
-  --   SterlingX_Client_ID,
-  --   SterlingX_Client_Name,
-  --   'Aurit Mediation' AS client,
-  --   event_date,
-  --   session_default_channel_group,
-  --   new_users,
-  --   engaged_sessions
-  -- FROM `sterlingx-insights.firm_marketing_googleanalytics4.aurit_googleanalytics4_custom_newusers_engaged_sessions`
+  SELECT
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
+    'Aurit Mediation' AS client,
+    event_date,
+    session_default_channel_group,
+    new_users,
+    engaged_sessions
+  FROM `sterlingx-insights.firm_marketing_googleanalytics4.aurit_googleanalytics4_custom_newusers_engaged_sessions`
 
-  -- UNION ALL
+  UNION ALL
 
-  -- SELECT
-  --   SterlingX_Client_ID,
-  --   SterlingX_Client_Name,
-  --   'Cutrer Family Law' AS client,
-  --   event_date,
-  --   session_default_channel_group,
-  --   new_users,
-  --   engaged_sessions
-  -- FROM `sterlingx-insights.firm_marketing_googleanalytics4.cutrerlaw_googleanalytics4_custom_newusers_engaged_sessions`
+  SELECT
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
+    'Cutrer Family Law' AS client,
+    event_date,
+    session_default_channel_group,
+    new_users,
+    engaged_sessions
+  FROM `sterlingx-insights.firm_marketing_googleanalytics4.cutrerlaw_googleanalytics4_custom_newusers_engaged_sessions`
 
-  -- UNION ALL
+  UNION ALL
 
   SELECT
     SterlingX_Client_ID,
@@ -76,17 +76,17 @@ base AS (
 
   UNION ALL
 
-  -- SELECT
-  --   SterlingX_Client_ID,
-  --   SterlingX_Client_Name,
-  --   'Five Star Bodies' AS client,
-  --   event_date,
-  --   session_default_channel_group,
-  --   new_users,
-  --   engaged_sessions
-  -- FROM `sterlingx-insights.firm_marketing_googleanalytics4.fivestarbodies_googleanalytics4_custom_newusers_engaged_sessions`
+  SELECT
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
+    'Five Star Bodies' AS client,
+    event_date,
+    session_default_channel_group,
+    new_users,
+    engaged_sessions
+  FROM `sterlingx-insights.firm_marketing_googleanalytics4.fivestarbodies_googleanalytics4_custom_newusers_engaged_sessions`
 
-  -- UNION ALL
+  UNION ALL
 
   SELECT
     SterlingX_Client_ID,
@@ -100,17 +100,17 @@ base AS (
 
   UNION ALL
 
-  -- SELECT
-  --   SterlingX_Client_ID,
-  --   SterlingX_Client_Name,
-  --   'Haffner Law' AS client,
-  --   event_date,
-  --   session_default_channel_group,
-  --   new_users,
-  --   engaged_sessions
-  -- FROM `sterlingx-insights.firm_marketing_googleanalytics4.haffnerlaw_googleanalytics4_custom_newusers_engaged_sessions`
+  SELECT
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
+    'Haffner Law' AS client,
+    event_date,
+    session_default_channel_group,
+    new_users,
+    engaged_sessions
+  FROM `sterlingx-insights.firm_marketing_googleanalytics4.haffnerlaw_googleanalytics4_custom_newusers_engaged_sessions`
 
-  -- UNION ALL
+  UNION ALL
 
   SELECT
     SterlingX_Client_ID,
@@ -134,29 +134,29 @@ base AS (
     engaged_sessions
   FROM `sterlingx-insights.firm_marketing_googleanalytics4.kalishjaggars_googleanalytics4_custom_newusers_engaged_sessions`
 
-  -- UNION ALL
+  UNION ALL
 
-  -- SELECT
-  --   SterlingX_Client_ID,
-  --   SterlingX_Client_Name,
-  --   'Lancaster Family Law' AS client,
-  --   event_date,
-  --   session_default_channel_group,
-  --   new_users,
-  --   engaged_sessions
-  -- FROM `sterlingx-insights.firm_marketing_googleanalytics4.lancasterlaw_googleanalytics4_custom_newusers_engaged_sessions`
+  SELECT
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
+    'Lancaster Family Law' AS client,
+    event_date,
+    session_default_channel_group,
+    new_users,
+    engaged_sessions
+  FROM `sterlingx-insights.firm_marketing_googleanalytics4.lancasterlaw_googleanalytics4_custom_newusers_engaged_sessions`
 
-  -- UNION ALL
+  UNION ALL
 
-  -- SELECT
-  --   SterlingX_Client_ID,
-  --   SterlingX_Client_Name,
-  --   'Lisa Vance' AS client,
-  --   event_date,
-  --   session_default_channel_group,
-  --   new_users,
-  --   engaged_sessions
-  -- FROM `sterlingx-insights.firm_marketing_googleanalytics4.lisavance_googleanalytics4_custom_newusers_engaged_sessions`
+  SELECT
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
+    'Lisa Vance' AS client,
+    event_date,
+    session_default_channel_group,
+    new_users,
+    engaged_sessions
+  FROM `sterlingx-insights.firm_marketing_googleanalytics4.lisavance_googleanalytics4_custom_newusers_engaged_sessions`
 
   UNION ALL
 
@@ -170,29 +170,29 @@ base AS (
     engaged_sessions
   FROM `sterlingx-insights.firm_marketing_googleanalytics4.meyerpinklaw_googleanalytics4_custom_newusers_engaged_sessions`
 
-  -- UNION ALL
+  UNION ALL
 
-  -- SELECT
-  --   SterlingX_Client_ID,
-  --   SterlingX_Client_Name,
-  --   'Neuro Endo' AS client,
-  --   event_date,
-  --   session_default_channel_group,
-  --   new_users,
-  --   engaged_sessions
-  -- FROM `sterlingx-insights.firm_marketing_googleanalytics4.neuroendo_googleanalytics4_custom_newusers_engaged_sessions`
+  SELECT
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
+    'Neuro Endo' AS client,
+    event_date,
+    session_default_channel_group,
+    new_users,
+    engaged_sessions
+  FROM `sterlingx-insights.firm_marketing_googleanalytics4.neuroendo_googleanalytics4_custom_newusers_engaged_sessions`
 
-  -- UNION ALL
+  UNION ALL
 
-  -- SELECT
-  --   SterlingX_Client_ID,
-  --   SterlingX_Client_Name,
-  --   'Omnipress' AS client,
-  --   event_date,
-  --   session_default_channel_group,
-  --   new_users,
-  --   engaged_sessions
-  -- FROM `sterlingx-insights.firm_marketing_googleanalytics4.omnipress_googleanalytics4_custom_newusers_engaged_sessions`
+  SELECT
+    SterlingX_Client_ID,
+    SterlingX_Client_Name,
+    'Omnipress' AS client,
+    event_date,
+    session_default_channel_group,
+    new_users,
+    engaged_sessions
+  FROM `sterlingx-insights.firm_marketing_googleanalytics4.omnipress_googleanalytics4_custom_newusers_engaged_sessions`
 
   UNION ALL
 
