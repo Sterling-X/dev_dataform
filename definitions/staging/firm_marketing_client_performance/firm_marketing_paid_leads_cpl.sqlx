@@ -3,31 +3,38 @@ config {
     database: "sterlingx-insights",
     schema: "firm_marketing_client_performance",
     name: "firm_marketing_paid_leads_cpl",
-    tags: ["google analytics 4", "ga4", "paid", "leads", "cpl", "client performance data"],
+    tags: ["google ads", "gads", "paid", "leads", "cpl", "client performance data"],
 }
 
 WITH client_roster AS (
   SELECT *
   FROM UNNEST([
     STRUCT('Aurit Mediation' AS client, 'Garrett' AS am, '916fb7c7-13bc-4725-8bca-e11e0749da31' AS SterlingX_Client_ID, 'Aurit mediation' AS SterlingX_Client_Name),
-    STRUCT('Badger Meter' AS client, 'Garrett' AS am, 'NA' AS SterlingX_Client_ID, 'Badger Meter' AS SterlingX_Client_Name),
-    STRUCT('Bank Five Nine' AS client, 'Garrett' AS am, 'NA' AS SterlingX_Client_ID, 'Bank Five Nine' AS SterlingX_Client_Name),
+    STRUCT('Badger Meter' AS client, 'Garrett' AS am, '916fb7c7-13bc-4725-8bca-e11e0749da31' AS SterlingX_Client_ID, 'Badger Meter' AS SterlingX_Client_Name),
+    STRUCT('Bank Five Nine' AS client, 'Garrett' AS am, 'eb3cb793-c3ea-4476-90f5-702c1b421f17' AS SterlingX_Client_ID, 'Bank Five Nine' AS SterlingX_Client_Name),
+    STRUCT('Blattner Family Law Group' AS client, 'Garrett' AS am, '66588887-f466-46e0-9650-b94e9f9801cf' AS SterlingX_Client_ID, 'Blattner Family Law Group' AS SterlingX_Client_Name),   
     STRUCT('Cutrer Family Law' AS client, 'Dani' AS am, '2e0efe10-f122-4a03-bfa5-7215e2dd7b71' AS SterlingX_Client_ID, 'Cutrer' AS SterlingX_Client_Name),
-    STRUCT('Elkus & Sisson' AS client, 'Dani' AS am, 'NA' AS SterlingX_Client_ID, 'Elkus & Sisson' AS SterlingX_Client_Name),
+    STRUCT('Elkus & Sisson' AS client, 'Dani' AS am, 'b861c480-0aa3-4af5-a7c7-6081e9623458' AS SterlingX_Client_ID, 'Elkus & Sisson' AS SterlingX_Client_Name),
     STRUCT('Fanash Family Law' AS client, 'Garrett' AS am, '8a4bb5d3-2988-4b58-901a-d7ebdb015a10' AS SterlingX_Client_ID, 'Fanash Family Law' AS SterlingX_Client_Name),
-    STRUCT('Five Star Bodies' AS client, 'Garrett' AS am, 'NA' AS SterlingX_Client_ID, 'Five Star Bodies' AS SterlingX_Client_Name),
+    STRUCT('Five Star Bodies' AS client, 'Garrett' AS am, 'd990f128-e1bb-4467-b6c9-2e52317ba7ed' AS SterlingX_Client_ID, 'Five Star Bodies' AS SterlingX_Client_Name),
     STRUCT('Gjesdahl Law' AS client, 'Dani' AS am, '17c0939a-2e3d-4728-933d-564183626ec3' AS SterlingX_Client_ID, 'Gjesdahl Law' AS SterlingX_Client_Name),
-    STRUCT('Michael Ireland & Associates' AS client, 'Dani' AS am, 'a9b10ec7-4dfe-4058-bdb5-a53e66176eed' AS SterlingX_Client_ID, 'Michael Ireland & Associates' AS SterlingX_Client_Name),
+    -- Haffner - remove from list - as per Kyle	
+    -- Hicks Family Law - not yet visible in RC MCC - check from time to time STRUCT('Hicks Family Lawyers', 'Dani' AS am, '030e704b-5142-453c-9313-9befd2111b31' AS SterlingX_Client_ID, 'Hicks Family Lawyers' AS SterlingX_Client_Name),
     STRUCT('Johnson Law Group' AS client, 'Garrett' AS am, '0c4e2f26-cf3d-41e3-978f-8cd31726062f' AS SterlingX_Client_ID, 'Johnson Law Group' AS SterlingX_Client_Name),
     STRUCT('Kalish & Jaggars' AS client, 'Dani' AS am, '085566ed-07da-44fc-9292-e77dafdf1b68' AS SterlingX_Client_ID, 'Kalish and Jaggars' AS SterlingX_Client_Name),
     STRUCT('Lancaster Family Law' AS client, 'Dani' AS am, '331dae6a-d0e7-48fe-866e-b068ec98059e' AS SterlingX_Client_ID, 'Lancaster' AS SterlingX_Client_Name),
-    STRUCT('MeyerPink' AS client, 'Dani' AS am, '5537c7d2-eb93-4748-bc6a-e236641db089' AS SterlingX_Client_ID, 'Meyer Pink' AS SterlingX_Client_Name),
-    STRUCT('Moran Wealth' AS client, 'Dani' AS am, 'NA' AS SterlingX_Client_ID, 'Moran Wealth' AS SterlingX_Client_Name),
-    STRUCT('Neuro Endo' AS client, 'Dani' AS am, 'NA' AS SterlingX_Client_ID, 'Neuro Endo' AS SterlingX_Client_Name),
-    STRUCT('Omnipress' AS client, 'Dani' AS am, 'NA' AS SterlingX_Client_ID, 'Omnipress' AS SterlingX_Client_Name),
-    STRUCT('Porcello Law Offices' AS client, 'Dani' AS am, 'NA' AS SterlingX_Client_ID, 'Porcello Law Offices' AS SterlingX_Client_Name),
+    -- Lisa Vance - remove from list - as per Kyle	    
+    STRUCT('MeyerPink' AS client, 'Dani' AS am, '5537c7d2-eb93-4748-bc6a-e236641db089' AS SterlingX_Client_ID, 'Meyer Pink' AS SterlingX_Client_Name),       
+    STRUCT('Michael Ireland & Associates' AS client, 'Dani' AS am, 'a9b10ec7-4dfe-4058-bdb5-a53e66176eed' AS SterlingX_Client_ID, 'Michael Ireland & Associates' AS SterlingX_Client_Name), 
+    STRUCT('Moran Wealth' AS client, 'Dani' AS am, '2cdee080-147c-4540-9a80-18a0835d2c0d' AS SterlingX_Client_ID, 'Moran Wealth' AS SterlingX_Client_Name),
+    STRUCT('Neuro Endo' AS client, 'Dani' AS am, 'c469e634-8986-4161-9b8e-b8d38b5fd826' AS SterlingX_Client_ID, 'Neuro Endo' AS SterlingX_Client_Name),
+    STRUCT('Omnipress' AS client, 'Dani' AS am, '1a402c5a-b3e7-4fc6-9f2e-cbd4c5ffe02a' AS SterlingX_Client_ID, 'Omnipress' AS SterlingX_Client_Name),
+    STRUCT('Porcello Law Offices' AS client, 'Dani' AS am, '6e2f5f01-f691-4603-8f7d-d5644a5bbb0e' AS SterlingX_Client_ID, 'Porcello Law Offices' AS SterlingX_Client_Name),
     STRUCT('Scott M Brown Law' AS client, 'Dani' AS am, '3cf419a4-3d2c-4a8b-8deb-d004496a971d' AS SterlingX_Client_ID, 'Scott M Brown' AS SterlingX_Client_Name),
+    STRUCT('Service Credit Union' AS client, 'Dani' AS am, 'dfb1117c-1e5f-462a-8c0e-5977a216dc5c' AS SterlingX_Client_ID, 'Service Credit Union' AS SterlingX_Client_Name),
     STRUCT('Sterling Lawyers' AS client, 'Dani' AS am, '99584197-537f-4cf5-80b4-29c99205f07a' AS SterlingX_Client_ID, 'Sterling Lawyers' AS SterlingX_Client_Name)
+    -- not yet visible in RC MCC - check from time to time STRUCT('The One Family Law', 'Dani' AS am, '030e704b-5142-453c-9313-9befd2111b31' AS SterlingX_Client_ID, 'The One Family Law' AS SterlingX_Client_Name),
+    -- The Ramage - remove from list - as per Kyle	       
   ])
 ),
 
@@ -43,6 +50,11 @@ google_ads_campaign_union AS (
   UNION ALL
 
   SELECT 'Bank Five Nine' AS client, 'Garrett' AS am, g.*
+  FROM `rc-datamart-adminreport.google_ads_bankfivenine.fct_gads_campaign_daily` g
+
+  UNION ALL
+
+  SELECT 'Blattner Family Law Group' AS client, 'Garrett' AS am, g.*
   FROM `rc-datamart-adminreport.google_ads_bankfivenine.fct_gads_campaign_daily` g
 
   UNION ALL
@@ -70,10 +82,9 @@ google_ads_campaign_union AS (
   SELECT 'Gjesdahl Law' AS client, 'Dani' AS am, g.*
   FROM `rc-datamart-adminreport.google_ads_gjesdahllaw.fct_gads_campaign_daily` g
 
-  UNION ALL
+  -- Haffner - remove from list - as per Kyle	
 
-  SELECT 'Michael Ireland & Associates' AS client, 'Dani' AS am, g.*
-  FROM `rc-datamart-adminreport.google_ads_ireland.fct_gads_campaign_daily` g
+  -- Hicks Family Law - not yet visible in RC MCC - check from time to time STRUCT('Hicks Family Lawyers', 'Dani' AS am, '030e704b-5142-453c-9313-9befd2111b31' AS SterlingX_Client_ID, 'Hicks Family Lawyers' AS SterlingX_Client_Name),
 
   UNION ALL
 
@@ -90,10 +101,17 @@ google_ads_campaign_union AS (
   SELECT 'Lancaster Family Law' AS client, 'Dani' AS am, g.*
   FROM `rc-datamart-adminreport.google_ads_lancasterlaw.fct_gads_campaign_daily` g
 
+   -- Lisa Vance - remove from list - as per Kyle
+
   UNION ALL
 
   SELECT 'MeyerPink' AS client, 'Dani' AS am, g.*
   FROM `rc-datamart-adminreport.google_ads_meyerpinklaw.fct_gads_campaign_daily` g
+
+  UNION ALL
+
+  SELECT 'Michael Ireland & Associates' AS client, 'Dani' AS am, g.*
+  FROM `rc-datamart-adminreport.google_ads_ireland.fct_gads_campaign_daily` g
 
   UNION ALL
 
@@ -103,12 +121,12 @@ google_ads_campaign_union AS (
   UNION ALL
 
   SELECT 'Neuro Endo' AS client, 'Dani' AS am, g.*
-  FROM `rc-datamart-adminreport.google_ads_neuroendo.fct_gads_campaign_daily` g
+  FROM `rc-datamart-adminreport.google_ads_neuroendo.fct_gads_campaign_daily` g	         
 
   UNION ALL
 
   SELECT 'Omnipress' AS client, 'Dani' AS am, g.*
-  FROM `rc-datamart-adminreport.google_ads_omnipress.fct_gads_campaign_daily` g
+  FROM `rc-datamart-adminreport.google_ads_omnipress.fct_gads_campaign_daily` g 
 
   UNION ALL
 
@@ -122,8 +140,18 @@ google_ads_campaign_union AS (
 
   UNION ALL
 
+  SELECT 'Service Credit Union' AS client, 'Dani' AS am, g.*
+  FROM `rc-datamart-adminreport.google_ads_servicecreditunion.fct_gads_campaign_daily` g
+
+  UNION ALL
+
   SELECT 'Sterling Lawyers' AS client, 'Dani' AS am, g.*
   FROM `rc-datamart-adminreport.google_ads_sterlinglawyers.fct_gads_campaign_daily` g
+
+  -- not yet visible in RC MCC - check from time to time STRUCT('The One Family Law', 'Dani' AS am, '030e704b-5142-453c-9313-9befd2111b31' AS SterlingX_Client_ID, 'The One Family Law' AS SterlingX_Client_Name),
+
+  -- Ramage - remove from list - as per Kyle
+
 ),
 
 data_availability AS (
