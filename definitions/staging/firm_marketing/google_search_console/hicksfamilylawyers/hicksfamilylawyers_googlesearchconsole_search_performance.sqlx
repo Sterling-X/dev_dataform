@@ -1,0 +1,23 @@
+config {
+    type: "table",
+    database: "sterlingx-insights",
+    schema: "firm_marketing_googlesearchconsole",
+    name: "hicksfamilylawyers_googlesearchconsole_search_performance",
+    tags: ["google search console", "search performance", "hicksfamilylawyers"],
+}
+
+SELECT
+  '41406391-4166-4c73-ab0a-db73d34a18dd' AS SterlingX_Client_ID,
+  'Hicks Family Lawyers' AS SterlingX_Client_Name,
+
+  data_date,
+  site_url,
+  query,
+
+  clicks,
+  impressions,
+  position,
+FROM `rc-datamart-adminreport.google_search_console_hicksfamilylawyers.fct_gsc_query_metrics`
+ORDER BY 
+data_date DESC,
+query ASC
