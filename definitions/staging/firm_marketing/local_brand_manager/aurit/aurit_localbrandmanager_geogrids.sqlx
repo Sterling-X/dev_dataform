@@ -73,6 +73,7 @@ SELECT
    , atgr
    , solv
    , search_term
+   , business_place_id
    , business_address
    , business_country
    , business_name
