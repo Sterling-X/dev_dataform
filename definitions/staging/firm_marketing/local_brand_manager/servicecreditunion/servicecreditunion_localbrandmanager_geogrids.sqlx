@@ -1,0 +1,92 @@
+config {
+  type: "table",
+  database: "sterlingx-insights",
+  schema: "firm_marketing_localbrandmanager",
+  name: "servicecreditunion_localbrandmanager_geogrids",
+  tags: ["local brand manager", "geogrids", "marketing data", "servicecreditunion"]
+}
+
+/*
+ 
+*/
+
+WITH source AS (
+  SELECT
+    *
+  FROM `rc-datamart-adminreport.local_brand_manager.raw_lbm_geogrids`
+),
+
+flattened AS (
+  SELECT
+    CAST(record_key AS STRING) AS record_key,
+    CAST(source_endpoint AS STRING) AS source_endpoint,
+    CAST(remote_id AS STRING) AS remote_id,
+    CAST(business_id AS STRING) AS business_id,
+    SAFE_CAST(created_at AS TIMESTAMP) AS created_at,
+    SAFE_CAST(updated_at AS TIMESTAMP) AS updated_at,
+    SAFE_CAST(deleted_at AS TIMESTAMP) AS deleted_at,
+    SAFE_CAST(ingested_at AS TIMESTAMP) AS ingested_at,
+    SAFE_CAST(ingestion_date AS DATE) AS ingestion_date,
+    CAST(run_id AS STRING) AS run_id,
+    CAST(raw_hash AS STRING) AS raw_hash,
+
+    CAST(JSON_VALUE(raw_json, '$.id') AS STRING) AS geogrid_id,
+    SAFE_CAST(JSON_VALUE(raw_json, '$.agr') AS NUMERIC) AS agr,
+    SAFE_CAST(JSON_VALUE(raw_json, '$.atgr') AS NUMERIC) AS atgr,
+    CAST(JSON_VALUE(raw_json, '$.business_address') AS STRING) AS business_address,
+    CAST(JSON_VALUE(raw_json, '$.business_country') AS STRING) AS business_country,
+    CAST(JSON_VALUE(raw_json, '$.business_name') AS STRING) AS business_name,
+    CAST(JSON_VALUE(raw_json, '$.business_place_id') AS STRING) AS business_place_id,
+    CAST(JSON_VALUE(raw_json, '$.business_store_code') AS STRING) AS business_store_code,
+    SAFE_CAST(JSON_VALUE(raw_json, '$.created_at') AS TIMESTAMP) AS geogrid_created_at,
+    CAST(JSON_VALUE(raw_json, '$.created_at_formatted') AS STRING) AS geogrid_created_at_formatted,
+    SAFE_CAST(JSON_VALUE(raw_json, '$.finished_at') AS TIMESTAMP) AS finished_at,
+    CAST(JSON_VALUE(raw_json, '$.gbp_id') AS STRING) AS gbp_id,
+    CAST(JSON_VALUE(raw_json, '$.geogrid_config_id') AS STRING) AS geogrid_config_id,
+    SAFE_CAST(JSON_VALUE(raw_json, '$.grid_center_lat') AS FLOAT64) AS grid_center_lat,
+    SAFE_CAST(JSON_VALUE(raw_json, '$.grid_center_lng') AS FLOAT64) AS grid_center_lng,
+    CAST(JSON_VALUE(raw_json, '$.grid_distance_measure') AS STRING) AS grid_distance_measure,
+    SAFE_CAST(JSON_VALUE(raw_json, '$.grid_point_distance') AS NUMERIC) AS grid_point_distance,
+    CAST(JSON_VALUE(raw_json, '$.grid_ranks_str') AS STRING) AS grid_ranks_str,
+    SAFE_CAST(JSON_VALUE(raw_json, '$.grid_size') AS INT64) AS grid_size,
+    CAST(JSON_VALUE(raw_json, '$.headless_image_url') AS STRING) AS headless_image_url,
+    json_query(raw_json, '$.hightlighted_positions') AS hightlighted_positions_json,
+    CAST(JSON_VALUE(raw_json, '$.image_url') AS STRING) AS image_url,
+    SAFE_CAST(JSON_VALUE(raw_json, '$.local') AS BOOL) AS is_local,
+    CAST(JSON_VALUE(raw_json, '$.location_id') AS STRING) AS location_id,
+    CAST(JSON_VALUE(raw_json, '$.public_url') AS STRING) AS public_url,
+    json_query(raw_json, '$.ranks') AS ranks_json,
+    CAST(JSON_VALUE(raw_json, '$.search_term') AS STRING) AS search_term,
+    SAFE_CAST(JSON_VALUE(raw_json, '$.solv') AS NUMERIC) AS solv,
+    CAST(JSON_VALUE(raw_json, '$.state') AS STRING) AS state,
+
+    -- original JSON for traceability
+    raw_json
+  FROM source
+)
+
+SELECT 
+  'dfb1117c-1e5f-462a-8c0e-5977a216dc5c' AS SterlingX_Client_ID
+   , 'Service Credit Union' AS SterlingX_Client_Name
+   , geogrid_id
+   , agr
+   , atgr
+   , solv
+   , search_term
+   , business_place_id
+   , business_address
+   , business_country
+   , business_name
+   , business_store_code
+   , grid_center_lat
+   , grid_center_lng
+   , grid_distance_measure
+   , grid_size
+   , geogrid_created_at
+   , geogrid_created_at_formatted
+   , source_endpoint
+   , created_at
+   , updated_at
+FROM flattened
+WHERE LOWER(business_name) LIKE '%servicecreditunion%'
+ORDER BY created_at DESC

@@ -30,7 +30,7 @@ GROUP BY
   ts.session_default_channel_group
 ORDER BY
   f.event_date,
-  total_users DESC;
+  total_users DESC; 
 
 
 -- ============================================================================
