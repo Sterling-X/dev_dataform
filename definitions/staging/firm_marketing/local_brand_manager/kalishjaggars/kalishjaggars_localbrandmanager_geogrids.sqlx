@@ -88,5 +88,8 @@ SELECT
    , created_at
    , updated_at
 FROM flattened
-WHERE LOWER(business_name) LIKE '%kalish%'
+-- WHERE LOWER(business_name) LIKE '%kalish%'
+WHERE business_place_id IN (
+  'ChIJg89PynUF2YgR2QS8qzWApFc'
+  , 'ChIJg89PynUF2YgR2QS8qzWApFc' )
 ORDER BY created_at DESC

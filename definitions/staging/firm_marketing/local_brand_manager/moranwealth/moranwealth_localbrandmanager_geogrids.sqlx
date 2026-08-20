@@ -88,5 +88,6 @@ SELECT
    , created_at
    , updated_at
 FROM flattened
-WHERE LOWER(business_name) LIKE '%moran wealth%'
+-- WHERE LOWER(business_name) LIKE '%moran wealth%'
+WHERE business_place_id = 'ChIJW96Ab0Ie24gRF9kiTO-c9x0'
 ORDER BY created_at DESC

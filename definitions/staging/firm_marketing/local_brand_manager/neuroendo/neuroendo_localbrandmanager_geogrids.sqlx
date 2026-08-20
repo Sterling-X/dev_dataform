@@ -88,5 +88,9 @@ SELECT
    , created_at
    , updated_at
 FROM flattened
-WHERE LOWER(business_name) LIKE '%neurosurgery%'
+-- WHERE LOWER(business_name) LIKE '%neurosurgery%'
+WHERE business_place_id IN (
+  'ChIJ6w3_rceLBYgRXGEO_M7jymc'
+  , 'ChIJy3UHPldeBYgRfP650HeHiDw'
+  , 'ChIJ5RLtI70QBYgRdJNo6E2bLus' )
 ORDER BY created_at DESC

@@ -88,5 +88,6 @@ SELECT
    , created_at
    , updated_at
 FROM flattened
-WHERE LOWER(business_name) LIKE '%cutrer%'
+-- WHERE LOWER(business_name) LIKE '%cutrer%'
+WHERE business_place_id = 'ChIJs_VOyLt_ToYR56THi43vIAA'
 ORDER BY created_at DESC

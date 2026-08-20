@@ -88,5 +88,11 @@ SELECT
    , created_at
    , updated_at
 FROM flattened
-WHERE LOWER(business_name) LIKE '%porcellolawoffices%'
+-- WHERE LOWER(business_name) LIKE '%porcello law offices%'
+WHERE business_place_id IN (
+  'ChIJAeaopQ8l44kRq9yFMTSWoIc'
+  , 'ChIJAeaopQ8l44kRq9yFMTSWoIc'
+  , 'ChIJCVYEOYkU44kRBFVXY7rE7wk'
+  , 'ChIJCVYEOYkU44kRBFVXY7rE7wk'
+  , 'ChIJCVYEOYkU44kRBFVXY7rE7wk' )
 ORDER BY created_at DESC

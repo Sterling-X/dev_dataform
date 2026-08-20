@@ -88,5 +88,14 @@ SELECT
    , created_at
    , updated_at
 FROM flattened
-WHERE LOWER(business_name) LIKE '%meyerpink%'
+-- WHERE LOWER(business_name) LIKE '%meyerpink%'
+WHERE business_place_id IN (
+  'ChIJE1B_ob29kIARM0u_lg7H8gA'
+  , 'ChIJxVrocCXFkIARRVbFz6PNESE'
+  , 'ChIJywKfq7xTkIARbG4MRFwiTtI'
+  , 'ChIJywKfq7xTkIARbG4MRFwiTtI'
+  , 'ChIJywKfq7xTkIARbG4MRFwiTtI'
+  , 'ChIJE1B_ob29kIARM0u_lg7H8gA'
+  , 'ChIJE1B_ob29kIARM0u_lg7H8gA'
+  , 'ChIJxVrocCXFkIARRVbFz6PNESE' )
 ORDER BY created_at DESC

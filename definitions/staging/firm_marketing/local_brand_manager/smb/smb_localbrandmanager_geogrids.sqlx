@@ -88,5 +88,17 @@ SELECT
    , created_at
    , updated_at
 FROM flattened
-WHERE LOWER(business_name) LIKE '%scott m. brown%'
+-- WHERE LOWER(business_name) LIKE '%scott m. brown%'
+WHERE business_place_id IN (
+  'ChIJG5TgaKfnQIYRJsJt_6itqpk'
+  , 'ChIJH1tscxGTQIYRDXNEZQ5SOeo'
+  , 'ChIJPSFmbmGDQIYRyuBvM3ooD2I'
+  , 'ChIJD_3UKQFdQIYR88vYunBNouw'
+  , 'ChIJG5TgaKfnQIYRJsJt_6itqpk'
+  , 'ChIJD_3UKQFdQIYR88vYunBNouw'
+  , 'ChIJD_3UKQFdQIYR88vYunBNouw'
+  , 'ChIJH1tscxGTQIYRDXNEZQ5SOeo'
+  , 'ChIJPSFmbmGDQIYRyuBvM3ooD2I'
+)
 ORDER BY created_at DESC
+
