@@ -30,7 +30,7 @@ WITH am_roster AS (
     STRUCT('Neuro Endo' AS client, 'Dani' AS am),
     STRUCT('Omnipress' AS client, 'Dani' AS am),
     -- STRUCT('Porcello Law Offices' AS client, 'Dani' AS am),
-    STRUCT('Scott M Brown Law' AS client, 'Dani' AS am),    
+    -- CHURN Account STRUCT('Scott M Brown Law' AS client, 'Dani' AS am),    
     -- STRUCT('Service Credit Union' AS client, 'Dani' AS am),
     STRUCT('Sterling Lawyers' AS client, 'Dani' AS am),
     -- STRUCT('The One Family Law', 'Dani' AS am),
@@ -194,17 +194,17 @@ base AS (
     engaged_sessions
   FROM `sterlingx-insights.firm_marketing_googleanalytics4.omnipress_googleanalytics4_custom_newusers_engaged_sessions`
 
-  UNION ALL
+  -- CHURN Account  UNION ALL
 
-  SELECT
-    SterlingX_Client_ID,
-    SterlingX_Client_Name,
-    'Scott M Brown Law' AS client,
-    event_date,
-    session_default_channel_group,
-    new_users,
-    engaged_sessions
-  FROM `sterlingx-insights.firm_marketing_googleanalytics4.smb_googleanalytics4_custom_newusers_engaged_sessions`
+  -- SELECT
+  --   SterlingX_Client_ID,
+  --   SterlingX_Client_Name,
+  --   'Scott M Brown Law' AS client,
+  --   event_date,
+  --   session_default_channel_group,
+  --   new_users,
+  --   engaged_sessions
+  -- FROM `sterlingx-insights.firm_marketing_googleanalytics4.smb_googleanalytics4_custom_newusers_engaged_sessions`
 
   UNION ALL
 

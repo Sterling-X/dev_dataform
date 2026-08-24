@@ -18,7 +18,7 @@ WITH client_roster AS (
     STRUCT('Kalish & Jaggars' AS client, 'Dani' AS am, '085566ed-07da-44fc-9292-e77dafdf1b68' AS SterlingX_Client_ID, 'Kalish and Jaggars' AS SterlingX_Client_Name),
     STRUCT('Lancaster Family Law' AS client, 'Dani' AS am, '331dae6a-d0e7-48fe-866e-b068ec98059e' AS SterlingX_Client_ID, 'Lancaster' AS SterlingX_Client_Name),
     STRUCT('MeyerPink' AS client, 'Dani' AS am, '5537c7d2-eb93-4748-bc6a-e236641db089' AS SterlingX_Client_ID, 'Meyer Pink' AS SterlingX_Client_Name),
-    STRUCT('Scott M Brown Law' AS client, 'Dani' AS am, '3cf419a4-3d2c-4a8b-8deb-d004496a971d' AS SterlingX_Client_ID, 'Scott M Brown' AS SterlingX_Client_Name),
+    -- STRUCT('Scott M Brown Law' AS client, 'Dani' AS am, '3cf419a4-3d2c-4a8b-8deb-d004496a971d' AS SterlingX_Client_ID, 'Scott M Brown' AS SterlingX_Client_Name),
     STRUCT('Sterling Lawyers' AS client, 'Dani' AS am, '99584197-537f-4cf5-80b4-29c99205f07a' AS SterlingX_Client_ID, 'Sterling Lawyers' AS SterlingX_Client_Name)
   ])
 ),
@@ -67,10 +67,10 @@ google_ads_campaign_union AS (
   SELECT 'MeyerPink' AS client, 'Dani' AS am, g.*
   FROM `rc-datamart-adminreport.google_ads_meyerpinklaw.fct_gads_campaign_daily` g
 
-  UNION ALL
+--   CHURN Account UNION ALL
 
-  SELECT 'Scott M Brown Law' AS client, 'Dani' AS am, g.*
-  FROM `rc-datamart-adminreport.google_ads_smb.fct_gads_campaign_daily` g
+--   SELECT 'Scott M Brown Law' AS client, 'Dani' AS am, g.*
+--   FROM `rc-datamart-adminreport.google_ads_smb.fct_gads_campaign_daily` g
 
   UNION ALL
 

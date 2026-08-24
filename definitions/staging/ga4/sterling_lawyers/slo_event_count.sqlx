@@ -1,9 +1,3 @@
--- ============================================================================
--- FINAL TABLE: slo_event_count
--- Writes to: rc-datamart-adminreport.ga4_sterlinglawyers_scorecard_tables
--- Form Fill & Call Tracking events, per day per channel per event.
--- Covers ALL dates present in the source (no date filter).
--- ============================================================================
 
 CREATE OR REPLACE TABLE
   `rc-datamart-adminreport.ga4_sterlinglawyers_scorecard_tables.slo_event_count`
