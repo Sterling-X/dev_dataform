@@ -1,0 +1,23 @@
+config {
+    type: "table",
+    database: "sterlingx-insights",
+    schema: "firm_marketing_googlesearchconsole",
+    name: "neuroendo_googlesearchconsole_search_performance",
+    tags: ["google search console", "search performance", "neuroendo"],
+}
+
+SELECT
+  'c469e634-8986-4161-9b8e-b8d38b5fd826' AS SterlingX_Client_ID,
+  'NeuroEndoMKE' AS SterlingX_Client_Name,
+
+  data_date,
+  site_url,
+  query,
+
+  clicks,
+  impressions,
+  position,
+FROM `rc-datamart-adminreport.google_search_console_neuroendo.fct_gsc_query_metrics`
+ORDER BY 
+data_date DESC,
+query ASC
