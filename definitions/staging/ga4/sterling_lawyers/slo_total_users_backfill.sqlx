@@ -1,0 +1,28 @@
+-- ============================================================================
+-- Add historical backfill (2019+) into slo_total_users_daily.
+-- Target: rc-datamart-adminreport.ga4_sterlinglawyers_scorecard_tables.slo_total_users_daily
+--
+-- Behaviour:
+--   * Inserts one row per historical date that is NOT already present.
+--   * For historical rows, only total_users is known (from users_all); the
+--     other metric columns are NULL (the spreadsheet has no source for them).
+--   * Existing pipeline rows are LEFT UNTOUCHED -- on any overlapping date the
+--     pipeline value stays, because it's the real GA4 distinct-user count.
+--   * Idempotent: re-running inserts nothing new once the dates are present.
+--
+-- Source of historical data:
+--   sterling-lawyers-database.slo_marketing_team_scorecard.slo_historical_daily_backfill
+-- ============================================================================
+
+MERGE `rc-datamart-adminreport.ga4_sterlinglawyers_scorecard_tables.slo_total_users_daily` T
+USING (
+  SELECT
+    date          AS date,
+    users_all     AS total_users
+  FROM `sterling-lawyers-database.slo_marketing_team_scorecard.slo_historical_daily_backfill`
+) S
+ON T.date = S.date
+WHEN NOT MATCHED THEN
+  INSERT (date, total_users, new_users, active_users, sessions,
+          event_count, key_events, total_revenue)
+  VALUES (S.date, S.total_users, NULL, NULL, NULL, NULL, NULL, NULL);

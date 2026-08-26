@@ -1,0 +1,49 @@
+-- ============================================================================
+-- Add historical calls + form fills (2019+) into slo_event_count.
+-- Target: rc-datamart-adminreport.ga4_sterlinglawyers_scorecard_tables.slo_event_count
+--
+-- The spreadsheet has daily totals with NO channel breakdown, so historical
+-- rows use channel = '(historical)' -- this keeps them clearly separate from
+-- real pipeline rows and prevents any key collision.
+--
+-- Two events per historical date:
+--   * CTM_Inbound_Tracking_Call_InboundCall  <- call_occurred
+--   * form_fill_all                          <- form_fill
+--
+-- Behaviour:
+--   * Inserts only (date, '(historical)', event_name) rows NOT already present.
+--   * event_count is filled from the spreadsheet; total_users / key_events /
+--     rates are NULL (the spreadsheet has no source for them).
+--   * Existing pipeline rows are LEFT UNTOUCHED.
+--   * Idempotent: re-running inserts nothing new.
+--   * Zero-value days are skipped (WHERE cnt > 0) to avoid empty filler rows.
+-- ============================================================================
+
+MERGE `rc-datamart-adminreport.ga4_sterlinglawyers_scorecard_tables.slo_event_count` T
+USING (
+  SELECT date, event_name, cnt
+  FROM (
+    SELECT
+      date,
+      'CTM_Inbound_Tracking_Call_InboundCall' AS event_name,
+      call_occurred AS cnt
+    FROM `sterling-lawyers-database.slo_marketing_team_scorecard.slo_historical_daily_backfill`
+    UNION ALL
+    SELECT
+      date,
+      'form_fill_all' AS event_name,
+      form_fill AS cnt
+    FROM `sterling-lawyers-database.slo_marketing_team_scorecard.slo_historical_daily_backfill`
+  )
+  WHERE cnt > 0
+) S
+ON  T.date       = S.date
+AND T.event_name = S.event_name
+AND T.session_default_channel_group = '(historical)'
+WHEN NOT MATCHED THEN
+  INSERT (date, session_default_channel_group, event_name,
+          total_users, key_events, event_count,
+          user_key_event_rate_native, user_key_event_rate_derived)
+  VALUES (S.date, '(historical)', S.event_name,
+          NULL, NULL, S.cnt,
+          NULL, NULL);
