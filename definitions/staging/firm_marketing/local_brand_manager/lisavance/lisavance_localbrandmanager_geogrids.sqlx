@@ -69,6 +69,7 @@ SELECT
   '84daafc1-503c-47e2-8fed-410f56f64a96' AS SterlingX_Client_ID
    , 'Lisa Vance' AS SterlingX_Client_Name
    , geogrid_id
+   , geogrid_config_id
    , agr
    , atgr
    , solv
@@ -88,8 +89,5 @@ SELECT
    , created_at
    , updated_at
 FROM flattened
--- WHERE LOWER(business_name) LIKE '%lisa a. vance%'
-WHERE business_place_id IN (
-  'ChIJt9Aw1fj1XIYRlJGJjRMbNDA'
-  , 'ChIJt9Aw1fj1XIYRlJGJjRMbNDA' )
+WHERE geogrid_config_id = '7l81pwoz'
 ORDER BY created_at DESC

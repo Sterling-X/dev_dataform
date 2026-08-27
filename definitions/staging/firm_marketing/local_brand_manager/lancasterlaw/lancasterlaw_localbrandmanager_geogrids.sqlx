@@ -69,6 +69,7 @@ SELECT
   '331dae6a-d0e7-48fe-866e-b068ec98059e' AS SterlingX_Client_ID
    , 'Lancaster' AS SterlingX_Client_Name
    , geogrid_id
+   , geogrid_config_id
    , agr
    , atgr
    , solv
@@ -88,8 +89,5 @@ SELECT
    , created_at
    , updated_at
 FROM flattened
--- WHERE LOWER(business_name) LIKE '%lancaster law%'
-WHERE business_place_id IN (
-  'ChIJ7UmLA-0kxokRwIpiiaI8BYY'
-  , 'ChIJ7UmLA-0kxokRwIpiiaI8BYY' )
+WHERE geogrid_config_id = 'nl1wy265'
 ORDER BY created_at DESC

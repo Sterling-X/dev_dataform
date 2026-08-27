@@ -69,6 +69,7 @@ SELECT
   '41406391-4166-4c73-ab0a-db73d34a18dd' AS SterlingX_Client_ID
   , 'Hicks Family Lawyers' AS SterlingX_Client_Name
    , geogrid_id
+   , geogrid_config_id
    , agr
    , atgr
    , solv
@@ -88,8 +89,5 @@ SELECT
    , created_at
    , updated_at
 FROM flattened
--- WHERE LOWER(business_name) LIKE '%hicks family%'
-WHERE business_place_id IN (
-  'ChIJedBsOc6_QIYRMkT02XShOxQ'
-  , 'ChIJedBsOc6_QIYRMkT02XShOxQ' )
+WHERE geogrid_config_id = 'xln2j8el'
 ORDER BY created_at DESC

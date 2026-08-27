@@ -69,6 +69,7 @@ SELECT
   '8a4bb5d3-2988-4b58-901a-d7ebdb015a10' AS SterlingX_Client_ID
    , 'Fanash Family Law' AS SterlingX_Client_Name
    , geogrid_id
+   , geogrid_config_id
    , agr
    , atgr
    , solv
@@ -88,8 +89,5 @@ SELECT
    , created_at
    , updated_at
 FROM flattened
--- WHERE LOWER(business_name) LIKE '%fanash%'
-WHERE business_place_id IN (
-  'ChIJXTu4YchkXkERLAuXbhJQTEk'
-  , 'ChIJXTu4YchkXkERLAuXbhJQTEk' )
+WHERE geogrid_config_id = 'vzdr8745'
 ORDER BY created_at DESC

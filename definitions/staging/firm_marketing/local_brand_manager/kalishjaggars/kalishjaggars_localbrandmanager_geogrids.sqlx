@@ -69,6 +69,7 @@ SELECT
   '085566ed-07da-44fc-9292-e77dafdf1b68' AS SterlingX_Client_ID
    , 'Kalish and Jaggars' AS SterlingX_Client_Name
    , geogrid_id
+   , geogrid_config_id
    , agr
    , atgr
    , solv
@@ -88,8 +89,5 @@ SELECT
    , created_at
    , updated_at
 FROM flattened
--- WHERE LOWER(business_name) LIKE '%kalish%'
-WHERE business_place_id IN (
-  'ChIJg89PynUF2YgR2QS8qzWApFc'
-  , 'ChIJg89PynUF2YgR2QS8qzWApFc' )
+WHERE geogrid_config_id = 'xl0ny8mz'
 ORDER BY created_at DESC

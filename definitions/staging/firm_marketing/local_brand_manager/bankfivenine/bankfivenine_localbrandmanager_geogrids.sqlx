@@ -69,6 +69,7 @@ SELECT
    'eb3cb793-c3ea-4476-90f5-702c1b421f17' AS SterlingX_Client_ID
    , 'Bank Five Nine' AS SterlingX_Client_Name
    , geogrid_id
+   , geogrid_config_id   
    , agr
    , atgr
    , solv
@@ -88,20 +89,19 @@ SELECT
    , created_at
    , updated_at
 FROM flattened
--- WHERE LOWER(business_name) LIKE '%bank five nine%'
-WHERE business_place_id IN (
-  'ChIJdSMtcVLhBIgRrcxCq6A-0gk'
-  , 'ChIJyxdAD0AEBYgRq-yvmx-8Fqg'
-  , 'ChIJPecKj0HKBYgRLjDZh5hs-vw'
-  , 'ChIJPecKj0HKBYgRn2kO02fI1tE'
-  , 'ChIJ8fDlvAZfBIgRM3qaKALF_NQ'
-  , 'ChIJl5egVMgABYgRiRYgTgECkBk'
-  , 'ChIJo53JWa3oBIgRvOg5OuHVZ-c'
-  , 'ChIJWZF8gacZBYgRO4YJZc-6wVg'
-  , 'ChIJnxNy3GEeBYgRgTi9EegUvOc'
-  , 'ChIJScSGdi2yBYgRFOtAYmTkVzY'
-  , 'ChIJ5X_Ix39PBIgRw4jxLu0qI7M'
-  , 'ChIJp4isDv8ABYgRHbilfAXCiM8'
-  , 'ChIJy-5-ZNz-BIgRjyE7aBirfjM'
-  , 'ChIJ4ym0Q3W1BYgRQ0Il5bXi-GY' )
+WHERE geogrid_config_id IN (
+  '4z2kg0mz'
+  , 'o5ejk1xl'
+  , 'xlrnkdmz'
+  , 'nl1og26z'
+  , '45om2dkz'
+  , '95po7xdl'
+  , '8lgvm81l'
+  , 'g59n8dml'
+  , 'v5jd4o95'
+  , '3zx9neyz'
+  , 'wl6jgd25'
+  , 'v5qkvdg5'
+  , 'vzwj48o5'
+  , '7l8yrgmz' )
 ORDER BY created_at DESC

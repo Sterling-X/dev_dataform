@@ -69,6 +69,7 @@ SELECT
   '0c4e2f26-cf3d-41e3-978f-8cd31726062f' AS SterlingX_Client_ID
    , 'Johnson Law Group' AS SterlingX_Client_Name
    , geogrid_id
+   , geogrid_config_id
    , agr
    , atgr
    , solv
@@ -88,34 +89,13 @@ SELECT
    , created_at
    , updated_at
 FROM flattened
--- WHERE REGEXP_REPLACE(LOWER(TRIM(business_name)), r'[^a-z0-9]', '') IN (
---   'johnsonokeefellc',
---   'johnsonokeefe',
---   'johnsonlawgroupllc'
--- )
-WHERE business_place_id IN (
-  'ChIJOU89NVUf2YgRwGx9pjUMvG4'
-  , 'ChIJrW99zyAtDogRNbAMSo6fOKU'
-  , 'ChIJOZuraJM7b4cRxtOIyCMxeN4'
-  , 'ChIJVcbKWvFvbIcRv853TWYC2X8'
-  , 'ChIJbVsT_w9NE4cRCMt5nrFHzjw'
-  , 'ChIJQ1eQhKV7bIcRhBPiabLRgT0'
-  , 'ChIJB6Wc2FSFbIcRDRoOJ2Yrpzk'
-  , 'ChIJh_PqGbizbocRXlb58j4Yh2s'
-  , 'ChIJbVsT_w9NE4cRCMt5nrFHzjw'
-  , 'ChIJh_PqGbizbocRXlb58j4Yh2s'
-  , 'ChIJVcbKWvFvbIcRv853TWYC2X8'
-  , 'ChIJB6Wc2FSFbIcRDRoOJ2Yrpzk'
-  , 'ChIJQ1eQhKV7bIcRhBPiabLRgT0'
-  , 'ChIJB6Wc2FSFbIcRDRoOJ2Yrpzk'
-  , 'ChIJOZuraJM7b4cRxtOIyCMxeN4'
-  , 'ChIJOZuraJM7b4cRxtOIyCMxeN4'
-  , 'ChIJOZuraJM7b4cRxtOIyCMxeN4'
-  , 'ChIJOU89NVUf2YgRwGx9pjUMvG4'
-  , 'ChIJrW99zyAtDogRNbAMSo6fOKU'
-  , 'ChIJh_PqGbizbocRXlb58j4Yh2s'
-  , 'ChIJVcbKWvFvbIcRv853TWYC2X8'
-  , 'ChIJB6Wc2FSFbIcRDRoOJ2Yrpzk'
-  , 'ChIJbVsT_w9NE4cRCMt5nrFHzjw'
-  , 'ChIJQ1eQhKV7bIcRhBPiabLRgT0' )
+WHERE geogrid_config_id IN (
+  'xlr9v1yl'
+  , '45o7epez'
+  , '95p0pqgl'
+  , '8lgdwojl'
+  , 'g59r4g25'
+  , '3zxrx82z'
+  , 'o5em9r6l'
+  , '7l81674z' )
 ORDER BY created_at DESC

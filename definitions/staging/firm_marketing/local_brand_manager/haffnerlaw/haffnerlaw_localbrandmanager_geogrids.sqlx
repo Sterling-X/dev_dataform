@@ -69,6 +69,7 @@ SELECT
   'ca859f21-4206-4fda-af68-102f24c0b67e' AS SterlingX_Client_ID
    , 'Haffner Law' AS SterlingX_Client_Name
    , geogrid_id
+   , geogrid_config_id
    , agr
    , atgr
    , solv
@@ -88,10 +89,5 @@ SELECT
    , created_at
    , updated_at
 FROM flattened
--- WHERE LOWER(business_name) LIKE '%haffner law%'
-WHERE business_place_id IN (
-  'ChIJk5wz0x2XwoARLwxKQ7oAmto'
-  , 'ChIJ4QUoa7LHwoARPsIn4zIejAU'
-  , 'ChIJ4QUoa7LHwoARPsIn4zIejAU'
-  , 'ChIJ4QUoa7LHwoARPsIn4zIejAU' )
+WHERE geogrid_config_id = 'o5ej9nrl'
 ORDER BY created_at DESC

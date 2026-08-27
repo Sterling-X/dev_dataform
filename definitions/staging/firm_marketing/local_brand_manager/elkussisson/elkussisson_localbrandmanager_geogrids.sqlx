@@ -69,6 +69,7 @@ SELECT
     'b861c480-0aa3-4af5-a7c7-6081e9623458' AS SterlingX_Client_ID
    , 'Elkus & Sisson' AS SterlingX_Client_Name
    , geogrid_id
+   , geogrid_config_id
    , agr
    , atgr
    , solv
@@ -88,8 +89,5 @@ SELECT
    , created_at
    , updated_at
 FROM flattened
--- WHERE LOWER(business_name) LIKE '%elkus%'
-WHERE business_place_id IN (
-  'ChIJZxPW-9V4bIcRVKrqvfCMgGw'
-  , 'ChIJZxPW-9V4bIcRVKrqvfCMgGw' )
+WHERE geogrid_config_id = '7l8yoryz'
 ORDER BY created_at DESC

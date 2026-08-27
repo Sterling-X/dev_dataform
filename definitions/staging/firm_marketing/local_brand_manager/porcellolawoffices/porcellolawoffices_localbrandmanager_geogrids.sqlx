@@ -69,6 +69,7 @@ SELECT
   '6e2f5f01-f691-4603-8f7d-d5644a5bbb0e' AS SterlingX_Client_ID
    , 'Porcello Law Offices' AS SterlingX_Client_Name
    , geogrid_id
+   , geogrid_config_id
    , agr
    , atgr
    , solv
@@ -88,11 +89,7 @@ SELECT
    , created_at
    , updated_at
 FROM flattened
--- WHERE LOWER(business_name) LIKE '%porcello law offices%'
-WHERE business_place_id IN (
-  'ChIJAeaopQ8l44kRq9yFMTSWoIc'
-  , 'ChIJAeaopQ8l44kRq9yFMTSWoIc'
-  , 'ChIJCVYEOYkU44kRBFVXY7rE7wk'
-  , 'ChIJCVYEOYkU44kRBFVXY7rE7wk'
-  , 'ChIJCVYEOYkU44kRBFVXY7rE7wk' )
+WHERE geogrid_config_id IN (
+  'g59r06m5' 
+  , 'v5jjq995' )
 ORDER BY created_at DESC

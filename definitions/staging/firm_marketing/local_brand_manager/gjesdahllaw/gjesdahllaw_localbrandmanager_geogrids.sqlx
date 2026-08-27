@@ -69,6 +69,7 @@ SELECT
   '17c0939a-2e3d-4728-933d-564183626ec3' AS SterlingX_Client_ID
    , 'Gjesdahl Law' AS SterlingX_Client_Name
    , geogrid_id
+   , geogrid_config_id
    , agr
    , atgr
    , solv
@@ -88,8 +89,5 @@ SELECT
    , created_at
    , updated_at
 FROM flattened
--- WHERE LOWER(business_name) LIKE '%gjesdahl%'
-WHERE business_place_id IN (
-  'ChIJEbiM-IjJyFIRizLg0Xb-93Y'
-  , 'ChIJDfG02irJyFIRb4gDVzz5Mo4' )
+WHERE geogrid_config_id = 'v5330xy5'
 ORDER BY created_at DESC

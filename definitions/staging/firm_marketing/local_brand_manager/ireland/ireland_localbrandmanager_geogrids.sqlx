@@ -69,6 +69,7 @@ SELECT
    'a9b10ec7-4dfe-4058-bdb5-a53e66176eed' AS SterlingX_Client_ID
    , 'Michael Ireland & Associates' AS SterlingX_Client_Name
    , geogrid_id
+   , geogrid_config_id
    , agr
    , atgr
    , solv
@@ -88,8 +89,8 @@ SELECT
    , created_at
    , updated_at
 FROM flattened
--- WHERE LOWER(business_name) LIKE '%michael ireland%'
-WHERE business_place_id IN (
-  'ChIJf_KeiTi9XIYRF4YBjEoNaaE'
-  , 'ChIJTyehIwdhXIYRGPzLR84WRgI' )
+WHERE geogrid_config_id IN (
+  '95p0n49l'
+  , 'qzk0enel'
+  , 'olvgde8l' )
 ORDER BY created_at DESC

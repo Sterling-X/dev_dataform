@@ -1,0 +1,23 @@
+config {
+    type: "table",
+    database: "sterlingx-insights",
+    schema: "firm_marketing_googlesearchconsole",
+    name: "aurit_googlesearchconsole_search_performance",
+    tags: ["google search console", "search performance", "aurit"],
+}
+
+SELECT
+  '916fb7c7-13bc-4725-8bca-e11e0749da31' AS SterlingX_Client_ID,
+  'Aurit mediation' AS SterlingX_Client_Name,
+
+  data_date,
+  site_url,
+  query,
+
+  clicks,
+  impressions,
+  position,
+FROM `rc-datamart-adminreport.google_search_console_aurit.fct_gsc_query_metrics`
+ORDER BY 
+data_date DESC,
+query ASC

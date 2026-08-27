@@ -88,11 +88,8 @@ SELECT
    , created_at
    , updated_at
 FROM flattened
--- WHERE LOWER(business_name) LIKE '%ramage%'
-WHERE business_place_id IN (
-  'ChIJPWETak89TIYRpIbzSJiX7kQ'
-  , 'ChIJPWETak89TIYRpIbzSJiX7kQ'
-  , 'ChIJOyD2gfg8TIYRei3rwE01B9s'
-  , 'ChIJOyD2gfg8TIYRei3rwE01B9s'
-)
+WHERE geogrid_config_id IN (
+   'nl1w8e25'
+  , 'v5379xyz'
+  , 'qzk0jd0l' )
 ORDER BY created_at DESC

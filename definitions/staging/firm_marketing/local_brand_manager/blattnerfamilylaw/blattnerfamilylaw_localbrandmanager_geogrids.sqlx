@@ -69,6 +69,7 @@ SELECT
    '66588887-f466-46e0-9650-b94e9f9801cf' AS SterlingX_Client_ID
    , 'Blattner Family Law Group' AS SterlingX_Client_Name
    , geogrid_id
+   , geogrid_config_id
    , agr
    , atgr
    , solv
@@ -88,8 +89,5 @@ SELECT
    , created_at
    , updated_at
 FROM flattened
--- WHERE LOWER(business_name) LIKE '%blattner%'
-WHERE business_place_id IN (
-  'ChIJ25WNyK8PyIkRWHNwFl3SjfE'
-  , 'ChIJ25WNyK8PyIkRWHNwFl3SjfE' )
+WHERE geogrid_config_id = '3zxrk4yz'
 ORDER BY created_at DESC

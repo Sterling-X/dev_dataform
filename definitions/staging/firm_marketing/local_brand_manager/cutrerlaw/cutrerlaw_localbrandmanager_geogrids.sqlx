@@ -69,6 +69,7 @@ SELECT
   '2e0efe10-f122-4a03-bfa5-7215e2dd7b71' AS SterlingX_Client_ID
    , 'Cutrer' AS SterlingX_Client_Name
    , geogrid_id
+   , geogrid_config_id
    , agr
    , atgr
    , solv
@@ -88,6 +89,5 @@ SELECT
    , created_at
    , updated_at
 FROM flattened
--- WHERE LOWER(business_name) LIKE '%cutrer%'
-WHERE business_place_id = 'ChIJs_VOyLt_ToYR56THi43vIAA'
+WHERE geogrid_config_id = 'qzk0q1gl'
 ORDER BY created_at DESC

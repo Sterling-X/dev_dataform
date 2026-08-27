@@ -69,6 +69,7 @@ SELECT
   '916fb7c7-13bc-4725-8bca-e11e0749da31' AS SterlingX_Client_ID
    , 'Aurit mediation' AS SterlingX_Client_Name
    , geogrid_id
+   , geogrid_config_id
    , agr
    , atgr
    , solv
@@ -88,5 +89,12 @@ SELECT
    , created_at
    , updated_at
 FROM flattened
-WHERE LOWER(business_name) LIKE '%aurit%'
+WHERE geogrid_config_id IN (
+  'v5392wr5'
+  , 'olv9761z'
+  , '4z7vpv1z'
+  , '4z2kpk1z'
+  , 'o5ej6jwl'
+  , '7l8ypyqz'
+  , '7l8y42yz' )
 ORDER BY created_at DESC

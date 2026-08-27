@@ -69,6 +69,7 @@ SELECT
   '1a402c5a-b3e7-4fc6-9f2e-cbd4c5ffe02a' AS SterlingX_Client_ID
    , 'Omnipress' AS SterlingX_Client_Name
    , geogrid_id
+   , geogrid_config_id
    , agr
    , atgr
    , solv
@@ -88,6 +89,5 @@ SELECT
    , created_at
    , updated_at
 FROM flattened
--- WHERE LOWER(business_name) LIKE '%omnipress%'
-WHERE business_place_id = 'ChIJIUhxmkZUBogRtm3rqk2sWnw'
+WHERE geogrid_config_id = '95p0839l'
 ORDER BY created_at DESC
