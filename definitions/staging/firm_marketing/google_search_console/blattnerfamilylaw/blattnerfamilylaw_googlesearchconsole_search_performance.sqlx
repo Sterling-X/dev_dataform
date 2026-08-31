@@ -1,0 +1,23 @@
+config {
+    type: "table",
+    database: "sterlingx-insights",
+    schema: "firm_marketing_googlesearchconsole",
+    name: "blattnerfamilylaw_googlesearchconsole_search_performance",
+    tags: ["google search console", "search performance", "blattnerfamilylaw"],
+}
+
+SELECT
+  '66588887-f466-46e0-9650-b94e9f9801cf' AS SterlingX_Client_ID,
+  'Blattner Family Law Group' AS SterlingX_Client_Name,
+
+  data_date,
+  site_url,
+  query,
+
+  clicks,
+  impressions,
+  position,
+FROM `rc-datamart-adminreport.google_search_console_blattnerfamilylaw.fct_gsc_query_metrics`
+ORDER BY 
+data_date DESC,
+query ASC

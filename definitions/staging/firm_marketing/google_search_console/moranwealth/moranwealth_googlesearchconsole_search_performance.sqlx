@@ -1,0 +1,23 @@
+config {
+    type: "table",
+    database: "sterlingx-insights",
+    schema: "firm_marketing_googlesearchconsole",
+    name: "moranwealth_googlesearchconsole_search_performance",
+    tags: ["google search console", "search performance", "moranwealth"],
+}
+
+SELECT
+  '2cdee080-147c-4540-9a80-18a0835d2c0d' AS SterlingX_Client_ID,
+  'Moran Wealth Management' AS SterlingX_Client_Name,
+
+  data_date,
+  site_url,
+  query,
+
+  clicks,
+  impressions,
+  position,
+FROM `rc-datamart-adminreport.google_search_console_moranwealth.fct_gsc_query_metrics`
+ORDER BY 
+data_date DESC,
+query ASC
