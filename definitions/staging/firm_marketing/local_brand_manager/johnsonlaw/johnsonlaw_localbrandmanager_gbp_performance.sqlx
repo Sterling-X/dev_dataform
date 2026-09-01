@@ -76,7 +76,7 @@ SELECT
     business_impressions_mobile_search,
     business_direction_requests,
     call_clicks,
-    website_clicks    
+    website_clicks
 FROM performance_metric pm
 JOIN location l ON pm.lbm_location_record_id = l.id
 WHERE pm.lbm_location_record_id IN (
