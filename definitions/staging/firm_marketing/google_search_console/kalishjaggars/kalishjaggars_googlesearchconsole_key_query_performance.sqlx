@@ -1,0 +1,62 @@
+config {
+    type: "table",
+    database: "sterlingx-insights",
+    schema: "firm_marketing_googlesearchconsole",
+    name: "kalishjaggars_googlesearchconsole_key_query_performance",
+    tags: ["google search console", "key query performance", "kalishjaggars"],
+}
+
+WITH key_query_performance AS (
+
+  SELECT
+    data_date AS date,
+    query,
+
+    -- Total impressions
+    SUM(impressions) AS impressions,
+
+    -- Additive numerator for GSC Average Position
+    SUM(
+      CASE
+        WHEN position IS NOT NULL
+        THEN position * impressions
+        ELSE 0
+      END
+    ) AS position_weighted_sum,
+
+    -- Additive denominator for GSC Average Position
+    SUM(
+      CASE
+        WHEN position IS NOT NULL
+        THEN impressions
+        ELSE 0
+      END
+    ) AS position_weighted_impressions
+
+  FROM
+    `rc-datamart-adminreport.google_search_console_kalishjaggars.fct_gsc_key_query_performance`
+
+  GROUP BY
+    data_date,
+    query
+)
+
+SELECT
+  '085566ed-07da-44fc-9292-e77dafdf1b68' AS SterlingX_Client_ID,
+  'Kalish and Jaggars' AS SterlingX_Client_Name,
+  date,
+  query,
+
+  -- Daily/query position
+  SAFE_DIVIDE(
+    position_weighted_sum,
+    position_weighted_impressions
+  ) AS position,
+
+  impressions,
+
+  -- Keep these for correct aggregation across dates/queries
+  position_weighted_sum,
+  position_weighted_impressions
+
+FROM key_query_performance

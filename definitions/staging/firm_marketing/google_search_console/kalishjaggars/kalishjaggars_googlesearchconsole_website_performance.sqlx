@@ -1,0 +1,32 @@
+config {
+    type: "table",
+    database: "sterlingx-insights",
+    schema: "firm_marketing_googlesearchconsole",
+    name: "kalishjaggars_googlesearchconsole_website_performance",
+    tags: ["google search console", "website performance", "kalishjaggars"],
+}
+
+WITH website_performance AS (
+
+  SELECT
+    data_date AS date,
+    SUM(impressions) AS impressions,
+    SUM(clicks) AS clicks
+
+  FROM
+    `rc-datamart-adminreport.google_search_console_kalishjaggars.fct_gsc_website_performance`
+
+  GROUP BY
+    data_date
+
+)
+
+SELECT
+  '085566ed-07da-44fc-9292-e77dafdf1b68' AS SterlingX_Client_ID,
+  'Kalish and Jaggars' AS SterlingX_Client_Name,
+
+  date,
+  impressions,
+  clicks
+
+FROM website_performance

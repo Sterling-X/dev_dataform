@@ -1,0 +1,32 @@
+config {
+    type: "table",
+    database: "sterlingx-insights",
+    schema: "firm_marketing_googlesearchconsole",
+    name: "johnsonlaw_googlesearchconsole_website_performance",
+    tags: ["google search console", "website performance", "johnsonlaw"],
+}
+
+WITH website_performance AS (
+
+  SELECT
+    data_date AS date,
+    SUM(impressions) AS impressions,
+    SUM(clicks) AS clicks
+
+  FROM
+    `rc-datamart-adminreport.google_search_console_johnsonlaw.fct_gsc_website_performance`
+
+  GROUP BY
+    data_date
+
+)
+
+SELECT
+  '0c4e2f26-cf3d-41e3-978f-8cd31726062f' AS SterlingX_Client_ID,
+  'Johnson Law Group' AS SterlingX_Client_Name,
+
+  date,
+  impressions,
+  clicks
+
+FROM website_performance

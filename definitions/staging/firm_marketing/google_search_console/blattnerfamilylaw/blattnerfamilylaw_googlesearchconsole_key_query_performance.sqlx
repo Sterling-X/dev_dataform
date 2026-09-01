@@ -1,0 +1,62 @@
+config {
+    type: "table",
+    database: "sterlingx-insights",
+    schema: "firm_marketing_googlesearchconsole",
+    name: "blattnerfamilylaw_googlesearchconsole_key_query_performance",
+    tags: ["google search console", "key query performance", "blattnerfamilylaw"],
+}
+
+WITH key_query_performance AS (
+
+  SELECT
+    data_date AS date,
+    query,
+
+    -- Total impressions
+    SUM(impressions) AS impressions,
+
+    -- Additive numerator for GSC Average Position
+    SUM(
+      CASE
+        WHEN position IS NOT NULL
+        THEN position * impressions
+        ELSE 0
+      END
+    ) AS position_weighted_sum,
+
+    -- Additive denominator for GSC Average Position
+    SUM(
+      CASE
+        WHEN position IS NOT NULL
+        THEN impressions
+        ELSE 0
+      END
+    ) AS position_weighted_impressions
+
+  FROM
+    `rc-datamart-adminreport.google_search_console_blattnerfamilylaw.fct_gsc_key_query_performance`
+
+  GROUP BY
+    data_date,
+    query
+)
+
+SELECT
+  '66588887-f466-46e0-9650-b94e9f9801cf' AS SterlingX_Client_ID,
+  'Blattner Family Law Group' AS SterlingX_Client_Name,
+  date,
+  query,
+
+  -- Daily/query position
+  SAFE_DIVIDE(
+    position_weighted_sum,
+    position_weighted_impressions
+  ) AS position,
+
+  impressions,
+
+  -- Keep these for correct aggregation across dates/queries
+  position_weighted_sum,
+  position_weighted_impressions
+
+FROM key_query_performance
