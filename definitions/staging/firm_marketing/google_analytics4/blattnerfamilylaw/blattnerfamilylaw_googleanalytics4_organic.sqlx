@@ -1,0 +1,34 @@
+config {
+    type: "table",
+    database: "sterlingx-insights",
+    schema: "firm_marketing_googleanalytics4",
+    name: "blattnerfamilylaw_googleanalytics4_organic",
+    tags: ["google analytics 4", "ga4", "organic", "marketing data", "blattnerfamilylaw"],
+}
+
+SELECT
+  '66588887-f466-46e0-9650-b94e9f9801cf' AS SterlingX_Client_ID,
+  'Blattner Family Law Group' AS SterlingX_Client_Name,
+    fa.property_id,
+    fa.event_date,
+    -- dimensions
+    JSON_VALUE(fa.dimension_values_json, '$.date') AS date,
+    JSON_VALUE(fa.dimension_values_json, '$.firstUserDefaultChannelGroup') AS firstUserDefaultChannelGroup,
+
+    -- metrics
+    SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.newUsers') AS INT64) AS newUsers,
+    SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.engagedSessions') AS INT64) AS engaged_sessions,
+FROM `rc-datamart-adminreport.google_analytics4_blattnerfamilylaw.fact_ga4_daily_analysis` fa
+LEFT JOIN `rc-datamart-adminreport.google_analytics4_blattnerfamilylaw.dim_ga4_report` dr
+    ON fa.report_id = dr.report_id
+WHERE dr.report_category = 'user_acquisition' 
+    AND dr.report_name = 'organic_daily'
+    AND JSON_VALUE(fa.dimension_values_json, '$.firstUserDefaultChannelGroup') IN (
+        'AI Assistant'
+        , 'Cross-network'
+        , 'Direct'
+        , 'Organic Search'
+        , 'Organic Social'
+        , 'Unassigned'
+    )
+
