@@ -13,7 +13,7 @@ SELECT
     fa.event_date,
     -- dimensions
     JSON_VALUE(fa.dimension_values_json, '$.date') AS date,
-    JSON_VALUE(fa.dimension_values_json, '$.sessionDefaultChannelGroup') AS sessionDefaultChannelGroup,
+    JSON_VALUE(fa.dimension_values_json, '$.sessionPrimaryChannelGroup') AS sessionPrimaryChannelGroup,
 
     -- metrics
     SAFE_CAST(JSON_VALUE(fa.metric_values_json, '$.sessions') AS INT64) AS sessions,
