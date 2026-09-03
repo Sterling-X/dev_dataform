@@ -23,12 +23,12 @@ LEFT JOIN `rc-datamart-adminreport.google_analytics4_blattnerfamilylaw.dim_ga4_r
     ON fa.report_id = dr.report_id
 WHERE dr.report_category = 'user_acquisition' 
     AND dr.report_name = 'organic_daily'
-    AND JSON_VALUE(fa.dimension_values_json, '$.firstUserPrimaryChannelGroup') IN (
-        'AI Assistant'
-        , 'Cross-network'
-        , 'Direct'
-        , 'Organic Search'
-        , 'Organic Social'
-        , 'Unassigned'
-    )
+    -- AND JSON_VALUE(fa.dimension_values_json, '$.firstUserPrimaryChannelGroup') IN (
+    --     'AI Assistant'
+    --     , 'Cross-network'
+    --     , 'Direct'
+    --     , 'Organic Search'
+    --     , 'Organic Social'
+    --     , 'Unassigned'
+    -- )
 
