@@ -1,0 +1,127 @@
+config {
+  type: "table",
+  database: "sterlingx-insights",
+  schema: "firm_marketing_localbrandmanager",
+  name: "servicecreditunion_localbrandmanager_review_management",
+  tags: ["local brand manager", "review management", "marketing data", "servicecreditunion"]
+}
+
+WITH reviews AS (
+  SELECT
+    TIMESTAMP(JSON_VALUE(raw_json, '$.created_at')) AS created_at,
+    TIMESTAMP(JSON_VALUE(raw_json, '$.deleted_at')) AS deleted_at,
+
+    JSON_VALUE(raw_json, '$.location_name') AS location_name,
+    JSON_VALUE(raw_json, '$.location_place_id') AS location_place_id,
+
+    SAFE_CAST(JSON_VALUE(raw_json, '$.rating') AS INT64) AS rating,
+
+    JSON_VALUE(raw_json, '$.remote_id') AS remote_id,
+    JSON_VALUE(raw_json, '$.remote_location_id') AS remote_location_id,
+
+    JSON_VALUE(raw_json, '$.reply') AS reply,
+
+    -- Nested reviewer object
+    JSON_VALUE(raw_json, '$.reviewer.display_name') AS reviewer_display_name,
+    JSON_VALUE(raw_json, '$.reviewer.profile_photo_url') AS reviewer_profile_photo_url,
+
+    JSON_VALUE(raw_json, '$.text') AS review_text,
+
+    TIMESTAMP(JSON_VALUE(raw_json, '$.updated_at')) AS updated_at
+  FROM rc-datamart-adminreport.local_brand_manager.raw_lbm_gmb_reviews
+)
+
+, location AS 
+(
+      SELECT
+    JSON_VALUE(raw_json, '$.address') AS address,
+    JSON_VALUE(raw_json, '$.administrative_area') AS administrative_area,
+    JSON_VALUE(raw_json, '$.city') AS city,
+    JSON_VALUE(raw_json, '$.country') AS country,
+    TIMESTAMP(JSON_VALUE(raw_json, '$.created_at')) AS created_at,
+    SAFE_CAST(JSON_VALUE(raw_json, '$.enabled') AS BOOL) AS enabled,
+    TIMESTAMP(JSON_VALUE(raw_json, '$.enabled_at')) AS enabled_at,
+    JSON_VALUE(raw_json, '$.gbp_id') AS gbp_id,
+    JSON_VALUE(raw_json, '$.gmb_url') AS gmb_url,
+    JSON_VALUE(raw_json, '$.id') AS id,
+    TIMESTAMP(JSON_VALUE(raw_json, '$.keywords_synced_at')) AS keywords_synced_at,
+    SAFE_CAST(JSON_VALUE(raw_json, '$.lat') AS FLOAT64) AS lat,
+    SAFE_CAST(JSON_VALUE(raw_json, '$.lng') AS FLOAT64) AS lng,
+    JSON_VALUE(raw_json, '$.name') AS name,
+    JSON_VALUE(raw_json, '$.note') AS note,
+    JSON_VALUE(raw_json, '$.phone_number') AS phone_number,
+    JSON_VALUE(raw_json, '$.place_id') AS place_id,
+    JSON_VALUE(raw_json, '$.postal_code') AS postal_code,
+    JSON_VALUE(raw_json, '$.primary_category') AS primary_category,
+    JSON_VALUE(raw_json, '$.source_type') AS source_type,
+    JSON_VALUE(raw_json, '$.store_code') AS store_code,
+    JSON_VALUE(raw_json, '$.website_url') AS website_url,
+
+    -- Arrays
+    JSON_VALUE_ARRAY(raw_json, '$.additional_categories') AS additional_categories,
+    JSON_VALUE_ARRAY(raw_json, '$.labels') AS labels,
+    JSON_VALUE_ARRAY(raw_json, '$.states') AS states,
+    JSON_VALUE_ARRAY(raw_json, '$.tags') AS tags,
+
+    -- Object
+    JSON_QUERY(raw_json, '$.regular_hours') AS regular_hours
+  FROM rc-datamart-adminreport.local_brand_manager.raw_lbm_locations
+)
+
+SELECT 
+  'dfb1117c-1e5f-462a-8c0e-5977a216dc5c' AS SterlingX_Client_ID,
+   'Service Credit Union' AS SterlingX_Client_Name,
+    l.id AS location_id,
+    l.name AS location_name,
+    l.address AS lcoation_address,
+    COUNT(remote_id) as total_reviews,
+    AVG(rating) as avg_rating,
+    COUNTIF(
+        DATE(r.created_at) >= DATE_TRUNC(CURRENT_DATE(), MONTH)
+        AND DATE(r.created_at) < DATE_ADD(DATE_TRUNC(CURRENT_DATE(), MONTH), INTERVAL 1 MONTH)
+    ) AS no_of_new_reviews
+FROM reviews r
+JOIN location l ON r.remote_location_id = l.gbp_id
+WHERE r.remote_location_id IN (
+   '15480249477996567407'
+  , '13635078284751185494'
+  , '11317597906013888774'
+  , '5532416671545052057'
+  , '15583796230595373676'
+  , '12783088720980935755'
+  , '15412900956572272413'
+  , '16381733199252885952'
+  , '2229620758652298107'
+  , '3979811438195552793'
+  , '7525300307126313063'
+  , '3919288406417690063'
+  , '10973606233180416324'
+  , '1104807054926409443'
+  , '17970689459867819081'
+  , '10413814398553277205'
+  , '5620244048869108357'
+  , '8182176723510450714'
+  , '3946394393877232344'
+  , '18379954981596638008'
+  , '1267599569867965087'
+  , '4773638461324342535'
+  , '8772467321204280227'
+  , '8748621261417990425'
+  , '2708040449994734382'
+  , '8271371074047019603'
+  , '9161621015757618181'
+  , '9908933966175959592'
+  , '16439113758491101164'
+  , '13678035411924739545'
+  , '1207927732730053820'
+  , '11986615734962463331'
+)
+  AND deleted_at IS NULL
+GROUP BY l.id,
+    l.name,
+    l.address
+
+
+
+
+
