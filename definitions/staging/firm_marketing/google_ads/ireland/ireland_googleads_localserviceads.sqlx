@@ -14,10 +14,10 @@ WITH cte_local_service_ads AS
     d.segment_date AS date,
     (d.cost_micros / 1000000.0) AS cost,
     d.conversions
-  FROM `rc-datamart-adminreport.google_ads_ireland.fct_gads_campaign_daily` d
-  JOIN `rc-datamart-adminreport.google_ads_ireland.dim_gads_campaign` c
+  FROM `rc-datamart-adminreport.google_ads_test_ireland.fct_gads_campaign_daily` d
+  JOIN `rc-datamart-adminreport.google_ads_test_ireland.dim_gads_campaign` c
     ON d.campaign_id = c.campaign_id
-  LEFT JOIN `rc-datamart-adminreport.google_ads_ireland.dim_gads_customer` dc
+  LEFT JOIN `rc-datamart-adminreport.google_ads_test_ireland.dim_gads_customer` dc
     ON d.customer_id = dc.customer_id
   WHERE c.advertising_channel_type = 'LOCAL_SERVICES'
 )

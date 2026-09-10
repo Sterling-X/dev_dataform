@@ -57,13 +57,13 @@ SELECT
     fc.all_conversions_value,
     -- fc.view_through_conversions
 
-FROM `rc-datamart-adminreport.google_ads_ireland.fct_gads_campaign_conversion_action_daily` fc
-LEFT JOIN `rc-datamart-adminreport.google_ads_ireland.dim_gads_customer` dc
+FROM `rc-datamart-adminreport.google_ads_test_ireland.fct_gads_campaign_conversion_action_daily` fc
+LEFT JOIN `rc-datamart-adminreport.google_ads_test_ireland.dim_gads_customer` dc
     ON fc.customer_id = dc.customer_id
-LEFT JOIN `rc-datamart-adminreport.google_ads_ireland.dim_gads_campaign` dp
+LEFT JOIN `rc-datamart-adminreport.google_ads_test_ireland.dim_gads_campaign` dp
     ON fc.customer_id = dp.customer_id
     AND fc.campaign_id = dp.campaign_id
-LEFT JOIN `rc-datamart-adminreport.google_ads_ireland.dim_gads_conversion_action` dca
+LEFT JOIN `rc-datamart-adminreport.google_ads_test_ireland.dim_gads_conversion_action` dca
     ON fc.customer_id = dca.customer_id
     AND fc.conversion_action_id = dca.conversion_action_id
     

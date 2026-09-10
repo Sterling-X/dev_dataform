@@ -47,8 +47,8 @@ SELECT
     fc.video_quartile_p50_rate,
     fc.video_quartile_p75_rate,
     fc.video_quartile_p100_rate
-FROM `rc-datamart-adminreport.google_ads_ireland.fct_gads_campaign_daily` fc
-LEFT JOIN `rc-datamart-adminreport.google_ads_ireland.dim_gads_customer` dc
+FROM `rc-datamart-adminreport.google_ads_test_ireland.fct_gads_campaign_daily` fc
+LEFT JOIN `rc-datamart-adminreport.google_ads_test_ireland.dim_gads_customer` dc
     ON fc.customer_id = dc.customer_id
-LEFT JOIN `rc-datamart-adminreport.google_ads_ireland.dim_gads_campaign` dp
+LEFT JOIN `rc-datamart-adminreport.google_ads_test_ireland.dim_gads_campaign` dp
     ON fc.campaign_id = dp.campaign_id
