@@ -2,8 +2,8 @@ config {
     type: "table",
     database: "sterlingx-insights",
     schema: "firm_marketing_googleads",
-    name: "ireland_googleads_conversion_action_daily",
-    tags: ["google ads", "conversion action", "marketing data", "ireland"],
+    name: "hicksfamilylawyers_googleads_conversion_action_daily",
+    tags: ["google ads", "conversion action", "marketing data", "hicksfamilylawyers"],
     bigquery: {
         partitionBy: "segment_date",
         clusterBy: ["customer_id", "campaign_id", "conversion_action_id"]
@@ -24,7 +24,7 @@ config {
 
 SELECT
   'a9b10ec7-4dfe-4058-bdb5-a53e66176eed' AS SterlingX_Client_ID,
-  'Michael Ireland & Associates' AS SterlingX_Client_Name,
+  'Michael hicksfamilylawyers & Associates' AS SterlingX_Client_Name,
 
     fc.segment_date,
     fc.customer_id,
@@ -57,13 +57,13 @@ SELECT
     fc.all_conversions_value,
     -- fc.view_through_conversions
 
-FROM `rc-datamart-adminreport.google_ads_ireland.fct_gads_campaign_conversion_action_daily` fc
-LEFT JOIN `rc-datamart-adminreport.google_ads_ireland.dim_gads_customer` dc
+FROM `rc-datamart-adminreport.google_ads_hicksfamilylawyers.fct_gads_campaign_conversion_action_daily` fc
+LEFT JOIN `rc-datamart-adminreport.google_ads_hicksfamilylawyers.dim_gads_customer` dc
     ON fc.customer_id = dc.customer_id
-LEFT JOIN `rc-datamart-adminreport.google_ads_ireland.dim_gads_campaign` dp
+LEFT JOIN `rc-datamart-adminreport.google_ads_hicksfamilylawyers.dim_gads_campaign` dp
     ON fc.customer_id = dp.customer_id
     AND fc.campaign_id = dp.campaign_id
-LEFT JOIN `rc-datamart-adminreport.google_ads_ireland.dim_gads_conversion_action` dca
+LEFT JOIN `rc-datamart-adminreport.google_ads_hicksfamilylawyers.dim_gads_conversion_action` dca
     ON fc.customer_id = dca.customer_id
     AND fc.conversion_action_id = dca.conversion_action_id
     
