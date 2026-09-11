@@ -1,0 +1,31 @@
+config {
+    type: "table",
+    database: "sterlingx-insights",
+    schema: "firm_marketing_googlesearchconsole",
+    name: "porcellolawoffices_googlesearchconsole_website_performance",
+    tags: ["google search console", "website performance", "porcellolawoffices"],
+}
+
+WITH website_performance AS (
+
+  SELECT
+    data_date AS date,
+    SUM(impressions) AS impressions,
+    SUM(clicks) AS clicks
+
+  FROM
+    `rc-datamart-adminreport.google_search_console_porcellolawoffices.fct_gsc_website_performance`
+
+  GROUP BY
+    data_date
+
+)
+
+SELECT
+  '6e2f5f01-f691-4603-8f7d-d5644a5bbb0e' AS SterlingX_Client_ID,
+  'Porcello Law Offices' AS SterlingX_Client_Name,
+  date,
+  impressions,
+  clicks
+
+FROM website_performance
