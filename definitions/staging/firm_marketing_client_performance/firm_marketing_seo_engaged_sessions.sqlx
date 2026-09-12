@@ -2,8 +2,8 @@ config {
     type: "table",
     database: "sterlingx-insights",
     schema: "firm_marketing_client_performance",
-    name: "firm_marketing_seo_newusers_engaged_sessions",
-    tags: ["google analytics 4", "ga4", "seo", "new users", "client performance data"],
+    name: "firm_marketing_seo_engaged_sessions",
+    tags: ["google analytics 4", "ga4", "seo", "engaged sessions", "client performance data"],
 }
 
 WITH am_roster AS (
@@ -34,7 +34,6 @@ WITH am_roster AS (
     STRUCT('Sterling Lawyers' AS client, 'Dani' AS am),
     -- STRUCT('The One Family Law', 'Dani' AS am),
     STRUCT('Ramage Law Firm' AS client, 'Dani' AS am)
-
   ])
 ),
 
@@ -44,9 +43,10 @@ base AS (
     SterlingX_Client_Name,
     'Aurit Mediation' AS client,
     event_date,
-    firstUserPrimaryChannelGroup,
-    newUsers
-  FROM `sterlingx-insights.firm_marketing_googleanalytics4.aurit_googleanalytics4_organic`
+    sessionPrimaryChannelGroup,
+    sessions,
+    engaged_sessions
+  FROM `sterlingx-insights.firm_marketing_googleanalytics4.aurit_googleanalytics4_session_organic`
 
   UNION ALL
 
@@ -55,9 +55,10 @@ base AS (
     SterlingX_Client_Name,
     'Bank Five Nine' AS client,
     event_date,
-    firstUserPrimaryChannelGroup,
-    newUsers
-  FROM `sterlingx-insights.firm_marketing_googleanalytics4.bankfivenine_googleanalytics4_organic`
+    sessionPrimaryChannelGroup,
+    sessions,
+    engaged_sessions
+  FROM `sterlingx-insights.firm_marketing_googleanalytics4.bankfivenine_googleanalytics4_session_organic`
 
   UNION ALL
 
@@ -66,9 +67,10 @@ base AS (
     SterlingX_Client_Name,
     'Blattner Family Law Group' AS client,
     event_date,
-    firstUserPrimaryChannelGroup,
-    newUsers
-  FROM `sterlingx-insights.firm_marketing_googleanalytics4.blattnerfamilylaw_googleanalytics4_organic`
+    sessionPrimaryChannelGroup,
+    sessions,
+    engaged_sessions
+  FROM `sterlingx-insights.firm_marketing_googleanalytics4.blattnerfamilylaw_googleanalytics4_session_organic`
 
   UNION ALL
 
@@ -77,9 +79,10 @@ base AS (
     SterlingX_Client_Name,
     'Cutrer Family Law' AS client,
     event_date,
-    firstUserPrimaryChannelGroup,
-    newUsers
-  FROM `sterlingx-insights.firm_marketing_googleanalytics4.cutrerlaw_googleanalytics4_organic`
+    sessionPrimaryChannelGroup,
+    sessions,
+    engaged_sessions
+  FROM `sterlingx-insights.firm_marketing_googleanalytics4.cutrerlaw_googleanalytics4_session_organic`
 
   UNION ALL
 
@@ -88,9 +91,10 @@ base AS (
     SterlingX_Client_Name,
     'Elkus & Sisson' AS client,
     event_date,
-    firstUserPrimaryChannelGroup,
-    newUsers
-  FROM `sterlingx-insights.firm_marketing_googleanalytics4.elkussisson_googleanalytics4_organic`
+    sessionPrimaryChannelGroup,
+    sessions,
+    engaged_sessions
+  FROM `sterlingx-insights.firm_marketing_googleanalytics4.elkussisson_googleanalytics4_session_organic`
 
   UNION ALL
 
@@ -99,9 +103,10 @@ base AS (
     SterlingX_Client_Name,
     'Fanash Family Law' AS client,
     event_date,
-    firstUserPrimaryChannelGroup,
-    newUsers
-  FROM `sterlingx-insights.firm_marketing_googleanalytics4.fanashfamily_googleanalytics4_organic`
+    sessionPrimaryChannelGroup,
+    sessions,
+    engaged_sessions
+  FROM `sterlingx-insights.firm_marketing_googleanalytics4.fanashfamily_googleanalytics4_session_organic`
 
   UNION ALL
 
@@ -110,9 +115,10 @@ base AS (
     SterlingX_Client_Name,
     'Five Star Bodies' AS client,
     event_date,
-    firstUserPrimaryChannelGroup,
-    newUsers
-  FROM `sterlingx-insights.firm_marketing_googleanalytics4.fivestarbodies_googleanalytics4_organic`
+    sessionPrimaryChannelGroup,
+    sessions,
+    engaged_sessions
+  FROM `sterlingx-insights.firm_marketing_googleanalytics4.fivestarbodies_googleanalytics4_session_organic`
 
   UNION ALL
 
@@ -121,9 +127,10 @@ base AS (
     SterlingX_Client_Name,
     'Gjesdahl Law' AS client,
     event_date,
-    firstUserPrimaryChannelGroup,
-    newUsers
-  FROM `sterlingx-insights.firm_marketing_googleanalytics4.gjesdahllaw_googleanalytics4_organic`
+    sessionPrimaryChannelGroup,
+    sessions,
+    engaged_sessions
+  FROM `sterlingx-insights.firm_marketing_googleanalytics4.gjesdahllaw_googleanalytics4_session_organic`
 
   UNION ALL
 
@@ -132,9 +139,10 @@ base AS (
     SterlingX_Client_Name,
     'Haffner Law' AS client,
     event_date,
-    firstUserPrimaryChannelGroup,
-    newUsers
-  FROM `sterlingx-insights.firm_marketing_googleanalytics4.haffnerlaw_googleanalytics4_organic`
+    sessionPrimaryChannelGroup,
+    sessions,
+    engaged_sessions
+  FROM `sterlingx-insights.firm_marketing_googleanalytics4.haffnerlaw_googleanalytics4_session_organic`
 
   UNION ALL
 
@@ -143,9 +151,10 @@ base AS (
     SterlingX_Client_Name,
     'Johnson Law Group' AS client,
     event_date,
-    firstUserPrimaryChannelGroup,
-    newUsers
-  FROM `sterlingx-insights.firm_marketing_googleanalytics4.johnsonlaw_googleanalytics4_organic`
+    sessionPrimaryChannelGroup,
+    sessions,
+    engaged_sessions
+  FROM `sterlingx-insights.firm_marketing_googleanalytics4.johnsonlaw_googleanalytics4_session_organic`
 
   UNION ALL
 
@@ -154,9 +163,10 @@ base AS (
     SterlingX_Client_Name,
     'Kalish & Jaggars' AS client,
     event_date,
-    firstUserPrimaryChannelGroup,
-    newUsers
-  FROM `sterlingx-insights.firm_marketing_googleanalytics4.kalishjaggars_googleanalytics4_organic`
+    sessionPrimaryChannelGroup,
+    sessions,
+    engaged_sessions
+  FROM `sterlingx-insights.firm_marketing_googleanalytics4.kalishjaggars_googleanalytics4_session_organic`
 
   UNION ALL
 
@@ -165,9 +175,10 @@ base AS (
     SterlingX_Client_Name,
     'Lancaster Family Law' AS client,
     event_date,
-    firstUserPrimaryChannelGroup,
-    newUsers
-  FROM `sterlingx-insights.firm_marketing_googleanalytics4.lancasterlaw_googleanalytics4_organic`
+    sessionPrimaryChannelGroup,
+    sessions,
+    engaged_sessions
+  FROM `sterlingx-insights.firm_marketing_googleanalytics4.lancasterlaw_googleanalytics4_session_organic`
 
   UNION ALL
 
@@ -176,9 +187,10 @@ base AS (
     SterlingX_Client_Name,
     'Lisa Vance' AS client,
     event_date,
-    firstUserPrimaryChannelGroup,
-    newUsers
-  FROM `sterlingx-insights.firm_marketing_googleanalytics4.lisavance_googleanalytics4_organic`
+    sessionPrimaryChannelGroup,
+    sessions,
+    engaged_sessions
+  FROM `sterlingx-insights.firm_marketing_googleanalytics4.lisavance_googleanalytics4_session_organic`
 
   UNION ALL
 
@@ -187,9 +199,10 @@ base AS (
     SterlingX_Client_Name,
     'MeyerPink' AS client,
     event_date,
-    firstUserPrimaryChannelGroup,
-    newUsers
-  FROM `sterlingx-insights.firm_marketing_googleanalytics4.meyerpinklaw_googleanalytics4_organic`
+    sessionPrimaryChannelGroup,
+    sessions,
+    engaged_sessions
+  FROM `sterlingx-insights.firm_marketing_googleanalytics4.meyerpinklaw_googleanalytics4_session_organic`
 
   UNION ALL
 
@@ -198,9 +211,10 @@ base AS (
     SterlingX_Client_Name,
     'Michael Ireland & Associates' AS client,
     event_date,
-    firstUserPrimaryChannelGroup,
-    newUsers
-  FROM `sterlingx-insights.firm_marketing_googleanalytics4.ireland_googleanalytics4_organic`
+    sessionPrimaryChannelGroup,
+    sessions,
+    engaged_sessions
+  FROM `sterlingx-insights.firm_marketing_googleanalytics4.ireland_googleanalytics4_session_organic`
 
   UNION ALL
 
@@ -209,9 +223,10 @@ base AS (
     SterlingX_Client_Name,
     'Neuro Endo' AS client,
     event_date,
-    firstUserPrimaryChannelGroup,
-    newUsers
-  FROM `sterlingx-insights.firm_marketing_googleanalytics4.neuroendo_googleanalytics4_organic`
+    sessionPrimaryChannelGroup,
+    sessions,
+    engaged_sessions
+  FROM `sterlingx-insights.firm_marketing_googleanalytics4.neuroendo_googleanalytics4_session_organic`
 
   UNION ALL
 
@@ -220,9 +235,10 @@ base AS (
     SterlingX_Client_Name,
     'Omnipress' AS client,
     event_date,
-    firstUserPrimaryChannelGroup,
-    newUsers
-  FROM `sterlingx-insights.firm_marketing_googleanalytics4.omnipress_googleanalytics4_organic`
+    sessionPrimaryChannelGroup,
+    sessions,
+    engaged_sessions
+  FROM `sterlingx-insights.firm_marketing_googleanalytics4.omnipress_googleanalytics4_session_organic`
 
   UNION ALL
 
@@ -231,9 +247,10 @@ base AS (
     SterlingX_Client_Name,
     'Porcello Law Offices' AS client,
     event_date,
-    firstUserPrimaryChannelGroup,
-    newUsers
-  FROM `sterlingx-insights.firm_marketing_googleanalytics4.porcellolawoffices_googleanalytics4_organic`
+    sessionPrimaryChannelGroup,
+    sessions,
+    engaged_sessions
+  FROM `sterlingx-insights.firm_marketing_googleanalytics4.porcellolawoffices_googleanalytics4_session_organic`
 
   UNION ALL
 
@@ -242,9 +259,10 @@ base AS (
     SterlingX_Client_Name,
     'Sterling Lawyers' AS client,
     event_date,
-    firstUserPrimaryChannelGroup,
-    newUsers
-  FROM `sterlingx-insights.firm_marketing_googleanalytics4.sterlinglawyers_googleanalytics4_organic`
+    sessionPrimaryChannelGroup,
+    sessions,
+    engaged_sessions
+  FROM `sterlingx-insights.firm_marketing_googleanalytics4.sterlinglawyers_googleanalytics4_session_organic`
 
   UNION ALL
 
@@ -253,9 +271,10 @@ base AS (
     SterlingX_Client_Name,
     'Ramage Law Firm' AS client,
     event_date,
-    firstUserPrimaryChannelGroup,
-    newUsers
-  FROM `sterlingx-insights.firm_marketing_googleanalytics4.ramagelaw_googleanalytics4_organic`
+    sessionPrimaryChannelGroup,
+    sessions,
+    engaged_sessions
+  FROM `sterlingx-insights.firm_marketing_googleanalytics4.ramagelaw_googleanalytics4_session_organic`
 
 ),
 
@@ -317,7 +336,7 @@ client_rollup AS (
   SELECT
     r.client,
     r.am,
-    b.firstUserPrimaryChannelGroup,
+    b.sessionPrimaryChannelGroup,
 
     MAX(b.SterlingX_Client_ID) AS SterlingX_Client_ID,
     MAX(b.SterlingX_Client_Name) AS SterlingX_Client_Name,
@@ -352,24 +371,44 @@ client_rollup AS (
 
     MAX(b.event_date) AS latest_reporting_data_date,
 
-    -- 90 Days New Users
-    SUM(CASE WHEN b.event_date BETWEEN dw.current_90_days_start_date AND dw.current_90_days_end_date THEN COALESCE(b.newUsers, 0) ELSE 0 END) AS newUsers_90_days_current,
-    SUM(CASE WHEN b.event_date BETWEEN dw.prior_90_days_start_date AND dw.prior_90_days_end_date THEN COALESCE(b.newUsers, 0) ELSE 0 END) AS newUsers_90_days_prior,
-    SUM(CASE WHEN b.event_date BETWEEN dw.yoy_90_days_start_date AND dw.yoy_90_days_end_date THEN COALESCE(b.newUsers, 0) ELSE 0 END) AS newUsers_90_days_yoy,
+    -- 90 Days Sessions
+    SUM(CASE WHEN b.event_date BETWEEN dw.current_90_days_start_date AND dw.current_90_days_end_date THEN COALESCE(b.sessions, 0) ELSE 0 END) AS sessions_90_days_current,
+    SUM(CASE WHEN b.event_date BETWEEN dw.prior_90_days_start_date AND dw.prior_90_days_end_date THEN COALESCE(b.sessions, 0) ELSE 0 END) AS sessions_90_days_prior,
+    SUM(CASE WHEN b.event_date BETWEEN dw.yoy_90_days_start_date AND dw.yoy_90_days_end_date THEN COALESCE(b.sessions, 0) ELSE 0 END) AS sessions_90_days_yoy,
 
-    -- 30 Days New Users
-    SUM(CASE WHEN b.event_date BETWEEN dw.current_30_days_start_date AND dw.current_30_days_end_date THEN COALESCE(b.newUsers, 0) ELSE 0 END) AS newUsers_30_days_current,
-    SUM(CASE WHEN b.event_date BETWEEN dw.prior_30_days_start_date AND dw.prior_30_days_end_date THEN COALESCE(b.newUsers, 0) ELSE 0 END) AS newUsers_30_days_prior,
-    SUM(CASE WHEN b.event_date BETWEEN dw.yoy_30_days_start_date AND dw.yoy_30_days_end_date THEN COALESCE(b.newUsers, 0) ELSE 0 END) AS newUsers_30_days_yoy,
+    -- 90 Days Engaged Sessions
+    SUM(CASE WHEN b.event_date BETWEEN dw.current_90_days_start_date AND dw.current_90_days_end_date THEN COALESCE(b.engaged_sessions, 0) ELSE 0 END) AS engaged_sessions_90_days_current,
+    SUM(CASE WHEN b.event_date BETWEEN dw.prior_90_days_start_date AND dw.prior_90_days_end_date THEN COALESCE(b.engaged_sessions, 0) ELSE 0 END) AS engaged_sessions_90_days_prior,
+    SUM(CASE WHEN b.event_date BETWEEN dw.yoy_90_days_start_date AND dw.yoy_90_days_end_date THEN COALESCE(b.engaged_sessions, 0) ELSE 0 END) AS engaged_sessions_90_days_yoy,
 
-    -- 14 Days New Users
-    SUM(CASE WHEN b.event_date BETWEEN dw.current_14_days_start_date AND dw.current_14_days_end_date THEN COALESCE(b.newUsers, 0) ELSE 0 END) AS newUsers_14_days_current,
-    SUM(CASE WHEN b.event_date BETWEEN dw.prior_14_days_start_date AND dw.prior_14_days_end_date THEN COALESCE(b.newUsers, 0) ELSE 0 END) AS newUsers_14_days_prior,
-    SUM(CASE WHEN b.event_date BETWEEN dw.yoy_14_days_start_date AND dw.yoy_14_days_end_date THEN COALESCE(b.newUsers, 0) ELSE 0 END) AS newUsers_14_days_yoy,
+    -- 30 Days Sessions
+    SUM(CASE WHEN b.event_date BETWEEN dw.current_30_days_start_date AND dw.current_30_days_end_date THEN COALESCE(b.sessions, 0) ELSE 0 END) AS sessions_30_days_current,
+    SUM(CASE WHEN b.event_date BETWEEN dw.prior_30_days_start_date AND dw.prior_30_days_end_date THEN COALESCE(b.sessions, 0) ELSE 0 END) AS sessions_30_days_prior,
+    SUM(CASE WHEN b.event_date BETWEEN dw.yoy_30_days_start_date AND dw.yoy_30_days_end_date THEN COALESCE(b.sessions, 0) ELSE 0 END) AS sessions_30_days_yoy,
 
-    -- 12-Month YoY New Users
-    SUM(CASE WHEN b.event_date BETWEEN dw.current_yoy_start_date AND dw.current_yoy_end_date THEN COALESCE(b.newUsers, 0) ELSE 0 END) AS newUsers_yoy_current,
-    SUM(CASE WHEN b.event_date BETWEEN dw.prior_yoy_start_date AND dw.prior_yoy_end_date THEN COALESCE(b.newUsers, 0) ELSE 0 END) AS newUsers_yoy_prior,
+    -- 30 Days Engaged Sessions
+    SUM(CASE WHEN b.event_date BETWEEN dw.current_30_days_start_date AND dw.current_30_days_end_date THEN COALESCE(b.engaged_sessions, 0) ELSE 0 END) AS engaged_sessions_30_days_current,
+    SUM(CASE WHEN b.event_date BETWEEN dw.prior_30_days_start_date AND dw.prior_30_days_end_date THEN COALESCE(b.engaged_sessions, 0) ELSE 0 END) AS engaged_sessions_30_days_prior,
+    SUM(CASE WHEN b.event_date BETWEEN dw.yoy_30_days_start_date AND dw.yoy_30_days_end_date THEN COALESCE(b.engaged_sessions, 0) ELSE 0 END) AS engaged_sessions_30_days_yoy,
+
+    -- 14 Days Sessions
+    SUM(CASE WHEN b.event_date BETWEEN dw.current_14_days_start_date AND dw.current_14_days_end_date THEN COALESCE(b.sessions, 0) ELSE 0 END) AS sessions_14_days_current,
+    SUM(CASE WHEN b.event_date BETWEEN dw.prior_14_days_start_date AND dw.prior_14_days_end_date THEN COALESCE(b.sessions, 0) ELSE 0 END) AS sessions_14_days_prior,
+    SUM(CASE WHEN b.event_date BETWEEN dw.yoy_14_days_start_date AND dw.yoy_14_days_end_date THEN COALESCE(b.sessions, 0) ELSE 0 END) AS sessions_14_days_yoy,
+
+    -- 14 Days Engaged Sessions
+    SUM(CASE WHEN b.event_date BETWEEN dw.current_14_days_start_date AND dw.current_14_days_end_date THEN COALESCE(b.engaged_sessions, 0) ELSE 0 END) AS engaged_sessions_14_days_current,
+    SUM(CASE WHEN b.event_date BETWEEN dw.prior_14_days_start_date AND dw.prior_14_days_end_date THEN COALESCE(b.engaged_sessions, 0) ELSE 0 END) AS engaged_sessions_14_days_prior,
+    SUM(CASE WHEN b.event_date BETWEEN dw.yoy_14_days_start_date AND dw.yoy_14_days_end_date THEN COALESCE(b.engaged_sessions, 0) ELSE 0 END) AS engaged_sessions_14_days_yoy,
+
+    -- 12-Month YoY Sessions
+    SUM(CASE WHEN b.event_date BETWEEN dw.current_yoy_start_date AND dw.current_yoy_end_date THEN COALESCE(b.sessions, 0) ELSE 0 END) AS sessions_yoy_current,
+    SUM(CASE WHEN b.event_date BETWEEN dw.prior_yoy_start_date AND dw.prior_yoy_end_date THEN COALESCE(b.sessions, 0) ELSE 0 END) AS sessions_yoy_prior,
+
+    -- 12-Month YoY Engaged Sessions
+    SUM(CASE WHEN b.event_date BETWEEN dw.current_yoy_start_date AND dw.current_yoy_end_date THEN COALESCE(b.engaged_sessions, 0) ELSE 0 END) AS engaged_sessions_yoy_current,
+    SUM(CASE WHEN b.event_date BETWEEN dw.prior_yoy_start_date AND dw.prior_yoy_end_date THEN COALESCE(b.engaged_sessions, 0) ELSE 0 END) AS engaged_sessions_yoy_prior
+
   FROM am_roster r
   CROSS JOIN date_windows dw
   LEFT JOIN base b
@@ -384,7 +423,7 @@ client_rollup AS (
   GROUP BY
     r.client,
     r.am,
-    b.firstUserPrimaryChannelGroup,
+    b.sessionPrimaryChannelGroup,
 
     dw.report_end_date,
 
@@ -418,26 +457,41 @@ client_rollup AS (
 SELECT
   client,
   am,
-  firstUserPrimaryChannelGroup,
+  sessionPrimaryChannelGroup,
 
   -- 90 Days
-  COALESCE(newUsers_90_days_current, 0) AS newUsers_90_days_current,
-  COALESCE(newUsers_90_days_prior, 0) AS newUsers_90_days_prior,
-  COALESCE(newUsers_90_days_yoy, 0) AS newUsers_90_days_yoy,
+  COALESCE(sessions_90_days_current, 0) AS sessions_90_days_current,
+  COALESCE(sessions_90_days_prior, 0) AS sessions_90_days_prior,
+  COALESCE(sessions_90_days_yoy, 0) AS sessions_90_days_yoy,
+
+  COALESCE(engaged_sessions_90_days_current, 0) AS engaged_sessions_90_days_current,
+  COALESCE(engaged_sessions_90_days_prior, 0) AS engaged_sessions_90_days_prior,
+  COALESCE(engaged_sessions_90_days_yoy, 0) AS engaged_sessions_90_days_yoy,
 
   -- 30 Days
-  COALESCE(newUsers_30_days_current, 0) AS newUsers_30_days_current,
-  COALESCE(newUsers_30_days_prior, 0) AS newUsers_30_days_prior,
-  COALESCE(newUsers_30_days_yoy, 0) AS newUsers_30_days_yoy,
+  COALESCE(sessions_30_days_current, 0) AS sessions_30_days_current,
+  COALESCE(sessions_30_days_prior, 0) AS sessions_30_days_prior,
+  COALESCE(sessions_30_days_yoy, 0) AS sessions_30_days_yoy,
+
+  COALESCE(engaged_sessions_30_days_current, 0) AS engaged_sessions_30_days_current,
+  COALESCE(engaged_sessions_30_days_prior, 0) AS engaged_sessions_30_days_prior,
+  COALESCE(engaged_sessions_30_days_yoy, 0) AS engaged_sessions_30_days_yoy,
 
   -- 14 Days
-  COALESCE(newUsers_14_days_current, 0) AS newUsers_14_days_current,
-  COALESCE(newUsers_14_days_prior, 0) AS newUsers_14_days_prior,
-  COALESCE(newUsers_14_days_yoy, 0) AS newUsers_14_days_yoy,
+  COALESCE(sessions_14_days_current, 0) AS sessions_14_days_current,
+  COALESCE(sessions_14_days_prior, 0) AS sessions_14_days_prior,
+  COALESCE(sessions_14_days_yoy, 0) AS sessions_14_days_yoy,
+
+  COALESCE(engaged_sessions_14_days_current, 0) AS engaged_sessions_14_days_current,
+  COALESCE(engaged_sessions_14_days_prior, 0) AS engaged_sessions_14_days_prior,
+  COALESCE(engaged_sessions_14_days_yoy, 0) AS engaged_sessions_14_days_yoy,
 
   -- Trailing 12-Month YoY
-  COALESCE(newUsers_yoy_current, 0) AS newUsers_yoy_current,
-  COALESCE(newUsers_yoy_prior, 0) AS newUsers_yoy_prior,
+  COALESCE(sessions_yoy_current, 0) AS sessions_yoy_current,
+  COALESCE(sessions_yoy_prior, 0) AS sessions_yoy_prior,
+
+  COALESCE(engaged_sessions_yoy_current, 0) AS engaged_sessions_yoy_current,
+  COALESCE(engaged_sessions_yoy_prior, 0) AS engaged_sessions_yoy_prior,
 
   -- Date Frames
   latest_reporting_data_date,
@@ -474,4 +528,5 @@ SELECT
 FROM client_rollup
 ORDER BY
   client,
-  firstUserPrimaryChannelGroup
+  sessionPrimaryChannelGroup
+
