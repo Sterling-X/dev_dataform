@@ -7,8 +7,8 @@ config {
 }
 
 SELECT
-  'a9b10ec7-4dfe-4058-bdb5-a53e66176eed' AS SterlingX_Client_ID,
-  'Michael hicksfamilylawyers & Associates' AS SterlingX_Client_Name,
+  '41406391-4166-4c73-ab0a-db73d34a18dd' AS SterlingX_Client_ID,
+  'Hicks Family Lawyers' AS SterlingX_Client_Name,
     qs.customer_id,
     dc.customer_name,
     qs.campaign_id,

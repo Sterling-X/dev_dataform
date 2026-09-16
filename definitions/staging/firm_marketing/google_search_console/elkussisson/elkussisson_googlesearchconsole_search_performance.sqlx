@@ -1,0 +1,23 @@
+config {
+    type: "table",
+    database: "sterlingx-insights",
+    schema: "firm_marketing_googlesearchconsole",
+    name: "elkussisson_googlesearchconsole_search_performance",
+    tags: ["google search console", "search performance", "elkussisson"],
+}
+
+SELECT
+    'b861c480-0aa3-4af5-a7c7-6081e9623458' AS SterlingX_Client_ID,
+    'Elkus & Sisson' AS SterlingX_Client_Name,
+
+  data_date,
+  site_url,
+  query,
+
+  clicks,
+  impressions,
+  position,
+FROM `rc-datamart-adminreport.google_search_console_elkussisson.fct_gsc_query_metrics`
+ORDER BY 
+data_date DESC,
+query ASC
