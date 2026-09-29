@@ -148,11 +148,11 @@ SELECT
       )
     THEN TRUE
     ELSE FALSE
-  END AS is_new_review_current_month,
+  END AS is_new_review_current_month
 
   -- Ingestion metadata
-  r.ingested_at AS review_ingested_at,
-  r.ingestion_date AS review_ingestion_date
+--   r.ingested_at AS review_ingested_at,
+--   r.ingestion_date AS review_ingestion_date
 
 FROM reviews r
 
